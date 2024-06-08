@@ -14,7 +14,6 @@ use Teaching\SheduleCourses;
 $request = Application::getInstance()->getContext()->getRequest()->getValues();
 
 $response['request'] = $request;
-//если есть пользователь и курс, то работаем дальше
 if($request['employee_id']>0&&$request['course_id']>0) {
     $send = false;
     $allow_to_course = true;
