@@ -3,6 +3,8 @@
 !/bitrix/modules/common.settings/
 /bitrix/.settings.php
 /bitrix/php_interface/dbconn.php
+/bitrix/cache
+/bitrix/managed_cache
 /local/composer123/
 /local/vendor/
 /madl
