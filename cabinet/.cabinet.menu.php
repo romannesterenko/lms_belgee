@@ -1,0 +1,47 @@
+<?php
+use Bitrix\Main\Localization\Loc;
+$aMenuLinks = Array(
+	Array(
+		Loc::getMessage('COMMON_DATA'),
+		"/cabinet/common/",
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		Loc::getMessage('COMPLETED_COURSES_MENU'),
+		"/cabinet/completed_courses/",
+		Array(),
+		Array(),
+		""
+	),
+	Array(
+		Loc::getMessage('POLLS_MENU'),
+		"/cabinet/polls/",
+		Array(),
+		Array(),
+		""
+	),
+	Array(
+		"Заявки",
+		"/cabinet/applications/",
+		Array(),
+		Array(),
+		""
+	),
+	Array(
+		Loc::getMessage('NOTIFICATIONS_MENU'),
+		"/cabinet/notifications/",
+		Array(),
+		Array(),
+		""
+	),
+	Array(
+		Loc::getMessage('SETTINGS_MENU'),
+		"/cabinet/settings/",
+		Array(),
+		Array(),
+		""
+	),
+);
+?>

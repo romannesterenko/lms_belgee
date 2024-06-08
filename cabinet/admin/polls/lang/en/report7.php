@@ -1,0 +1,27 @@
+<?php
+$MESS['TITLE'] = 'Staff turnover report for';
+$MESS['TABLE_TH_REGIONAL'] = 'Regional';
+$MESS['TABLE_TH_REGIONAL_OP'] = 'Sales Manager';
+$MESS['TABLE_TH_REGIONAL_PPO'] = 'Aftersales Manager';
+$MESS['TABLE_TH_CITY'] = 'City';
+$MESS['TABLE_TH_DEALER'] = 'Dealer';
+$MESS['TABLE_TH_ROLE'] = 'Role';
+$MESS['TABLE_TH_EMPLOYEES_COUNT'] = 'Employees count';
+$MESS['TABLE_TH_EMPLOYEES_CNT_PERIOD'] = 'Count of new employees for';
+$MESS['TABLE_TH_KICK_EMP_CNT'] = 'Count of dismissed employees for';
+$MESS['TABLE_TH_TERMINE_WORK'] = 'Average tenure in the company (national average)';
+$MESS['TABLE_TH_TEK_KADR'] = 'Personnel turnover in DC (by country)';
+$MESS['TABLE_TH_TRAININH_COUNT'] = 'Count of trainings completed by laid-off employees';
+$MESS['ALL_DEALERS_FILTER'] = 'All dealers';
+$MESS['DEALER'] = 'Dealer:';
+$MESS['CITIES_FILTER'] = 'City';
+$MESS['ALL_CITIES_OPTION'] = 'All cities';
+$MESS['FILTER'] = 'Filter';
+$MESS['RESET'] = 'Reset filter';
+$MESS['PERIOD'] = 'Period, months';
+$MESS['ONE_MONTH'] = 'month';
+$MESS['TWO_MONTHS'] = 'months';
+$MESS['FIVE_MONTHS'] = 'months';
+$MESS['ONE_DAY'] = 'day';
+$MESS['TWO_DAYS'] = 'days';
+$MESS['FIVE_DAYS'] = 'days';

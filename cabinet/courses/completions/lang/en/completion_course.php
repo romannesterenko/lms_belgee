@@ -1,0 +1,14 @@
+<?php
+$MESS['MAIN_TITLE'] = 'Courses on the way';
+$MESS['ALLREADY_ENROLLED_TITLE'] = 'you are enrolled in a course';
+$MESS['COMPLETIONS_COURSE_TITLE'] = 'Course completion ';
+$MESS['COMPLETIONS_COURSE_PART'] = 'part';
+$MESS['COMPLETIONS_COURSE_COURSE'] = 'Course';
+$MESS['COMPLETIONS_COURSE_NOT_FOUND'] = 'Course not found';
+$MESS['COMPLETIONS_COURSE_TO_CABINET'] = 'To cabinet';
+$MESS['COMPLETIONS_COURSE_NOT_FOR'] = 'Course #COURSE_NAME# not for solo completion';
+$MESS['COMPLETIONS_COURSE_TITLE_STEP'] = 'Step #CURRENT# of #ALL#';
+$MESS['COMPLETIONS_COURSE_FROM'] = 'Step';
+$MESS['COMPLETIONS_COURSE_PREVIOUS_STEP'] = 'Previous step';
+$MESS['COMPLETIONS_COURSE_NEXT_STEP'] = 'Next step';
+$MESS['COMPLETIONS_COURSE_TESTING'] = 'Testing';

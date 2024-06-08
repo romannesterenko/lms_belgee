@@ -1,0 +1,324 @@
+<?php
+const NEED_AUTH = true;
+require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
+global $USER, $APPLICATION;
+$_REQUEST['report_id'] = 9999999;
+$shedule_filter = [];
+if (check_full_array($_REQUEST['trainer'])) {
+    $shedule_filter['PROPERTY_TRAINERS'] = $_REQUEST['trainer'];
+}
+if (check_full_array($_REQUEST['course'])) {
+    $shedule_filter['PROPERTY_COURSE'] = $_REQUEST['course'];
+}
+if (!empty($_REQUEST['from'])) {
+    $shedule_filter['>=PROPERTY_BEGIN_DATE'] = $_REQUEST['from'] . ' 00:00:01';
+}
+if (!empty($_REQUEST['to'])) {
+    $shedule_filter['<=PROPERTY_BEGIN_DATE'] = $_REQUEST['to'] . ' 23:59:59';
+}
+$shedules = \Teaching\SheduleCourses::getArray($shedule_filter);
+
+$questions_data = \Models\FeedbackPoll::getAllQuestions(true);
+
+//$questions_data = array_merge($questions_data , \Models\FeedbackPoll::getAllQuestionsNew());
+
+$log = date('Y-m-d H:i:s') . ' ' . print_r($_REQUEST, true);
+file_put_contents(__DIR__ . '/log.txt', $log . PHP_EOL, FILE_APPEND);
+
+$table_data = [];
+$dealers = \Models\Dealer::getAll(['ID', 'NAME']);
+$common_values = [];
+foreach ($shedules as $shedule) {
+    $completions = (new \Teaching\CourseCompletion())->get(['UF_SHEDULE_ID' => $shedule['ID']]);
+    if (!check_full_array($completions))
+        continue;
+    foreach ($completions as $completion) {
+        if (\Models\FeedbackPoll::isEndedByCompletion($completion['ID'])) {
+            $table_row = [];
+
+            foreach (\Polls\ProcessFBPOll::getByCompletion($completion['ID']) as $arAnswer) {
+                $dbItems = \Bitrix\Iblock\ElementTable::getList([
+                    'order' => ['SORT' => 'ASC'], // сортировка
+                    'select' => ['ID', 'NAME', 'SORT', 'IBLOCK_ID'], // выбираемые поля (без свойств)
+                    'filter' => ['ID' => $arAnswer['UF_QUESTION_ID']], // фильтр по полям (без свойств)
+                ]);
+                $iAnswerIblockId = $dbItems->fetch()['IBLOCK_ID'];
+            };
+
+            if ($iAnswerIblockId == TEST_QUESTIONS_IBLOCK) {
+                $arTestConstructor = CIBlockElement::GetList(
+                    [],
+                    ['IBLOCK_ID' => 20, 'ACTIVE' => 'Y', 'PROPERTY_COURSE' => $completion['UF_COURSE_ID']],
+                    ['ID', 'CODE', 'IBLOCK_ID', 'PROPERTY_TEST_QUSTION', 'PROPERTY_COURSE']
+                )->Fetch();
+
+                if (!empty($arTestConstructor['PROPERTY_TEST_QUSTION_VALUE'])) {
+                    //подменяем вопросы если курс подходить под фос
+                    $questions_data = \Models\FeedbackPoll::getAllQuestionsNew(true, $arTestConstructor['PROPERTY_TEST_QUSTION_VALUE']);
+                } else {
+                    $course = \Models\Course::find($completion['UF_COURSE_ID'], ['ID', 'NAME', 'PROPERTY_EVENTS_COURSE_VALUE', 'PROPERTY_COURSE_TYPE_VALUE']);
+                    if ($course['PROPERTY_COURSE_TYPE_VALUE'] == 'Гибридный' && $course['PROPERTY_EVENTS_COURSE_VALUE'] == 'Да') {
+                        $type = 149;//ФОС офлайн выездной
+                    } elseif ($course['PROPERTY_COURSE_FORMAT'] == 'Online') {
+                        $type = 148;//ФОС онлайн регулярный
+                    } elseif ($course['PROPERTY_COURSE_TYPE_VALUE'] == 'Гибридный') {
+                        $type = 147;//ФОС офлайн регулярный
+                    }
+                    $arTestConstructor = CIBlockElement::GetList(
+                        [],
+                        ['IBLOCK_ID' => 20, 'PROPERTY_TYPED_TYPE' => $type, 'ACTIVE' => 'Y'],
+                        ['ID', 'CODE', 'IBLOCK_ID', 'PROPERTY_TEST_QUSTION', 'PROPERTY_COURSE']
+                    )->Fetch();
+
+                    if (!empty($arTestConstructor['PROPERTY_TEST_QUSTION_VALUE'])) {
+                        $questions_data = \Models\FeedbackPoll::getAllQuestionsNew(true, $arTestConstructor['PROPERTY_TEST_QUSTION_VALUE']);
+                    };
+                }
+            }
+            $arCompareQuestionsByNew = [
+
+                '115382' => '114992',
+                '115383' => '114993',
+                '115384' => '114994',
+                '115385' => '114995',
+                '115386' => '114996',
+                '115387' => '114997',
+                '115388' => '114998',
+                '115389' => '114999',
+                '115390' => '115000',
+                '115391' => '115001',
+
+            ];
+            $arCompareQuestionsByOld = array_flip($arCompareQuestionsByNew);
+            if ($_REQUEST['questions']) {
+                //найденные вопросы
+                $arFoundedQuestions = current($questions_data);
+                $arFoundedQuestions = $arFoundedQuestions['QUESTIONS'];
+
+                //проверяем те ли вопросы мы нашли
+                if (in_array($_REQUEST['questions'], array_column($arFoundedQuestions, 'ID'))) {
+
+                } else {
+                    $arOldQuestions = \Models\FeedbackPoll::getAllQuestions(true);
+                    $questions_data = array_merge($arOldQuestions, $questions_data);
+                    $arFoundedQuestionsId = array_column($arFoundedQuestions, 'ID');
+
+                    // $_REQUEST['questions'] = array_merge($_REQUEST['questions'] , array_column($arFoundedQuestions , 'ID'));
+
+                    foreach ($_REQUEST['questions'] as $question) {
+                        $arNewQuestion = $arCompareQuestionsByOld[$question];
+                        if (!empty($arNewQuestion)) {
+                            $_REQUEST['questions'][] = $arNewQuestion;
+                        }
+                    }
+                }
+
+            }
+            $user = \Models\User::find($completion['UF_USER_ID'], ['ID', 'NAME', 'LAST_NAME', 'UF_DEALER']);
+            $table_row['COURSE_NAME'] = $shedule['NAME'];
+            $table_row['COURSE_DATES'] = \Helpers\DateHelper::printDatesFormatting($shedule['PROPERTY_BEGIN_DATE_VALUE'], $shedule['PROPERTY_END_DATE_VALUE'], 'd.m.Y');
+            $table_row['COURSE_TRAINERS'] = [];
+            if (check_full_array($shedule['PROPERTIES']['TRAINERS'])) {
+                $trainer_ids = [];
+                foreach ($shedule['PROPERTIES']['TRAINERS'] as $PROPERTY) {
+                    $trainer_ids[] = $PROPERTY['VALUE'];
+                }
+                $trainers = \Teaching\Trainers::get(['ID' => $trainer_ids]);
+                foreach ($trainers as $trainer) {
+                    $table_row['COURSE_TRAINERS'][] = $trainer['NAME'];
+                }
+            } else {
+                $course = \Models\Course::find($completion['UF_COURSE_ID'], ['ID', 'NAME', 'PROPERTY_TRAINERS']);
+                if (check_full_array($course['PROPERTY_TRAINERS_VALUE'])) {
+                    $trainers = \Teaching\Trainers::get(['ID' => $course['PROPERTY_TRAINERS_VALUE']]);
+                    foreach ($trainers as $trainer) {
+                        $table_row['COURSE_TRAINERS'][] = $trainer['NAME'];
+                    }
+                }
+            }
+            $table_row['USER_NAME'] = $user['LAST_NAME'] . ' ' . $user['NAME'];
+            $table_row['USER_DEALER'] = $dealers[$user['UF_DEALER']]['NAME'];
+            $answers = \Polls\ProcessFBPOll::getByCompletion($completion['ID']);
+
+            foreach ($questions_data as $iKeyTheme => $question_one) {
+                $r_data = [];
+                $common_score = 0;
+                foreach ($question_one['QUESTIONS'] as $iKeyQuestion => $q) {
+                    foreach ($answers as $answer) {
+                        if ((int)$answer['UF_QUESTION_ID'] == (int)$q['ID']) {
+                            $common_values[$question_one['THEME']['ID']][$q['ID']][] = $r_data[$q['ID']] = (int)$answer['UF_POINTS'];
+                            $common_score += (int)$answer['UF_POINTS'];
+
+                        }
+                        if ($answer['UF_IS_COMENT'] == 1) {
+                            $table_row['COMENT'] = $answer['UF_COMENT'];
+                        }
+                    }
+                }
+                $need_score = count($question_one['QUESTIONS']) * 5;
+                $common_values[$question_one['THEME']['ID']]['PERCENTS'][] = $r_data['PERCENTS'] = round($common_score / $need_score * 100);
+
+                $common_values[$question_one['THEME']['ID']]['COMMON'][] = $r_data['COMMON'] = round($common_score / count($question_one['QUESTIONS']), 1);
+                $table_row['ANSWERS'][$question_one['THEME']['ID']] = $r_data;
+            }
+            $table_data[] = $table_row;
+        }
+    }
+}
+
+?>
+    <script>console.log(<?=json_encode($questions_data)?>)</script>
+    <script>console.log(<?=json_encode($table_data)?>)</script>
+    <script>console.log(<?=json_encode($_REQUEST)?>)</script>
+    <div class="main-content">
+        <div class="content">
+            <div class="content-block">
+                <h2 class="h2 center">Отчет по обратной связи</h2>
+                <div class="text-content text-content--long">
+                    <div class="table-block">
+                        <div class="form-group" style="display: flex; padding-top: 1rem;">
+                            <div class="btn-center">
+                                <a href="." class="btn">К генератору</a>
+                            </div>
+                            <div class="btn-center">
+                                <button class="btn" id="gen"><span>Excel</span></button>
+                            </div>
+                        </div>
+                        <table class="table table-bordered" id="table-report" style="padding-top: 25px">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th style="vertical-align: middle" class="text-center ">№ п/п</th>
+                                <th style="vertical-align: middle" class="text-center">ФИО участника</th>
+                                <th style="vertical-align: middle" class="text-center">Предприятие</th>
+                                <th style="vertical-align: middle" class="text-center">Название тренинга</th>
+                                <th style="vertical-align: middle" class="text-center">Дата проведения</th>
+                                <th style="vertical-align: middle" class="text-center">Тренер</th>
+                                <?php if (check_full_array($_REQUEST['questions'])) { ?>
+                                    <?php foreach ($questions_data as $questions_datum) { ?>
+                                        <?php foreach ($questions_datum['QUESTIONS'] as $one_question) {
+                                            if (!in_array($one_question['ID'], $_REQUEST['questions']) || in_array($arCompareQuestionsByNew[$one_question['ID']] , $_REQUEST['questions'])) continue; ?>
+                                            <th style="vertical-align: middle; font-weight: 200"
+                                                class="text-center"><?= $one_question['NAME'] ?></th>
+                                        <?php } ?>
+                                    <?php }
+                                } else { ?>
+                                    <?php foreach ($questions_data as $questions_datum) { ?>
+                                        <th colspan="2" style="vertical-align: middle"
+                                            class="text-center "><?= $questions_datum['THEME']['NAME'] ?></th>
+                                        <?php foreach ($questions_datum['QUESTIONS'] as $one_question) { ?>
+                                            <th style="vertical-align: middle; font-weight: 200"
+                                                class="text-center"><?= $one_question['NAME'] ?></th>
+                                        <?php } ?>
+                                    <?php }
+                                } ?>
+                                <th style="vertical-align: middle" class="text-center">Комментарий</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td style="font-size: 10px; padding-top: 2px; padding-bottom: 2px"></td>
+                                <td style="font-size: 10px; padding-top: 2px; padding-bottom: 2px"></td>
+                                <td style="font-size: 10px; padding-top: 2px; padding-bottom: 2px"></td>
+                                <td style="font-size: 10px; padding-top: 2px; padding-bottom: 2px"></td>
+                                <td style="font-size: 10px; padding-top: 2px; padding-bottom: 2px"></td>
+                                <td style="font-size: 10px; padding-top: 2px; padding-bottom: 2px"></td>
+                                <?php if (check_full_array($_REQUEST['questions'])) { ?>
+                                    <?php foreach ($questions_data as $questions_datum) { ?>
+                                        <?php foreach ($questions_datum['QUESTIONS'] as $one_question) {
+                                            if (!in_array($one_question['ID'], $_REQUEST['questions']) || in_array($arCompareQuestionsByNew[$one_question['ID']] , $_REQUEST['questions'])) continue; ?>
+                                            <td style="font-size: 10px; padding-top: 2px; padding-bottom: 2px"></td>
+                                        <?php } ?>
+                                    <?php }
+                                } else { ?>
+                                    <?php foreach ($questions_data as $questions_datum) { ?>
+                                        <td style="font-size: 10px; padding-top: 2px; padding-bottom: 2px"></td>
+                                        <td style="font-size: 10px; padding-top: 2px; padding-bottom: 2px">%</td>
+                                        <?php foreach ($questions_datum['QUESTIONS'] as $one_question) { ?>
+                                            <td style="font-size: 10px; padding-top: 2px; padding-bottom: 2px"><?= $one_question['SORT'] ?></td>
+                                        <?php } ?>
+                                    <?php }
+                                } ?>
+
+                                <td style="font-size: 10px; padding-top: 2px; padding-bottom: 2px"></td>
+                            </tr>
+                            <?php foreach ($table_data as $key => $item) { ?>
+                                <tr>
+                                    <td><?= ($key + 1) ?></td>
+                                    <td><?= $item['USER_NAME'] ?></td>
+                                    <td><?= $item['USER_DEALER'] ?></td>
+                                    <td><?= $item['COURSE_NAME'] ?></td>
+                                    <td><?= $item['COURSE_DATES'] ?></td>
+                                    <td><?= implode(', ', $item['COURSE_TRAINERS']) ?></td>
+                                    <?php if (check_full_array($_REQUEST['questions'])) { ?>
+                                        <?php foreach ($questions_data as $questions_datum) { ?>
+                                            <?php foreach ($questions_datum['QUESTIONS'] as $one_question) {
+                                                if (!in_array($one_question['ID'], $_REQUEST['questions']) || in_array($arCompareQuestionsByNew[$one_question['ID']] , $_REQUEST['questions'])) continue; ?>
+                                                <?
+                                                $reversAnswer = $item['ANSWERS'][112][$arCompareQuestionsByOld[$one_question['ID']]];
+                                                if (empty($item['ANSWERS'][$questions_datum['THEME']['ID']][$one_question['ID']]) && $reversAnswer) {
+                                                    ?>
+                                                    <td><?= $reversAnswer ?></td>
+                                                <? } else {
+                                                    ?>
+                                                    <td><?= $item['ANSWERS'][$questions_datum['THEME']['ID']][$one_question['ID']] ?></td>
+                                                <? } ?>
+                                            <?php } ?>
+                                        <?php }
+                                    } else { ?>
+                                        <?php foreach ($questions_data as $questions_datum) { ?>
+                                            <td><?= number_format($item['ANSWERS'][$questions_datum['THEME']['ID']]['COMMON'], 1, ',') ?></td>
+                                            <td><?= number_format($item['ANSWERS'][$questions_datum['THEME']['ID']]['PERCENTS'], 1, ',') ?>
+                                                %
+                                            </td>
+                                            <?php foreach ($questions_datum['QUESTIONS'] as $one_question) { ?>
+                                                <td><?= $item['ANSWERS'][$questions_datum['THEME']['ID']][$one_question['ID']] ?></td>
+                                            <?php } ?>
+                                        <?php }
+                                    } ?>
+                                    <td><?= $item['COMENT'] ?></td>
+                                </tr>
+                            <?php }
+                            if (check_full_array($table_data)) {
+                                ?>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <?php if (check_full_array($_REQUEST['questions'])) { ?>
+                                        <?php foreach ($questions_data as $questions_datum) { ?>
+                                            <?php foreach ($questions_datum['QUESTIONS'] as $one_question) {
+                                                if (!in_array($one_question['ID'], $_REQUEST['questions'])|| in_array($arCompareQuestionsByNew[$one_question['ID']] , $_REQUEST['questions'])) continue; ?>
+                                                <td><?= number_format(array_sum($common_values[$questions_datum['THEME']['ID']][$one_question['ID']]) / count($common_values[$questions_datum['THEME']['ID']][$one_question['ID']]), 1, ',') ?></td>
+                                            <?php } ?>
+                                        <?php }
+                                    } else { ?>
+                                        <?php foreach ($questions_data as $questions_datum) { ?>
+                                            <td><?= number_format(array_sum($common_values[$questions_datum['THEME']['ID']]['COMMON']) / count($common_values[$questions_datum['THEME']['ID']]['COMMON']), 1, ',') ?></td>
+                                            <td><?= number_format(array_sum($common_values[$questions_datum['THEME']['ID']]['PERCENTS']) / count($common_values[$questions_datum['THEME']['ID']]['PERCENTS']), 1, ',') ?>
+                                                %
+                                            </td>
+                                            <?php foreach ($questions_datum['QUESTIONS'] as $one_question) { ?>
+                                                <td>
+                                                    <? if (empty($common_values[$questions_datum['THEME']['ID']][$one_question['ID']])) {
+                                                        echo ' </td>';
+                                                        continue;
+                                                    } ?>
+                                                    <?= number_format(array_sum($common_values[$questions_datum['THEME']['ID']][$one_question['ID']]) / count($common_values[$questions_datum['THEME']['ID']][$one_question['ID']]), 1, ',') ?>
+                                                </td>
+                                            <?php } ?>
+                                        <?php }
+                                    } ?>
+                                    <td></td>
+                                </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>

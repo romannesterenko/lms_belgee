@@ -1,0 +1,14 @@
+.idea/
+/upload
+!/bitrix/modules/common.settings/
+/bitrix/.settings.php
+/bitrix/php_interface/dbconn.php
+/local/composer123/
+/local/vendor/
+/madl
+/ftp1c/in
+/ftp1c/out
+files-sales-dept/
+*.log
+*log.txt
+local/php_interface/lib/Teaching/log$requestEnrollments.txt

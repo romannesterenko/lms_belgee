@@ -1,0 +1,22 @@
+<?php
+$MESS['TESTING'] = 'Testing';
+$MESS['COURSE'] = 'course';
+$MESS['POINTS'] = 'Points:';
+$MESS['STEP'] = 'from';
+$MESS['FROM'] = 'from';
+$MESS['TEST'] = 'Test';
+$MESS['NOT'] = 'not ';
+$MESS['COMPLETED'] = 'completed';
+$MESS['COMPLETED_1'] = 'Completed:';
+$MESS['DATE'] = 'Date:';
+$MESS['RESULTS_TITLE'] = 'Test results:';
+$MESS['PROCESS_TESTING_TITLE'] = 'Course testing "#NAME#"';
+$MESS['BACK_TO_COURSE'] = 'Back to course';
+$MESS['NEXT_QUESTION'] = 'Next';
+$MESS['YEAR'] = '';
+$MESS['POINTS'] = 'Points: ';
+$MESS['TO_CABINET'] = 'To cabinet';
+$MESS['AGAIN'] = 'Pass one more time';
+$MESS['ATTEMPTS'] = 'Attempts: ';
+$MESS['COURSE_FAILED_INFO'] = 'The course failed, the number of your attempts exceeded the number of allowed attempts. Take the course again by enrolling in it.';
+$MESS['PAGE_NOT_FOUND'] = 'Page not found';

@@ -1,0 +1,6 @@
+<?
+$MESS["MAIN_COURSES_FOR_ROLE_FOR"] = "для";
+$MESS["MAIN_COURSES_FOR_ROLE_TITLE"] = "Доступные курсы";
+$MESS["MAIN_COURSES_FOR_ROLE_ALL_COURSES_LINK"] = "все курсы";
+$MESS["MAIN_COURSES_FOR_ROLE_VIEW_ALL"] = "Смотреть еще";
+?>

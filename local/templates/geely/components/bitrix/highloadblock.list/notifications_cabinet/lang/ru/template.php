@@ -1,0 +1,11 @@
+<?php
+$MESS['COMPLETED_COURSES_COURSE'] = 'Курс';
+$MESS['COMPLETED_COURSES_TYPE'] = 'Тип';
+$MESS['COMPLETED_COURSES_STATUS'] = 'Статус';
+$MESS['COMPLETED_COURSES_ATTEMPTS'] = 'Попыток';
+$MESS['COMPLETED_COURSES_POINTS'] = 'Баллы';
+$MESS['COMPLETED_COURSES_DATE'] = 'Дата';
+$MESS['COMPLETED_COURSES_CERT'] = 'Сертификат';
+$MESS['COMPLETED_COURSES_COMPLETED'] = 'пройден';
+$MESS['H2_TITLE'] = 'Список уведомлений';
+$MESS['NO_EVENTS'] = 'Нет уведомлений';

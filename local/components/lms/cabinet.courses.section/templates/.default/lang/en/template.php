@@ -1,0 +1,8 @@
+<?php
+$MESS ['COURSES_SECTION_TITLE'] = "My courses";
+$MESS ['COURSES_SECTION_COMPLETED_COURSES'] = "Passed";
+$MESS ['COURSES_SECTION_ASSIGNED_COURSES'] = "Appointed";
+$MESS ['COURSES_SECTION_ENROLLMENTS'] = "Applications for passage";
+$MESS ['COURSES_SECTION_COMPLETIONS'] = "Courses completion";
+$MESS ['COURSES_SECTION_NEW_COURSES'] = "New courses";
+?>

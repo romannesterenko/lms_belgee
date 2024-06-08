@@ -1,0 +1,2 @@
+<?php
+$MESS['GMRMESSAGES_CABINET_ADMIN_TITLE'] = 'сообщения от GMR';

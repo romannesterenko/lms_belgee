@@ -1,0 +1,23 @@
+<?php
+$MESS['TESTING'] = 'Тестирование';
+$MESS['COURSE'] = 'Курс';
+$MESS['POINTS'] = 'Баллов:';
+$MESS['STEP'] = 'из';
+$MESS['FROM'] = 'из';
+$MESS['TEST'] = 'Тест';
+$MESS['NOT'] = 'не ';
+$MESS['COMPLETED'] = 'пройден';
+$MESS['COMPLETED_1'] = 'Пройден:';
+$MESS['DATE'] = 'Дата:';
+$MESS['RESULTS_TITLE'] = 'Результаты прохождения теста:';
+$MESS['PROCESS_TESTING_TITLE'] = 'Тестирование по курсу "#NAME#"';
+$MESS['BACK_TO_COURSE'] = 'Вернуться к курсу';
+$MESS['NEXT_QUESTION'] = 'Следующий';
+$MESS['YEAR'] = 'г.';
+$MESS['POINTS'] = 'Баллов: ';
+$MESS['FROM'] = 'из';
+$MESS['TO_CABINET'] = 'В кабинет';
+$MESS['AGAIN'] = 'Пройти еще раз';
+$MESS['ATTEMPTS'] = 'Попыток: ';
+$MESS['COURSE_FAILED_INFO'] = 'Курс не пройден, количество ваших попыток превысило количество допустимых попыток. Пройдите курс заново, записавшись на него.';
+$MESS['PAGE_NOT_FOUND'] = 'Страница не найдена';

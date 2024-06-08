@@ -1,0 +1,8 @@
+.profile-edit-item.error{
+    color: red;
+}.profile-edit-item.success{
+    color: green;
+}
+.profile-edit-item.message_info.hidden{
+    display: none!important;
+}

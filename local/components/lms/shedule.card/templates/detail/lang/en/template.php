@@ -1,0 +1,24 @@
+<?php
+$MESS['FREE_ACCESS'] = "Free access";
+$MESS['FREE_PLACES'] = "Free";
+$MESS['FOR'] = "For";
+$MESS['BEGIN_TITLE'] = "Start:";
+$MESS['DATE_TITLE'] = "Date:";
+$MESS['DURATION_TITLE'] = "Duration:";
+$MESS['FORMAT_TITLE'] = "Format:";
+$MESS['FOR_TITLE'] = "For whom:";
+$MESS['COST_TITLE'] = "The cost of participation in the training:";
+$MESS['FREE_PLACES_TITLE'] = "Free places left:";
+$MESS['MATERIALS_TITLE'] = "materials for preliminary acquaintance";
+$MESS['ENROLL'] = "Enroll";
+$MESS['MB'] = "MB";
+$MESS['MODAL_REGISTER_TITLE'] = "course registration";
+$MESS['YOU_ARE_REGISTERING'] = "You are registering for the seminar";
+$MESS['APPROVE_YOUR_REGISTRATION'] = "Approve your registration. A detailed letter with instructions will be sent to your email.";
+$MESS['APPROVE_REGISTRATION_BUTTON'] = "Approve your registration";
+$MESS['SCHEDULE_TITLE'] = "schedule";
+$MESS['MAIN_EVENT_SPEAKER'] = "event speaker";
+$MESS['EVENT_SPEAKERS'] = "speakers";
+$MESS['CURRENCY'] = "rub.";
+$MESS['ALLOW_REGISTER'] = "Training registration";
+$MESS['ALLOW'] = "is available:";

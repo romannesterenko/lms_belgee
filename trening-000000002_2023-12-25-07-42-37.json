@@ -1,0 +1,11 @@
+{
+  "id": "000000001",
+  "id_trening": "A01",
+  "id_dealer": "50150Test",
+  "invoice_number": "23-1231123123",
+  "invoice_date": "2023-12-20T19:55:54",
+  "payment_date": "2023-12-25T00:00:00",
+  "price": 100000,
+  "quantity": 9,
+  "total": 89991
+}

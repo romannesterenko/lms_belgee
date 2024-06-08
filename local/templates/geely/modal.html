@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <title></title>
+
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.css'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.css'><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.css'>
+  <link href="css/styles.css" rel="stylesheet" type="text/css">
+
+
+
+</head>
+
+<body>
+
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="#" class="logo"><img src="images/logo.svg" alt=""></a>
+
+        <nav class="main-menu move-2">
+          <ul>
+            <li><a href="">Новости</a></li>
+            <li class="active"><a href="">Все курсы</a></li>
+            <li><a href="">База знаний</a></li>
+            <li><a href="">Расписание</a></li>
+            <li><a href="">Личный кабинет</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-content__right">
+          <div class="header-user">
+            <a href="#">
+              <span class="icon icon-profile"></span>
+              Иванов М.В.
+            </a>
+          </div>
+
+          <a class="burger"><span></span></a>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <ul>
+        <li><a href="#ex1" rel="modal:open">course card confirm </a></li>
+        <li><a href="#ex2" rel="modal:open">course card choose date</a></li>
+        <li><a href="#ex3" rel="modal:open">в успешно записались на курс</a></li>
+
+      </ul>
+ 
+      <!-- <div class="range-calendar">
+        <input type="text" id="rangecalendar" data-range="true" data-multiple-dates-separator=" - " class="datepicker-here" placeholder="Выберите дату"/>
+      </div> -->
+
+  
+    </div>
+  </main>
+
+
+  <div id="ex1" class="modal modal--xs">
+
+    <div class="modal-content">
+      <div class="modal-icon"><img src="images/education-icon.svg" alt=""></div>
+      <h3 class="h3 center">регистрация на курс</h3>
+      <p>Вы регистрируетесь на семинар 19 июня
+        в 12:00. Подтвердите вашу регистрацию, подробное письмо с инструкциями придет
+        к вам на почту.</p>
+      <div class="btn-center">
+        <a href="" class="btn">Подтвердить регистрацию</a>
+      </div>
+    </div>
+
+
+    <a href="#" rel="modal:close"></a>
+  </div>
+
+  <div id="ex2" class="modal modal--md">
+
+    <div class="modal-content">
+      <div class="modal-icon"><img src="images/education-icon.svg" alt=""></div>
+      <h3 class="h3 center">регистрация на курс</h3>
+      <p>Выберите дату прохождения курса</p>
+
+      <div class="modal-calendar">
+        <div class="datepicker-here" id="modalcalendar"></div>
+      </div>
+
+
+
+      <div class="btn-center">
+        <a href="" class="btn">Подтвердить регистрацию</a>
+      </div>
+    </div>
+
+
+    <a href="#" rel="modal:close"></a>
+  </div>
+
+  <div id="ex3" class="modal modal--xs">
+
+    <div class="modal-content">
+      <div class="modal-icon"><img src="images/like-gray.svg" width="67px" alt=""></div>
+      <h3 class="h3 center">вы успешно <br> записались на курс!</h3>
+      <p>Не забудьте прийти на обучение 
+        в назначенную дату и время - 19 июня 
+        2022 года в 12:00. Ждем вас!</p>
+
+    </div>
+
+
+    <a href="#" rel="modal:close"></a>
+  </div>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/datepicker.js'></script>
+
+  <script src="js/owl.carousel.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js'></script>
+  <script src="js/scripts.js"></script>
+
+ 
+  <svg width="0" height="0" class="hidden">
+    <symbol fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 24" id="document">
+      <g clip-path="url(#clip0_432_27797)">
+        <path
+          d="M21.7969 5.20644L16.2585 -0.137314C16.1292 -0.262002 15.9538 -0.333252 15.7692 -0.333252H6.07692C4.93231 -0.333252 4 0.566279 4 1.67065V20.4628C4 21.5672 4.93231 22.4667 6.07692 22.4667H19.9231C21.0677 22.4667 22 21.5672 22 20.4628V5.67847C22 5.49589 21.9215 5.32667 21.7969 5.20644ZM16.4615 1.94675L19.6369 5.0105H17.1538C16.7708 5.0105 16.4615 4.71214 16.4615 4.34253V1.94675ZM19.9231 21.1308H6.07692C5.69385 21.1308 5.38462 20.8325 5.38462 20.4628V1.67065C5.38462 1.30104 5.69385 1.00269 6.07692 1.00269H15.0769V4.34253C15.0769 5.4469 16.0092 6.34644 17.1538 6.34644H20.6154V20.4628C20.6154 20.8325 20.3062 21.1308 19.9231 21.1308Z"
+          fill="currentColor" stroke="currentColor" stroke-width="0.3"></path>
+        <path
+          d="M17.1523 9.10742H8.84465C8.46157 9.10742 8.15234 9.40578 8.15234 9.77539C8.15234 10.145 8.46157 10.4434 8.84465 10.4434H17.1523C17.5354 10.4434 17.8447 10.145 17.8447 9.77539C17.8447 9.40578 17.5354 9.10742 17.1523 9.10742Z"
+          fill="currentColor" stroke="currentColor" stroke-width="0.3"></path>
+        <path
+          d="M17.1523 11.7793H8.84465C8.46157 11.7793 8.15234 12.0777 8.15234 12.4473C8.15234 12.8169 8.46157 13.1152 8.84465 13.1152H17.1523C17.5354 13.1152 17.8447 12.8169 17.8447 12.4473C17.8447 12.0777 17.5354 11.7793 17.1523 11.7793Z"
+          fill="currentColor" stroke="currentColor" stroke-width="0.3"></path>
+        <path
+          d="M17.1523 14.4512H8.84465C8.46157 14.4512 8.15234 14.7495 8.15234 15.1191C8.15234 15.4887 8.46157 15.7871 8.84465 15.7871H17.1523C17.5354 15.7871 17.8447 15.4887 17.8447 15.1191C17.8447 14.7495 17.5354 14.4512 17.1523 14.4512Z"
+          fill="currentColor" stroke="currentColor" stroke-width="0.3"></path>
+        <path
+          d="M14.3831 17.123H8.84465C8.46157 17.123 8.15234 17.4214 8.15234 17.791C8.15234 18.1606 8.46157 18.459 8.84465 18.459H14.3831C14.7662 18.459 15.0754 18.1606 15.0754 17.791C15.0754 17.4214 14.7662 17.123 14.3831 17.123Z"
+          fill="currentColor" stroke="currentColor" stroke-width="0.3"></path>
+      </g>
+      <defs>
+        <clipPath id="clip0_432_27797">
+          <rect width="24" height="24" fill="white" transform="translate(0.75)"></rect>
+        </clipPath>
+      </defs>
+    </symbol>
+  </svg>
+
+
+
+</body>
+
+</html>

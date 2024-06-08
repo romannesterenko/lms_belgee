@@ -1,0 +1,4 @@
+<?php
+$MESS['ADMIN_MENU_TITLE'] = "admin";
+$MESS['ADMIN_DILLER_MENU_WORKSPACE'] = "Workspace";
+$MESS['ADMIN_DILLER_MENU_REPORTS'] = "Reports";

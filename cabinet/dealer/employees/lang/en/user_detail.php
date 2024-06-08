@@ -1,0 +1,20 @@
+<?
+$MESS['TITLE'] = 'Staff';
+$MESS['EMPLOYESS'] = 'Staff';
+$MESS['PROFILE'] = 'Employee profile';
+$MESS['IN_COURSES'] = 'Passing courses';
+$MESS['COMPLETE_COURSES'] = 'Completed courses';
+$MESS['SETTED_COURSES'] = 'Assigned Courses';
+$MESS['PROFILE_IS_ACTIVE'] = 'Profile active!';
+$MESS['BIRTHDAY_DATE'] = 'Date of Birth';
+$MESS['PROFESSION'] = 'Job title';
+$MESS['PHONE'] = 'Phone';
+$MESS['WORK_START_DATE'] = 'Start date';
+$MESS['WORK_PLACE'] = 'Place of work';
+$MESS['DEALER_CODE'] = 'At the dealer';
+$MESS['NAME'] = 'Name ';
+$MESS['ROLE'] = 'Role ';
+$MESS['CITY'] = 'City';
+$MESS['ADDRESS'] = 'Address';
+$MESS['EDIT'] = 'Edit';
+$MESS['DELETE'] = 'Delete';

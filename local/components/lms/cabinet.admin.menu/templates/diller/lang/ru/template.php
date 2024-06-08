@@ -1,0 +1,8 @@
+<?
+$MESS ['ADMIN_DILLER_MENU_TITLE'] = "дилер";
+$MESS ['ADMIN_DILLER_MENU_WORKSPACE'] = "Рабочий стол";
+$MESS ['ADMIN_DILLER_MENU_MESSAGES'] = "Сообщения";
+$MESS ['ADMIN_DILLER_MENU_EMPLOYEES'] = "Сотрудники";
+$MESS ['ADMIN_DILLER_MENU_SALES'] = "Точки продаж";
+$MESS ['ADMIN_DILLER_MENU_REPORTS'] = "Отчеты";
+?>

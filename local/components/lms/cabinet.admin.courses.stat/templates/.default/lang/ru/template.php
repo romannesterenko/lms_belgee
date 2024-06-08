@@ -1,0 +1,39 @@
+<?
+$MESS ['ADMIN_COURSES_STAT_TITLE'] = "общая статистика по всем курсам";
+
+$MESS ['ADMIN_COURSES_ACTIVE_NOW_TITLE'] = "Активные на текущий момент курсы";
+$MESS ['ADMIN_COURSES_ACTIVE_NOW_NEW_EMP'] = "Новых сотрудников";
+$MESS ['ADMIN_COURSES_ACTIVE_NOW_COUNT_APPS'] = "Заявок на участие";
+$MESS ['ADMIN_COURSES_ACTIVE_NOW_COUNT_MEMBERS'] = "Участников курсов";
+$MESS ['ADMIN_COURSES_ACTIVE_NOW_COUNT_ALL_ACTIVE'] = "Всего курсов активно";
+
+$MESS ['ADMIN_COURSES_TOTAL_ENROLLED_TITLE'] = "Всего записалось на курсы";
+$MESS ['ADMIN_COURSES_TOTAL_ENROLLED_ACTIVE_COURSES'] = "Активные курсы";
+$MESS ['ADMIN_COURSES_TOTAL_ENROLLED_ALL_COURSES'] = "Всего курсов";
+$MESS ['ADMIN_COURSES_TOTAL_ENROLLED_MEMBERS_ENROLLED'] = "Записано участников";
+$MESS ['ADMIN_COURSES_TOTAL_ENROLLED_NEW_REGISTRATIONS'] = "Новых регистраций";
+
+$MESS ['ADMIN_COURSES_NEW_REGISTRATIONS_TITLE'] = "Всего новых регистраций на курс";
+$MESS ['ADMIN_COURSES_NEW_REGISTRATIONS_NEW_EMPLOYEES'] = "Новых сотрудников";
+$MESS ['ADMIN_COURSES_NEW_REGISTRATIONS_NEW_APPS'] = "Заявок на участие";
+$MESS ['ADMIN_COURSES_NEW_REGISTRATIONS_MEMBERS'] = "Участников курсов";
+$MESS ['ADMIN_COURSES_NEW_REGISTRATIONS_ACTIVE_COURSES'] = "Всего курсов активно";
+
+$MESS ['ADMIN_COURSES_ACTIVE_APPS_TITLE'] = "Активные заявки на текущие курсы";
+$MESS ['ADMIN_COURSES_ACTIVE_APPS_NEW_EMPLOYEES'] = "Новых сотрудников";
+$MESS ['ADMIN_COURSES_ACTIVE_APPS_NEW_APPS'] = "Заявок на участие";
+$MESS ['ADMIN_COURSES_ACTIVE_APPS_MEMBERS'] = "Участников курсов";
+$MESS ['ADMIN_COURSES_ACTIVE_APPS_ACTIVE_COURSES'] = "Всего курсов активно";
+
+$MESS ['ADMIN_COURSES_TRAINING_ATTENDANCE_TITLE'] = "Посещаемость тренингов";
+$MESS ['ADMIN_COURSES_TRAINING_ATTENDANCE_RECORDED_PARTICIPANTS'] = "Записано участников";
+$MESS ['ADMIN_COURSES_TRAINING_ATTENDANCE_ATTENDED_TRAININGS'] = "Посетили тренинги";
+$MESS ['ADMIN_COURSES_TRAINING_ATTENDANCE_APPROVED_APPLICATIONS'] = "Согласовано заявок";
+$MESS ['ADMIN_COURSES_TRAINING_ATTENDANCE_IN_QUEUE'] = "В очереди";
+
+$MESS ['ADMIN_COURSES_CERTS_TITLE'] = "Сертификаты - срок окончания действия";
+$MESS ['ADMIN_COURSES_CERTS_ACTIVE'] = "Действуют";
+$MESS ['ADMIN_COURSES_CERTS_END'] = "Заканчиваются";
+$MESS ['ADMIN_COURSES_CERTS_OVERDUE'] = "Просрочены";
+
+?>

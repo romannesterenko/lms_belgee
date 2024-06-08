@@ -1,0 +1,6 @@
+.show_me_nots_message{
+    color: green;
+}
+.show_me_nots_message.hidden{
+    display: none!important;
+}

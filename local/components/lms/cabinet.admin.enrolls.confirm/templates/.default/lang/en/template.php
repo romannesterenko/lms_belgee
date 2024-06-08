@@ -1,0 +1,12 @@
+<?php
+$MESS['ADMIN_ENROLLS_CONFIRM_TITLE'] = "Confirmation of employee participation";
+$MESS['ADMIN_ENROLLS_CONFIRM_TABLE_TH_COURSE'] = "Course";
+$MESS['ADMIN_ENROLLS_CONFIRM_TABLE_TH_DATE'] = "Date";
+$MESS['ADMIN_ENROLLS_CONFIRM_TABLE_TH_STEP'] = "Step X out of Y";
+$MESS['ADMIN_ENROLLS_CONFIRM_TABLE_TH_TYPE'] = "Type";
+$MESS['ADMIN_ENROLLS_CONFIRM_TABLE_TH_ENROLLED'] = "Enrolled";
+$MESS['ADMIN_ENROLLS_CONFIRM_TABLE_TH_NEW'] = "New";
+$MESS['ADMIN_ENROLLS_CONFIRM_SHOW_ALL'] = "show all list";
+$MESS['FOR'] = "For";
+$MESS['NO_ROWS'] = 'There are currently no entries';
+

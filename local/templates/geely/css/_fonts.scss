@@ -1,0 +1,57 @@
+@font-face {
+  font-family: 'Neo Sans Cyr';
+  src: url('../fonts/NeoSansCyr-Regular.woff2') format('woff2'),
+      url('../fonts/NeoSansCyr-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Neo Sans Cyr';
+  src: url('../fonts/NeoSansCyr-LIght.woff2') format('woff2'),
+      url('../fonts/NeoSansCyr-LIght.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Neo Sans Cyr';
+  src: url('../fonts/NeoSansCyr-Medium.woff2') format('woff2'),
+      url('../fonts/NeoSansCyr-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+@font-face {
+  font-family: 'icofonts';
+  src: url('../fonts/icofonts.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/icofonts.woff') format('woff'),
+       url('../fonts/0icofonts.ttf') format('truetype'),
+       url('../fonts/icofonts.svg#icofonts') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+[class*='icon-']:before{
+	display: inline-block;
+   font-family: 'icofonts';
+   font-style: normal;
+   font-weight: normal;
+   line-height: 1;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale
+}
+.icon-arrow-link:before{content:'\0041';}
+.icon-calendar:before{content:'\0042';}
+.icon-education:before{content:'\0043';}
+.icon-pdf:before{content:'\0044';}
+.icon-profile:before{content:'\0045';}
+.icon-purse:before{content:'\0046';}
+.icon-video:before{content:'\0047';}
+.icon-delete:before{content:'\0048';}
+.icon-check:before{content:'\0049';}
+.icon-cancel:before{content:'\004a';}
+.icon-download:before{content:'\004b';}

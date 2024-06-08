@@ -1,0 +1,25 @@
+<?php
+$MESS['SELECT'] = "Select";
+$MESS['JANUARY'] = "January";
+$MESS['FEBRUARY'] = "February";
+$MESS['MARCH'] = "March";
+$MESS['APRIL'] = "April";
+$MESS['MAY'] = "May";
+$MESS['JUNE'] = "June";
+$MESS['JULY'] = "July";
+$MESS['AUGUST'] = "August";
+$MESS['SEPTEMBER'] = "September";
+$MESS['OCTOBER'] = "October";
+$MESS['NOVEMBER'] = "November";
+$MESS['DECEMBER'] = "December";
+$MESS['MONDAY'] = "Monday";
+$MESS['TUESDAY'] = "Tuesday";
+$MESS['WEDNESDAY'] = "Wednesday";
+$MESS['THURSDAY'] = "Thursday";
+$MESS['FRIDAY'] = "Friday";
+$MESS['SATURDAY'] = "Saturday";
+$MESS['SUNDAY'] = "Sunday";
+$MESS['MUST_HAVE_COURSE'] = "Required course";
+$MESS['IN_APPROVE_COURSE'] = "Under approval";
+$MESS['APPROVED_COURSE'] = "Approved";
+$MESS['COMPLETE_COURSE'] = "Course completed";
