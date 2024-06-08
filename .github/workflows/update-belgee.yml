@@ -38,5 +38,6 @@ jobs:
 
       - name: Send to server
         run: |
-          git diff --name-only HEAD~1
+          git diff --name-only HEAD^
+
 
