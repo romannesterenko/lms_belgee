@@ -36,8 +36,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_LMS_BELGEE }}
 
-      - name: Send to server
-        run: |
-          git diff --name-only HEAD^
-
 
