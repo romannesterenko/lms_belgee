@@ -24,7 +24,7 @@ jobs:
         id: changes
         run: |
           VARIABLE=123456678890 
-          PARENT_COMMIT=$(git log -2 --pretty=format:"%H" | tail -n 1)
+          PARENT_COMMIT=$(git log -1 --pretty=format:"%H" | tail -n 1)
           echo "PARENT_COMMIT=$PARENT_COMMIT"
           CHANGED_FILES=$(git diff-tree --name-only -r $PARENT_COMMIT)
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
