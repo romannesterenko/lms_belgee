@@ -17,7 +17,6 @@ $response['request'] = $request;
 if($request['employee_id']>0&&$request['course_id']>0) {
     $send = false;
     $allow_to_course = true;
-    //фыg
     $allow_to_schedule = true;
     $allow = true;
     if(\Models\Course::isHasMaxUsers($request['course_id'])){
