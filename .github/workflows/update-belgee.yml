@@ -28,7 +28,8 @@ jobs:
 
       - name: Show Changed Files
         run: |
-            git log
+          git show --name-only HEAD
+
       - name: Determine changed files
         id: changes
         run: |
