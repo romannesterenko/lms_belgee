@@ -36,4 +36,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_LMS_BELGEE }}
 
+      - name: Развертывание на Belgee
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key
+          chmod 600 private_key
+          rsync -av -e "ssh -i private_key -o StrictHostKeyChecking=no" lms_belgee/ u520251@u520251.ssh.masterhost.ru:/ttt/www
+          rm private_key
+
 
