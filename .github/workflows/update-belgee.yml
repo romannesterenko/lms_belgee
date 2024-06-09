@@ -28,7 +28,7 @@ jobs:
 
       - name: Show Changed Files
         run: |
-          git show --name-only HEAD
+          git diff-tree --no-commit-id --name-only -r HEAD
 
       - name: Determine changed files
         id: changes
