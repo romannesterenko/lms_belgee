@@ -28,7 +28,7 @@ jobs:
 
       - name: Show Changed Files
         run: |
-            git diff-tree --no-commit-id --name-only -r $PARENT_COMMIT
+            git status
       - name: Determine changed files
         id: changes
         run: |
