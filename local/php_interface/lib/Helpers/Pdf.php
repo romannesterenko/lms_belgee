@@ -48,11 +48,11 @@ class Pdf
                 return;
             $user = $user['LAST_NAME'].' '.$user['NAME'];
             $start_cert_date = $compl_info['UF_COMPLETED_TIME']?date('d.m.Y', strtotime($compl_info['UF_COMPLETED_TIME'])):(string)$compl_info['UF_DATE'];
+            $file_date = (string)$compl_info['UF_DATE'];
             $template = $course['PROPERTY_CERTIFICATE_TEMPLATE_VALUE'] == 'Шаблон 3 (новый)' ? 4 : 3;
             $template = $course['PROPERTY_CERTIFICATE_TEMPLATE_VALUE'] == 'Шаблон 4 (после 04.07)' ? 5 : $template;
             if($template==5) {
                 $file = $_SERVER["DOCUMENT_ROOT"] . '/upload/new_op_template.pdf';
-
                 $pdf = new Fpdi();
                 $pdf->AddPage();
                 $pdf->AddFont('Ubuntu-Medium', '', 'Ubuntu-Medium.php');
@@ -91,7 +91,7 @@ class Pdf
                     $filename = $compl_info['ID'] . '.pdf';
                 } else {
                     $need_dir = $_SERVER["DOCUMENT_ROOT"] . '/upload/certificates/' . $course['ID'];
-                    $filename = $compl_info['UF_COURSE_ID'] . '_' . $compl_info['UF_USER_ID'] . '_' . str_replace('.', '_', $start_cert_date) . '.pdf';
+                    $filename = $compl_info['UF_COURSE_ID'] . '_' . $compl_info['UF_USER_ID'] . '_' . str_replace('.', '_', $file_date) . '.pdf';
                 }
                 if (!is_dir($need_dir))
                     mkdir($need_dir);
