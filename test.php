@@ -2,6 +2,5 @@
 const NEED_AUTH = true;
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 
-$min_points = \Models\Course::getMaxPoints(100);
-dump($min_points);
+//\Helpers\Pdf::generateCertFromCompletionId(60376);
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php");

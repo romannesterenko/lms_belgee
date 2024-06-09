@@ -47,7 +47,7 @@ class Pdf
             if(!$user['ID']>0)
                 return;
             $user = $user['LAST_NAME'].' '.$user['NAME'];
-            $start_cert_date = (string)$compl_info['UF_DATE'];
+            $start_cert_date = $compl_info['UF_COMPLETED_TIME']?date('d.m.Y', strtotime($compl_info['UF_COMPLETED_TIME'])):(string)$compl_info['UF_DATE'];
             $template = $course['PROPERTY_CERTIFICATE_TEMPLATE_VALUE'] == 'Шаблон 3 (новый)' ? 4 : 3;
             $template = $course['PROPERTY_CERTIFICATE_TEMPLATE_VALUE'] == 'Шаблон 4 (после 04.07)' ? 5 : $template;
             if($template==5) {
