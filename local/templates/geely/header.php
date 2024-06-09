@@ -46,7 +46,7 @@ if($USER->IsAuthorized()){
 <header>
     <div class="container">
         <div class="header-content">
-            <a href="/" class="logo"><img src="<?=\Bitrix\Main\Config\Option::get('common.settings', 'header_logo')?>" alt=""></a>
+            <a href="/" class="logo"><img style="max-width: 120px" src="<?=\Bitrix\Main\Config\Option::get('common.settings', 'header_logo')?>" alt=""></a>
 
             <nav class="main-menu">
                 <?php $APPLICATION->IncludeComponent(
