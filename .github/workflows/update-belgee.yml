@@ -31,7 +31,7 @@ jobs:
 
       - name: Sync files
         run: |
-          echo "Changed files: $CHANGED_FILES"
+          echo $CHANGED_FILES
           echo "GITHUB_ENV: $GITHUB_ENV"
           echo "testtesttset"
           rsync -av --delete --exclude='.git' --exclude='lms_belgee' $GITHUB_WORKSPACE/ lms_belgee/
