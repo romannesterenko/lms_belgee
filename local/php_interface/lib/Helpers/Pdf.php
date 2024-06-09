@@ -51,7 +51,7 @@ class Pdf
             $template = $course['PROPERTY_CERTIFICATE_TEMPLATE_VALUE'] == 'Шаблон 3 (новый)' ? 4 : 3;
             $template = $course['PROPERTY_CERTIFICATE_TEMPLATE_VALUE'] == 'Шаблон 4 (после 04.07)' ? 5 : $template;
             if($template==5) {
-                $file = $_SERVER["DOCUMENT_ROOT"] . '/upload/232323.pdf';
+                $file = $_SERVER["DOCUMENT_ROOT"] . '/upload/new_op_template.pdf';
 
                 $pdf = new Fpdi();
                 $pdf->AddPage();
