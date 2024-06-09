@@ -19,6 +19,7 @@ jobs:
           repository: romannesterenko/lms_belgee
           token: ${{ secrets.PAT_LMS_BELGEE }}
           path: lms_belgee  # Путь к копии репозитория lms_belgee
+
       - name: Determine changed files
         id: changes
         run: |
@@ -49,7 +50,7 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
-          rsync -av -e "ssh -i private_key -o StrictHostKeyChecking=no" lms_belgee/ u520251@u520251.ssh.masterhost.ru:~/ttt/www
+          echo "$CHANGED_FILES" | tr ' ' '\n' | xargs -I {} rsync -av -e "ssh -i private_key -o StrictHostKeyChecking=no" lms_belgee/{} u520251@u520251.ssh.masterhost.ru:~/ttt/www
           rm private_key
 
 
