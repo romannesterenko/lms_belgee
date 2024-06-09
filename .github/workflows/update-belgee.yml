@@ -22,8 +22,9 @@ jobs:
 
       - name: Set Parent Commit
         run: |
-          PARENT_COMMIT=$(git log -2 --pretty=format:"%H" | tail -n 1)
+          PARENT_COMMIT=$(git log -1 --pretty=format:"%H" | tail -n 1)
           echo "PARENT_COMMIT=$PARENT_COMMIT" >> $GITHUB_ENV
+          echo "PARENT_COMMIT=$PARENT_COMMIT"
 
       - name: Show Changed Files
         run: |
