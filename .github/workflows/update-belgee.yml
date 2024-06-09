@@ -26,13 +26,10 @@ jobs:
           PARENT_COMMIT=$(git log -2 --pretty=format:"%H" | tail -n 1)
           echo "PARENT_COMMIT=$PARENT_COMMIT"
           CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r $PARENT_COMMIT) >> $GITHUB_ENV
-        
+          echo "CHANGED_FILES=$CHANGED_FILES"
 
       - name: Sync files
         run: |
-          echo $CHANGED_FILES
-          echo "GITHUB_ENV: $GITHUB_ENV"
-          echo "testtesttset"
           rsync -av --delete --exclude='.git' --exclude='lms_belgee' $GITHUB_WORKSPACE/ lms_belgee/
 
       - name: Commit and push changes
