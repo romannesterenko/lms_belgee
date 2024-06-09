@@ -31,6 +31,8 @@ jobs:
 
       - name: Sync files
         run: |
+          echo "Changed files: $CHANGED_FILES"
+          echo "testtesttset"
           rsync -av --delete --exclude='.git' --exclude='lms_belgee' $GITHUB_WORKSPACE/ lms_belgee/
 
       - name: Commit and push changes
