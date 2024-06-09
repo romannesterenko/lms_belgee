@@ -13,7 +13,6 @@ use Teaching\SheduleCourses;
 
 $request = Application::getInstance()->getContext()->getRequest()->getValues();
 //test commit
-//test commit
 $response['request'] = $request;
 if($request['employee_id']>0&&$request['course_id']>0) {
     $send = false;
