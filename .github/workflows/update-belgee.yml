@@ -20,26 +20,8 @@ jobs:
           token: ${{ secrets.PAT_LMS_BELGEE }}
           path: lms_belgee  # Путь к копии репозитория lms_belgee
 
-      - name: Set Parent Commit
-        run: |
-          PARENT_COMMIT=$(git log -1 --pretty=format:"%H" | tail -n 1)
-          echo "PARENT_COMMIT=$PARENT_COMMIT" >> $GITHUB_ENV
-          echo "PARENT_COMMIT=$PARENT_COMMIT"
-
-      - name: Show Changed Files
-        run: |
-          git diff-tree --no-commit-id --name-only -r HEAD
-
-      - name: Determine changed files
-        id: changes
-        run: |
-          CHANGED_FILES=$(git diff-tree --name-only -r $PARENT_COMMIT)
-          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
-          echo "CHANGED_FILES=$CHANGED_FILES"
-
       - name: Sync files
         run: |
-          echo "CHANGED_FILES=$CHANGED_FILES"
           rsync -av --delete --exclude='.git' --exclude='lms_belgee' $GITHUB_WORKSPACE/ lms_belgee/
 
       - name: Commit and push changes
@@ -60,7 +42,7 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
-          echo "$CHANGED_FILES" | xargs -I {} rsync -av -e "ssh -i private_key -o StrictHostKeyChecking=no" lms_belgee/{} u520251@u520251.ssh.masterhost.ru:~/ttt/www
+          rsync -av -e "ssh -i private_key -o StrictHostKeyChecking=no" lms_belgee/ u520251@u520251.ssh.masterhost.ru:~/ttt/www
           rm private_key
 
 
