@@ -28,7 +28,7 @@ jobs:
 
       - name: Show Changed Files
         run: |
-            git status
+            git log
       - name: Determine changed files
         id: changes
         run: |
