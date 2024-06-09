@@ -18,7 +18,7 @@ $completions = new CourseCompletion();
 $popup_title = GetMessage('SUCCESS_APPROVE_TITLE');
 $popup_body = GetMessage('SUCCESS_APPROVE_BODY');
 $success = true;
-
+//фывфыв
 if((int)($request['id'])>0){
 
     if ($request['action']=='confirm'){
