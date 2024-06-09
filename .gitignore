@@ -7,7 +7,15 @@
 /bitrix/managed_cache
 /local/composer123/
 /local/vendor/
+/service_scripts/files/
+/service_scripts/2023_certs.xlsx
+/local/templates/geely/include/footer_contacts.php
+/local/php_interface/madeline_new_session
+/local/php_interface/madl
+/local/php_interface/mdl
 /madl
+/api/couses/index_files/iblock
+/api/couses/index_files/medialibrary
 /ftp1c/in
 /ftp1c/out
 files-sales-dept/
