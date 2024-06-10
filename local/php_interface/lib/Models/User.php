@@ -918,4 +918,19 @@ class User
         }
         return $enum;
     }
+
+    public static function isLMSAdmin(): bool
+    {
+        return \CSite::InGroup( array(7) );
+    }
+
+    public static function isAdmin(): bool
+    {
+        global $USER;
+        if($USER->IsAdmin())
+            return true;
+        if(self::isLMSAdmin())
+            return true;
+        return false;
+    }
 }

@@ -4,7 +4,7 @@ global $USER, $APPLICATION;
 use Helpers\UserHelper;
 use Models\Employee;
 
-if($USER->IsAdmin()){
+if($USER->IsAdmin() || \Models\User::isLMSAdmin()) {
     $APPLICATION->IncludeComponent(
         "lms:cabinet.admin.menu",
         "admin",
