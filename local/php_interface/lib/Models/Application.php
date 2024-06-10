@@ -129,10 +129,73 @@ class Application {
         if($entity_data_class)
             $entity_data_class::update($record_id, ['UF_DECLINED' => 1]);
         $app = $entity_data_class::getList(['filter' => ['ID' => $record_id]])->fetch();
+        $application = current(Application::getList(['ID' => $app_id], ['ID', 'NAME', 'PROPERTY_ROLES']));
         $fields = [
             'USER_NAME' => User::getFullName($app['UF_USER_ID']),
-            'APP_NAME' => current(Application::getList(['ID' => $app_id], ['ID', 'NAME']))['NAME'],
+            'APP_NAME' => $application['NAME'],
         ];
+        $op_roles = Roles::getOPRoles();
+        $ppo_roles = Roles::getPPORoles();
+        $marketing_roles = Roles::getMarketingRoles();
+        $is_need_op = false;
+        $is_need_ppo = false;
+        $is_need_marketing = false;
+        $user = User::find($app['UF_USER_ID'], ['ID', 'NAME', 'UF_DEALER', 'UF_ROLE']);
+        if(check_full_array($user) && check_full_array($user['UF_ROLE'])){
+            $need_roles = array_intersect($user['UF_ROLE'], $application['PROPERTY_ROLES_VALUE']);
+            if(check_full_array($need_roles)){
+                foreach($need_roles as $need_role){
+                    if(in_array($need_role, array_keys($op_roles))){
+                        $is_need_op = true;
+                    }
+                    if(in_array($need_role, array_keys($ppo_roles))){
+                        $is_need_ppo = true;
+                    }
+                    if(in_array($need_role, array_keys($marketing_roles))){
+                        $is_need_marketing = true;
+                    }
+                }
+            }
+            if ($is_need_op) {
+                $admins = User::getOpAdmin($app['UF_USER_ID']);
+                if (check_full_array($admins)) {
+                    foreach ($admins as $key => $value) {
+                        $admin_fields = [
+                            'USER_NAME' => User::getFullName($value['ID']),
+                            'APP_NAME' => $application['NAME'],
+                            'EMPLOYEE_EMAIL' => User::getEmail($app['UF_USER_ID']),
+                        ];
+                        EmailNotifications::send('APPLICATION_WAS_DECLINED_FOR_ADMIN', $value['EMAIL'], $admin_fields);
+                    }
+                }
+            }
+            if ($is_need_ppo) {
+                $admins = User::getPPOAdmin($app['UF_USER_ID']);
+                if (check_full_array($admins)) {
+                    foreach ($admins as $key => $value) {
+                        $admin_fields = [
+                            'USER_NAME' => User::getFullName($value['ID']),
+                            'APP_NAME' => $application['NAME'],
+                            'EMPLOYEE_EMAIL' => User::getEmail($app['UF_USER_ID']),
+                        ];
+                        EmailNotifications::send('APPLICATION_WAS_DECLINED_FOR_ADMIN', $value['EMAIL'], $admin_fields);
+                    }
+                }
+            }
+            if ($is_need_marketing) {
+                $admins = User::getMarketingAdmin($app['UF_USER_ID']);
+                if (check_full_array($admins)) {
+                    foreach ($admins as $key => $value) {
+                        $admin_fields = [
+                            'USER_NAME' => User::getFullName($value['ID']),
+                            'APP_NAME' => $application['NAME'],
+                            'EMPLOYEE_EMAIL' => User::getEmail($app['UF_USER_ID']),
+                        ];
+                        EmailNotifications::send('APPLICATION_WAS_DECLINED_FOR_ADMIN', $value['EMAIL'], $admin_fields);
+                    }
+                }
+            }
+        }
         EmailNotifications::send('APPLICATION_WAS_DECLINED', User::getEmail($app['UF_USER_ID']), $fields);
     }
 

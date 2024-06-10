@@ -933,4 +933,40 @@ class User
             return true;
         return false;
     }
+
+    public static function getOpAdmin($employee_id)
+    {
+        $need_user = self::find($employee_id, ['ID', 'UF_DEALER']);
+        if($need_user['UF_DEALER'] > 0) {
+            return self::get([
+                'UF_LOCAL_ADMIN' => 1,
+                'UF_DEALER' => $need_user['UF_DEALER'],
+                'UF_TEACHING_ADMIN_TYPE' => 15,
+            ], ['ID', 'NAME', 'LAST_NAME', 'EMAIL']);
+        }
+    }
+
+    public static function getPPOAdmin($employee_id)
+    {
+        $need_user = self::find($employee_id, ['ID', 'UF_DEALER']);
+        if($need_user['UF_DEALER'] > 0) {
+            return self::get([
+                'UF_LOCAL_ADMIN' => 1,
+                'UF_DEALER' => $need_user['UF_DEALER'],
+                'UF_TEACHING_ADMIN_TYPE' => 16,
+            ], ['ID', 'NAME', 'LAST_NAME', 'EMAIL']);
+        }
+    }
+
+    public static function getMarketingAdmin($employee_id)
+    {
+        $need_user = self::find($employee_id, ['ID', 'UF_DEALER']);
+        if($need_user['UF_DEALER'] > 0) {
+            return self::get([
+                'UF_LOCAL_ADMIN' => 1,
+                'UF_DEALER' => $need_user['UF_DEALER'],
+                'UF_TEACHING_ADMIN_TYPE' => 16,
+            ], ['ID', 'NAME', 'LAST_NAME', 'EMAIL']);
+        }
+    }
 }
