@@ -508,6 +508,24 @@ class Course
             return false;
         }
     }
+
+    public static function getTemplateXML(int $int)
+    {
+        CModule::IncludeModule('iblock');
+        $prop = \Helpers\PropertyHelper::getPropertyValue(\Models\Course::getIBlockID(), $int, 'CERTIFICATE_TEMPLATE');
+        if ($prop > 0){
+            $rsEnum = \CIBlockPropertyEnum::GetList(
+                array(),
+                array(
+                    "IBLOCK_ID" => \Models\Course::getIBlockID(),
+                    "ID" => $prop
+                )
+            )->Fetch();
+            return $rsEnum['XML_ID'];
+        }
+        return '';
+    }
+
     public function activate($id){
         $list = self::getList(['SECTION_ID' => 17, 'INCLUDE_SUBSECTIONS' => 'Y'], ['ID']);
     }

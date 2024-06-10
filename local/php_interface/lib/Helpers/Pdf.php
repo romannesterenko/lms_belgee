@@ -46,12 +46,15 @@ class Pdf
             $user = User::find($compl_info['UF_USER_ID'], ['ID', 'NAME', 'LAST_NAME']);
             if(!$user['ID']>0)
                 return;
+
             $user = $user['LAST_NAME'].' '.$user['NAME'];
             $start_cert_date = $compl_info['UF_COMPLETED_TIME']?date('d.m.Y', strtotime($compl_info['UF_COMPLETED_TIME'])):(string)$compl_info['UF_DATE'];
             $file_date = (string)$compl_info['UF_DATE'];
-            $template = $course['PROPERTY_CERTIFICATE_TEMPLATE_VALUE'] == 'Шаблон 3 (новый)' ? 4 : 3;
-            $template = $course['PROPERTY_CERTIFICATE_TEMPLATE_VALUE'] == 'Шаблон 4 (после 04.07)' ? 5 : $template;
-            if($template==5) {
+            $template_xml = \Models\Course::getTemplateXML($course['ID']);
+
+            $template = $template_xml == 'template3' ? 4 : 3;
+            $template = $template_xml == 'template4' ? 5 : $template;
+            if($template_xml == 'template4') {
                 $file = $_SERVER["DOCUMENT_ROOT"] . '/upload/new_op_template.pdf';
                 $pdf = new Fpdi();
                 $pdf->AddPage();
@@ -96,7 +99,7 @@ class Pdf
                 if (!is_dir($need_dir))
                     mkdir($need_dir);
                 $pdf->Output('F', $need_dir . '/' . $filename);
-            } elseif ($template==4) {
+            } elseif ($template_xml == 'template3') {
 
                 $file = $_SERVER["DOCUMENT_ROOT"] . '/upload/'.$template.'-pdf.pdf';
                 $pdf = new Fpdi();
