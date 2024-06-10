@@ -38,6 +38,7 @@ $dealers = \Models\Dealer::getAll(['ID', 'NAME', 'CODE', 'PROPERTY_CITY']);
                                 <div style="display: flex; align-items: center; margin-bottom: 10px"><input type="checkbox" style="width: 20px; height: 20px; margin-right: 10px" id="migrate_op_users"><label for="migrate_op_users" style="cursor: pointer">Перенести сотрудников отдела продаж</label></div>
                                 <div style="display: flex; align-items: center; margin-bottom: 10px"><input type="checkbox" style="width: 20px; height: 20px; margin-right: 10px" id="migrate_ppo_users"><label for="migrate_ppo_users" style="cursor: pointer">Перенести сотрудников отдела послепродажного обслуживания</label></div>
                                 <div style="display: flex; align-items: center; margin-bottom: 10px"><input type="checkbox" style="width: 20px; height: 20px; margin-right: 10px" id="migrate_marketing_users"><label for="migrate_marketing_users" style="cursor: pointer">Перенести сотрудников отдела маркетинга</label></div>
+                                <div style="display: flex; align-items: center; margin-bottom: 10px"><input type="checkbox" style="width: 20px; height: 20px; margin-right: 10px" id="migrate_roles"><label for="migrate_roles" style="cursor: pointer">Перенести роли сотрудника</label></div>
                                 <div class="form-group selectable" style="margin-bottom: 10px">
                                     <label for="">Действия с переносимым сотрудником в целевой LMS</label>
                                     <select class="js-example-basic-multiple" id="migrated_user_actions" name="" style="width: 100%;">
@@ -183,6 +184,7 @@ $dealers = \Models\Dealer::getAll(['ID', 'NAME', 'CODE', 'PROPERTY_CITY']);
                                 id: data.ids[index],
                                 addActive: $('#add_active').is(':checked'),
                                 linkIfExists: $('#link_if_exists').is(':checked'),
+                                migrate_roles: $('#migrate_roles').is(':checked'),
                                 migrate_users: $('#migrate_users').is(':checked'),
                                 migrate_op_users: $('#migrate_op_users').is(':checked'),
                                 migrate_ppo_users: $('#migrate_ppo_users').is(':checked'),

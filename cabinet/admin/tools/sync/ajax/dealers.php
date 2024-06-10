@@ -98,7 +98,8 @@ function processUsers($roles, $dealerId, $lms): void
             unset($user["BX_USER_ID"]);
             unset($user["UF_OLD_ROLES"]);
             unset($user["UF_ROLES"]);
-            unset($user["UF_ROLE"]);
+            if($_REQUEST['migrate_roles'] != 'true')
+                unset($user["UF_ROLE"]);
             unset($user["UF_REQUIRED_COURSES"]);
             $user["ACTIVE"] = $_REQUEST['migrated_user_actions']=='activate'?"Y":"N";
             $httpClient = new Bitrix\Main\Web\HttpClient();
@@ -114,7 +115,7 @@ function processUsers($roles, $dealerId, $lms): void
             $httpClient->setHeader('Content-Type', 'application/x-www-form-urlencoded', true);
             $response = $httpClient->post($url, http_build_query($data));
             $response_array = json_decode($response, true);
-            if ($user_id == 3027 && $_REQUEST['migrated_user_actions_this_lms'] === 'deactivate'){
+            if ($_REQUEST['migrated_user_actions_this_lms'] === 'deactivate'){
                 \Models\User::resetDealer($user_id);
                 \Models\User::deactivate($user_id);
             }
