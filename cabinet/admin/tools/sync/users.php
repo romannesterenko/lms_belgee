@@ -45,6 +45,7 @@ $dealers = \Models\Dealer::getAll(['ID', 'NAME', 'CODE']);
                                     <option value="deactivate">Деактивировать</option>
                                 </select>
                             </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 10px"><input type="checkbox" style="width: 20px; height: 20px; margin-right: 10px" id="migrate_roles"><label for="migrate_roles" style="cursor: pointer">Перенести роли пользователя</label></div>
                             <div style="display: flex; align-items: center; margin-bottom: 10px"><input type="checkbox" style="width: 20px; height: 20px; margin-right: 10px" id="migrate_op_completions"><label for="migrate_op_completions" style="cursor: pointer">Перенести прохождения курсов отдела продаж<sup style="color:red">*</sup></label></div>
                             <div style="display: flex; align-items: center; margin-bottom: 10px"><input type="checkbox" style="width: 20px; height: 20px; margin-right: 10px" id="migrate_ppo_completions"><label for="migrate_ppo_completions" style="cursor: pointer">Перенести прохождения курсов отдела послепродажного обслуживания<sup style="color:red">*</sup></label></div>
                             <div style="display: flex; align-items: center; margin-bottom: 10px"><input type="checkbox" style="width: 20px; height: 20px; margin-right: 10px" id="migrate_marketing_completions"><label for="migrate_marketing_completions" style="cursor: pointer">Перенести прохождения курсов отдела маркетинга<sup style="color:red">*</sup></label></div>
@@ -213,6 +214,7 @@ $dealers = \Models\Dealer::getAll(['ID', 'NAME', 'CODE']);
                                 id: data.ids[index],
                                 addActive: $('#add_active').is(':checked'),
                                 linkIfExists: $('#link_if_exists').is(':checked'),
+                                migrate_roles: $('#migrate_roles').is(':checked'),
                                 migrate_op_completions: $('#migrate_op_completions').is(':checked'),
                                 migrate_ppo_completions: $('#migrate_ppo_completions').is(':checked'),
                                 migrate_marketing_completions: $('#migrate_marketing_completions').is(':checked'),

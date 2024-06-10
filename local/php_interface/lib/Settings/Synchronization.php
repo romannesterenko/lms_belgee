@@ -201,6 +201,16 @@ class Synchronization
     {
         return self::getLinkedLocalID('dealer', $remote_id, $lms_code);
     }
+    public static function getLinkedRoles($roles, $lms_code): array
+    {
+        $return_array = [];
+        foreach ($roles as $role_id){
+            $linked_role_id = self::getLinkedLocalID('role', $role_id, $lms_code);
+            if($linked_role_id)
+                $return_array[] = $linked_role_id;
+        }
+        return $return_array;
+    }
 
     public static function getRemoteList($entity, $local_id): array
     {

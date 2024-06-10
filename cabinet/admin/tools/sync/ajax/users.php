@@ -59,7 +59,8 @@ if ($_REQUEST['method'] && $_REQUEST['method'] == 'getFilteredUsers'){
         unset($user["BX_USER_ID"]);
         unset($user["UF_OLD_ROLES"]);
         unset($user["UF_ROLES"]);
-        unset($user["UF_ROLE"]);
+        if($_REQUEST['migrated_roles'] != 'true')
+            unset($user["UF_ROLE"]);
         unset($user["UF_REQUIRED_COURSES"]);
         $user["ACTIVE"] = $_REQUEST['migrated_user_actions']=='activate'?"Y":"N";
         if (check_full_array($lms)) {

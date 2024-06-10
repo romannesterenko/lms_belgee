@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $arFields = $_REQUEST['data']['user'];
             $arFields['CONFIRM_PASSWORD'] = $_REQUEST['data']['user']['PASSWORD'];
             $arFields['UF_DEALER'] = \Settings\Synchronization::getLinkedDealerId($arFields['UF_DEALER'], $_REQUEST['data']['from']);
+            $arFields['UF_ROLE'] = ($arFields['UF_ROLE']&&check_full_array($arFields['UF_ROLE']))?\Settings\Synchronization::getLinkedRoles($arFields['UF_ROLE'], $_REQUEST['data']['from']):[];
             // Создание пользователя
             $userId = $user->Add($arFields);
 
