@@ -64,6 +64,16 @@ global $APPLICATION, $USER;?>
                 Отчет о посещаемости
             </a>
         </li>
+        <li<?=CSite::InDir('/cabinet/dealer/report_schedule/')?" class='active'":""?>>
+            <a href="/cabinet/dealer/report_schedule/">
+                    <span class="icon">
+                      <svg width="17px" height="17px">
+                        <use xlink:href="#report"></use>
+                      </svg>
+                    </span>
+                Расписания
+            </a>
+        </li>
     </ul>
 </div>
 
