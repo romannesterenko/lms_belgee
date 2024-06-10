@@ -90,7 +90,7 @@ if($USER->IsAuthorized()){
 </header>
 
 <main>
-    <?php if(CSite::InDir('/cabinet/admin/') && !\Models\User::isAdmin()) {?>
+    <?php if(CSite::InDir('/cabinet/admin/') && (!\Models\User::isAdmin() && !\Models\Employee::isInReportsGroup())) {?>
         <p style="color: red">Доступ запрещен</p>
     <?php
     die();
