@@ -90,6 +90,15 @@ class Application {
 
     }
 
+    public static function getNoneDeclinedAddedItemsByDealer($app_id, $dealer_id)
+    {
+
+        $entity_data_class = self::generateDataClass($app_id);
+
+        return $entity_data_class::getList(['filter' => ['UF_DEALER_ID' => $dealer_id, 'UF_DECLINED' => false]])->fetchAll();
+
+    }
+
     public static function getAllAdded($app_id)
     {
 
@@ -141,8 +150,10 @@ class Application {
         $is_need_ppo = false;
         $is_need_marketing = false;
         $user = User::find($app['UF_USER_ID'], ['ID', 'NAME', 'UF_DEALER', 'UF_ROLE']);
+        $admin_emails = [];
         if(check_full_array($user) && check_full_array($user['UF_ROLE'])){
             $need_roles = array_intersect($user['UF_ROLE'], $application['PROPERTY_ROLES_VALUE']);
+
             if(check_full_array($need_roles)){
                 foreach($need_roles as $need_role){
                     if(in_array($need_role, array_keys($op_roles))){
@@ -160,6 +171,7 @@ class Application {
                 $admins = User::getOpAdmin($app['UF_USER_ID']);
                 if (check_full_array($admins)) {
                     foreach ($admins as $key => $value) {
+                        $admin_emails[] = $value['EMAIL'];
                         $admin_fields = [
                             'USER_NAME' => User::getFullName($value['ID']),
                             'APP_NAME' => $application['NAME'],
@@ -173,6 +185,7 @@ class Application {
                 $admins = User::getPPOAdmin($app['UF_USER_ID']);
                 if (check_full_array($admins)) {
                     foreach ($admins as $key => $value) {
+                        $admin_emails[] = $value['EMAIL'];
                         $admin_fields = [
                             'USER_NAME' => User::getFullName($value['ID']),
                             'APP_NAME' => $application['NAME'],
@@ -186,6 +199,7 @@ class Application {
                 $admins = User::getMarketingAdmin($app['UF_USER_ID']);
                 if (check_full_array($admins)) {
                     foreach ($admins as $key => $value) {
+                        $admin_emails[] = $value['EMAIL'];
                         $admin_fields = [
                             'USER_NAME' => User::getFullName($value['ID']),
                             'APP_NAME' => $application['NAME'],
@@ -196,7 +210,8 @@ class Application {
                 }
             }
         }
-        EmailNotifications::send('APPLICATION_WAS_DECLINED', User::getEmail($app['UF_USER_ID']), $fields);
+        if(!in_array(User::getEmail($app['UF_USER_ID']), $admin_emails))
+            EmailNotifications::send('APPLICATION_WAS_DECLINED', User::getEmail($app['UF_USER_ID']), $fields);
     }
 
     private static function GetEntityDataClass($HlBlockId) {

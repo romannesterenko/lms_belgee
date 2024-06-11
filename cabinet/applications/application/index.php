@@ -26,7 +26,7 @@ function GetEntityDataClass($HlBlockId) {
 if($app_id > 0) {
     $user = User::getCurrent(['ID', 'EMAIL']);
 $exists_apps = Application::getAddedItemsByDealer($app_id, Dealer::getByEmployee());
-
+$none_decline_apps = Application::getNoneDeclinedAddedItemsByDealer($app_id, Dealer::getByEmployee());
 if($_REQUEST['sended'] = 'Y' && $_REQUEST['application_id'] > 0){
 
     $filter = array(
@@ -70,7 +70,7 @@ $roles = Role::getArray(['ID' => $arFields['PROPERTIES']['ROLES']['VALUE']]);
 $users = User::get(['UF_ROLE' => $arFields['PROPERTIES']['ROLES']['VALUE'], 'UF_DEALER' => Dealer::getByEmployee()]);
 foreach ($users as $key_user => &$temp_user) {
     if($arFields['PROPERTIES']['DECLINE_MULTIPLE']['VALUE_ENUM_ID'] == 163) {
-        foreach ($exists_apps as $exists_app) {
+        foreach ($none_decline_apps as $exists_app) {
             if ($exists_app['UF_EMAIL'] == $temp_user['EMAIL']) {
                 unset($users[$key_user]);
                 continue 2;
@@ -108,7 +108,7 @@ foreach ($users as $key_user => &$temp_user) {
                 </div>
             <?php }?>
         <?php
-        if($apps_count!=0 && count($exists_apps) >= $apps_count) {?>
+        if($apps_count!=0 && count($none_decline_apps) >= $apps_count) {?>
                 <p style="color: green; text-align: center">Количество заявок для вашего дилера достигло лимита</p>
             </div>
         <?php } elseif (!check_full_array($users)) {?>
