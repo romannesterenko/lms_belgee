@@ -228,6 +228,8 @@ $APPLICATION->SetTitle(Loc::getMessage('PROCESS_TESTING_TITLE', ['#NAME#' => $co
 							<h3 class="h3 lowercase center"><?=$question['NAME']?></h3>
                             <?php if(check_full_array($question['PREVIEW_PICTURE'])) {?>
                                 <img src="<?=$question['PREVIEW_PICTURE']['SRC']?>" alt="">
+                            <?php } elseif($question['PREVIEW_PICTURE'] > 0) {?>
+                                <img src="<?=CFile::GetPath($question['PREVIEW_PICTURE'])?>" alt="">
                             <?php }?>
 
                             <?php if(!empty($question['PROPERTIES']['CORRECT_NUM'])){
