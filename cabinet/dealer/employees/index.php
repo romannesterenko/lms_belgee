@@ -86,9 +86,18 @@ $APPLICATION->SetTitle(Loc::getMessage('EMPLOYEES'));
                             </a>
                             <div class="worker-item__position"><?=$employee['PERSONAL_PROFESSION']?></div>
                             <ul>
+                                <?
+                                $ids = \Teaching\Roles::GetRequiredCourseIdsByUser($employee['ID']);
+                                foreach ($ids as $key => $course_id) {
+                                    $status = \Models\Course::getStatus($course_id, $employee['ID']);
+                                    if($status == 'completed')
+                                        unset($ids[$key]);
+                                }
+
+                                ?>
                                 <li><?= Loc::getMessage('SATGE') ?><span> <?=$experience_string?></span></li>
                                 <li><?= Loc::getMessage('COMPLETED_COURSES') ?><span><?= \Teaching\Courses::getCountOfCompetedCourses($employee['ID'])?></span></li>
-                                <li><?= Loc::getMessage('SETTED_COURSES') ?><span><?=count(\Teaching\Roles::GetRequiredCourseIdsByUser($employee['ID']))?></span></li>
+                                <li><?= Loc::getMessage('SETTED_COURSES') ?><span><?=count($ids)?></span></li>
                                 <?php if(\Models\User::isCertifiedEmployee($employee['ID'])){?>
                                     <li><?= Loc::getMessage('CERTIFICIED') ?><span><?= Loc::getMessage('YES') ?></span></li>
                                     <li><?= Loc::getMessage('CERTIFY_DATE') ?><span><?=\Models\User::getCertifiedDate($employee['ID'], true)?></span></li>

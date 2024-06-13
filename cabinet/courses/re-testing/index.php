@@ -260,9 +260,13 @@ $APPLICATION->SetTitle(Loc::getMessage('PROCESS_TESTING_TITLE', ['#NAME#' => $co
 						<div class="poll__content">
 							<h3 class="h3 lowercase center"><?=$question['NAME']?></h3>
                             <?php if(check_full_array($question['PREVIEW_PICTURE'])) {?>
-                                <img src="<?=$question['PREVIEW_PICTURE']['SRC']?>" alt="">
+                                <div style="width: 100%; text-align: center; margin: 10px">
+                                    <img src="<?=$question['PREVIEW_PICTURE']['SRC']?>" alt="">
+                                </div>
                             <?php } elseif($question['PREVIEW_PICTURE'] > 0){?>
-                                <img src="<?=CFile::GetPath($question['PREVIEW_PICTURE'])?>" alt="">
+                                <div style="width: 100%; text-align: center; margin: 10px">
+                                    <img src="<?=CFile::GetPath($question['PREVIEW_PICTURE'])?>" alt="">
+                                </div>
                             <?php }?>
                             <?php if(!empty($question['PROPERTIES']['CORRECT_NUM'])){
                                 $many_answers = false;
