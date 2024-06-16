@@ -45,4 +45,13 @@ jobs:
           rsync -av -e "ssh -i private_key -o StrictHostKeyChecking=no" lms_belgee/ u520251@u520251.ssh.masterhost.ru:~/lms.smr-motors.com/www
           rm private_key
 
+      - name: Развертывание на Pangocaready
+        env:
+          SSH_PRIVATE_KEY_PANGOCAREADY: ${{ secrets.SSH_PRIVATE_KEY_PANGOCAREADY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY_PANGOCAREADY" > private_key_pangocaready
+          chmod 600 private_key
+          rsync -av -e "ssh -i private_key_pangocaready -o StrictHostKeyChecking=no" lms_belgee/ u2694077@31.31.196.13:~/www/pangocaready.academy
+          rm private_key_pangocaready
+
 
