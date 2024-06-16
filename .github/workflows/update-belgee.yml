@@ -18,7 +18,7 @@ jobs:
         with:
           repository: romannesterenko/lms_belgee
           token: ${{ secrets.PAT_LMS_BELGEE }}
-          path: lms_belgee  # Путь к копии репозитория lms_belgee
+          path: lms_belgee  # Путь к копии репозитория lms_belgee1
 
       - name: Sync files
         run: |
