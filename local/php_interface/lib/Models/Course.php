@@ -526,6 +526,18 @@ class Course
         return '';
     }
 
+    public static function getDenieCountries($course_id): array
+    {
+        $return_array = [];
+        \Helpers\IBlockHelper::includeIBlockModule();
+        $res = \CIBlockElement::GetProperty(self::getIBlockID(), $course_id, 'sort', 'asc', ['CODE' => 'DENIE_ENROLL_COUNTRIES']);
+        while ($property = $res->fetch()){
+            if($property['VALUE_XML_ID'])
+                $return_array[] = $property['VALUE_XML_ID'];
+        }
+        return $return_array;
+    }
+
     public function activate($id){
         $list = self::getList(['SECTION_ID' => 17, 'INCLUDE_SUBSECTIONS' => 'Y'], ['ID']);
     }

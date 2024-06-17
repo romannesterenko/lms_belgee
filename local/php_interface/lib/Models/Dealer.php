@@ -331,4 +331,17 @@ class Dealer
         }
         return 0;
     }
+
+
+
+    public static function getCountry($course_id)
+    {
+        \Helpers\IBlockHelper::includeIBlockModule();
+        $res = \CIBlockElement::GetProperty(self::getIBlockID(), $course_id, 'sort', 'asc', ['CODE' => 'COUNTRY']);
+        if ($property = $res->fetch()){
+            if($property['VALUE_XML_ID'])
+                return $property['VALUE_XML_ID'];
+        }
+        return false;
+    }
 }

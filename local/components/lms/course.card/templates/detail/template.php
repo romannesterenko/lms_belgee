@@ -230,7 +230,9 @@ $APPLICATION->SetTitle($arResult['ITEM']['NAME']);
 
                                     } else {
                                         if(!(new \Teaching\CourseCompletion())->missAttempts($arResult['ITEM']['ID'])){?>
-                                            <a href="javascript:void(0)" class="btn btn--reverse detail_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL')?></a>
+                                            <?php if(\Teaching\Courses::isAllowToEnrollByCountry($arResult['ITEM']['ID'])) {?>
+                                                <a href="javascript:void(0)" class="btn btn--reverse detail_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL')?></a>
+                                            <?php }?>
                                         <?php }
                                     }
                                 }?>
@@ -240,11 +242,15 @@ $APPLICATION->SetTitle($arResult['ITEM']['NAME']);
 
                                     } else {
                                         if(!(new \Teaching\CourseCompletion())->missAttempts($arResult['ITEM']['ID']) && \Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID'])){?>
-                                            <a href="javascript:void(0)" class="btn btn--reverse detail_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL')?></a>
+                                            <?php if(\Teaching\Courses::isAllowToEnrollByCountry($arResult['ITEM']['ID'])) {?>
+                                                <a href="javascript:void(0)" class="btn btn--reverse detail_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL')?></a>
+                                            <?php }?>
                                         <?php }
                                     }
                                 } elseif ($status == 'expired_date') {?>
-                                    <a href="javascript:void(0)" class="btn btn--reverse detail_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL')?></a>
+                                    <?php if(\Teaching\Courses::isAllowToEnrollByCountry($arResult['ITEM']['ID'])) {?>
+                                        <a href="javascript:void(0)" class="btn btn--reverse detail_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL')?></a>
+                                    <?php }?>
 
                                 <?php } else {?>
                                     <a href="<?=$arResult['ITEM']['COMPLETION_LINK']?>" class="btn btn--reverse"><?= Loc::getMessage('VIEW') ?></a>
@@ -255,7 +261,9 @@ $APPLICATION->SetTitle($arResult['ITEM']['NAME']);
 
                             } else {
                                 if(!(new \Teaching\CourseCompletion())->missAttempts($arResult['ITEM']['ID']) && \Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID'])){?>
-                                    <a href="javascript:void(0)" class="btn btn--reverse detail_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL')?></a>
+                                    <?php if(\Teaching\Courses::isAllowToEnrollByCountry($arResult['ITEM']['ID'])) {?>
+                                        <a href="javascript:void(0)" class="btn btn--reverse detail_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL')?></a>
+                                    <?php }?>
                                 <?php }
                             }?>
                     <?php }?>
@@ -263,12 +271,15 @@ $APPLICATION->SetTitle($arResult['ITEM']['NAME']);
                         <a href="javascript:void(0)" class="btn btn--reverse set_course_to_employee_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('SET_TO_EMPLOYEE')?></a>
                     <?php }?>
                     <?php if($arResult['USER']['HAS_RIGHTS_TO_ENROLL_EMPLOYEE'] && \Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID'])){?>
-                        <a href="javascript:void(0)" class="btn btn--reverse employee_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL_EMPLOYEE')?></a>
+                        <?php if(\Teaching\Courses::isAllowToEnrollByCountry($arResult['ITEM']['ID'])) {?>
+                            <a href="javascript:void(0)" class="btn btn--reverse employee_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL_EMPLOYEE')?></a>
+                        <?php }?>
                     <?php }?>
 
                 <?php } else {
 
                     $status = \Models\Course::getStatus($arResult['ITEM']["ID"]);
+
                     if($status=='expired') {
                         if($arResult['ITEM']['PROPERTIES']["HAS_RETEST"] == "Да") {
                             if (\Models\Course::isScormCourse($arResult['ITEM']['ID'])) {?>

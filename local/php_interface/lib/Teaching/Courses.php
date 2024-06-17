@@ -447,4 +447,17 @@ class Courses
     {
         return self::getList(['PROPERTY_TEST' => 118], ['ID', 'NAME']);
     }
+
+    public static function isAllowToEnrollByCountry($course_id, $user_id = 0): bool
+    {
+        $user_id = UserHelper::prepareUserId($user_id);
+        $dealer = UserHelper::getDealerId($user_id);
+        $countries = Course::getDenieCountries($course_id);
+        $dealer_country = Dealer::getCountry($dealer);
+        if(!$dealer_country)
+            return true;
+        if(!check_full_array($countries))
+            return true;
+        return !in_array($dealer_country, $countries);
+    }
 }

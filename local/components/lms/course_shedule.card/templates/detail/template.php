@@ -217,7 +217,9 @@ global $USER, $APPLICATION;
                     }?>
                 <?php }?>
                 <?php if(\Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID']) && $arResult['ITEM']['HAS_FREE_PLACES']&&$arResult['ITEM']['REGISTER_BUTTON']['NEED_SHOW']){?>
+                    <?php if(\Teaching\Courses::isAllowToEnrollByCountry($arResult['ITEM']['ID'])) {?>
                         <a href="javascript:void(0)" class="btn btn--reverse detail_enroll_shedule_butt" data-course-id="<?=$arResult['ITEM']['SCHEDULE']['ID']?>"><?=Loc::getMessage('ENROLL')?></a>
+                    <?php }?>
                 <?php }?>
                 <?php if($arResult['ITEM']['IS_COMPLETED_COURSE']&&!\Teaching\SheduleCourses::isExistsCheckedByCourse($arResult['ITEM']['ID'])){?>
                         <a href="<?=$arResult['ITEM']['COMPLETION_LINK']?>" class="btn btn--reverse"><?= Loc::getMessage('VIEW') ?></a>
@@ -227,7 +229,9 @@ global $USER, $APPLICATION;
                 <?php }?>
                 <?php
                 if(\Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID']) && $arResult['ITEM']['ALLOW_TO_REGISTER_BY_DATE']&&$arResult['ITEM']['HAS_FREE_PLACES']&&$arResult['ITEM']['REGISTER_EMPLOYEE_BUTTON']['NEED_SHOW']&&$arResult['USER']['HAS_RIGHTS_TO_ENROLL_EMPLOYEE']){?>
-                    <a href="javascript:void(0)" class="btn btn--reverse employee_shedule_enroll_butt" data-course-id="<?=$arResult['ITEM']['SCHEDULE']['ID']?>"><?=Loc::getMessage('ENROLL_EMPLOYEE')?></a>
+                    <?php if(\Teaching\Courses::isAllowToEnrollByCountry($arResult['ITEM']['ID'])) {?>
+                        <a href="javascript:void(0)" class="btn btn--reverse employee_shedule_enroll_butt" data-course-id="<?=$arResult['ITEM']['SCHEDULE']['ID']?>"><?=Loc::getMessage('ENROLL_EMPLOYEE')?></a>
+                    <?php }?>
                 <?php } ?>
                 <?php if($_REQUEST['load_ajax']=='enrolled_data')
                     die();?>
