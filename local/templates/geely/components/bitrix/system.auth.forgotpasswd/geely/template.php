@@ -13,10 +13,13 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 <div class="authorization-content">
 
-    <span class="logo-title"><img src="<?=SITE_TEMPLATE_PATH?>/images/geely_logo_title.png" alt=""></span>
+    <span class="logo-title">
+        <img src="<?=\Bitrix\Main\Config\Option::get('common.settings', 'common_logo')?>" alt="">
+    </span>
 
     <div class="authorization">
-        <div class="authorization__image"><img src="<?=SITE_TEMPLATE_PATH?>/images/form-img-1.jpg" alt=""></div>
+        <div class="authorization__image"><img src="<?=\Bitrix\Main\Config\Option::get('common.settings', 'logo_auth')?>" alt=""></div>
+
         <div class="authorization__form">
             <span class="authorization__title"><?=GetMessage("AUTH_AUTH")?></span>
             <?php

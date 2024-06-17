@@ -18,7 +18,9 @@ if($arResult["PHONE_REGISTRATION"])
 }
 ?>
 <div class="authorization-content">
-    <span class="logo-title"><img src="<?=SITE_TEMPLATE_PATH?>/images/geely_logo_title.png" alt=""></span>
+    <span class="logo-title">
+        <img src="<?=\Bitrix\Main\Config\Option::get('common.settings', 'common_logo')?>" alt="">
+    </span>
 
     <?php if(!empty($arParams["~AUTH_RESULT"])):
 	$text = str_replace(array("<br>", "<br />"), "\n", $arParams["~AUTH_RESULT"]["MESSAGE"]);

@@ -46,6 +46,12 @@ $aTabs = array(
                 array("text", 30)
             ),
             array(
+                "common_logo",
+                "Логотип",
+                "",
+                array("text", 30)
+            ),
+            array(
                 "logo_404",
                 "Изображение на странице 404 (путь к файлу от корня)",
                 "",
