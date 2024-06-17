@@ -348,7 +348,14 @@ class CourseCompletion
 
     public function getCompletedItemsByCourseID($course_id)
     {
-        return $this->get(['UF_IS_COMPLETE'=>1, 'UF_COURSE_ID' => $course_id, 'UF_DIDNT_COM' => false], ['UF_USER_ID']);
+        $return_array = [];
+        $items = $this->get(['UF_IS_COMPLETE'=>1, 'UF_COURSE_ID' => $course_id, 'UF_DIDNT_COM' => false, 'UF_RETEST_FAILED' => false], ['ID', 'UF_USER_ID']);
+        foreach ($items as $item){
+            if(!self::isExpired($course_id, $item["UF_USER_ID"], $item['ID'])) {
+                $return_array[] = $item;
+            }
+        }
+        return $return_array;
     }
 
     public function getCompletedItemsArrayByCourseID($course_id)
