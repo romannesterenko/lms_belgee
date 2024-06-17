@@ -26,6 +26,7 @@ if(!$user['UF_DEALER']>0) {
         Asset::getInstance()->addCss('https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css');
         Asset::getInstance()->addCss('https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.css');
         Asset::getInstance()->addCss(SITE_TEMPLATE_PATH.'/css/custom.css?1');
+        Asset::getInstance()->addCss('/upload/brand/brand.css');
     ?>
 </head>
 <body>
