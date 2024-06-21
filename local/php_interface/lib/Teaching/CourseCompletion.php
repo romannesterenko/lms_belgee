@@ -117,14 +117,25 @@ class CourseCompletion
     public function add($fields, $need_paid = true)
     {
         if((int)$fields['UF_USER_ID']>0) {
-            $result = $this->completionsHlDataClass::add($fields);
-            if ($result->getId() > 0 && $need_paid) {
-                //dump($fields);
-                if (Courses::isPaid($fields['UF_COURSE_ID']) && $fields['UF_PAYMENT_FROM_BALANCE'] == 1 && Course::hasBalancePayment($fields['UF_COURSE_ID'])) {
-                    \Models\Invoice::createFromCompletion($result->getId());
+            $exists_completion = $this->get(
+                [
+                    'UF_USER_ID' => $fields['UF_USER_ID'],
+                    'UF_COURSE_ID' => $fields['UF_COURSE_ID'],
+                    'UF_DATE' => $fields['UF_DATE'],
+                    'UF_IS_COMPLETE' => $fields['UF_IS_COMPLETE']??false,
+                    'UF_FAILED' => $fields['UF_FAILED']??false,
+                ]
+            );
+            if(!check_full_array($exists_completion)) {
+                $result = $this->completionsHlDataClass::add($fields);
+                if ($result->getId() > 0 && $need_paid) {
+                    if (Courses::isPaid($fields['UF_COURSE_ID']) && $fields['UF_PAYMENT_FROM_BALANCE'] == 1 && Course::hasBalancePayment($fields['UF_COURSE_ID'])) {
+                        \Models\Invoice::createFromCompletion($result->getId());
+                    }
                 }
+                return $result;
             }
-            return $result;
+            return false;
         } else {
             return false;
         }

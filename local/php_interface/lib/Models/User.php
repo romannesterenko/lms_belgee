@@ -422,7 +422,6 @@ class User
         foreach ($enrolls->getCompletedItemsByCourseID($course_id) as $enroll){
             $return_ids[] = $enroll['UF_USER_ID'];
         }
-        //print_r($return_ids);
         if(count($return_ids)==0)
             return [];
         $getListParams['select'] = ['ID', 'NAME', 'LAST_NAME', 'SECOND_NAME'];

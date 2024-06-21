@@ -6,7 +6,7 @@ use Bitrix\Main\Localization\Loc;
 use Models\User;
 use Teaching\Tests;
 $status = \Models\Course::getStatus($_REQUEST['course_id']);
-if($status=='expired'){
+if($status=='expired') {
     $result = (new \Teaching\CourseCompletion)->add([
         'UF_USER_ID' => User::getCurrentId(),
         'UF_COURSE_ID' => $_REQUEST['course_id'],
