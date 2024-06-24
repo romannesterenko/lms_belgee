@@ -57,11 +57,6 @@ $tr_fields["UF_ACTIONS"] = "Действия";
 
 $APPLICATION->SetTitle('Заявка '.$arFields['NAME']); ?>
     <div class="main-content">
-        <aside>
-            <div class="aside-sticky aside-sticky--title">
-                <?php require_once(PageHelper::getSideBarForCabinet());?>
-            </div>
-        </aside>
         <div class="content">
             <h2 class="h2 center lowercase">Отчет по заявке<br/><?=$arFields['NAME']?></h2>
             <div class="content-block">
