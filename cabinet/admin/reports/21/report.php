@@ -99,7 +99,7 @@ $all_role_ids = [];
 foreach ($dealers as &$dealer_temp) {
     if($dealer_temp["ID"]==360)
         continue;
-    $params['filter'] = ['ACTIVE' => 'ALL', '=UF_DEALER' => $dealer_temp['ID'], "!UF_ROLE" => false];
+    $params['filter'] = ['ACTIVE' => 'Y', '=UF_DEALER' => $dealer_temp['ID'], "!UF_ROLE" => false];
     $params['select'] = ['ID', 'UF_CERT_USER', "UF_DEALER", "UF_ROLE", "UF_REQUIRED_COURSES"];
     $dealer_temp['USERS'] = \Models\User::getArray($params);
     $new_user_array = [];

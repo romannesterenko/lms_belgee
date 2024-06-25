@@ -44,7 +44,7 @@ class Group
     {
         $user_id = UserHelper::prepareUserId($user_id);
         $exist_groups = self::getList(['=PROPERTY_SCHEDULE' => $schedule_id, '=PROPERTY_USERS' => $user_id], ["PROPERTY_USERS"]);
-        if(check_full_array($exist_groups)){
+        if(check_full_array($exist_groups)) {
             //dump("Пользователь $user_id уже находится в группах ".implode('|', array_keys($exist_groups)));
         } else {
             $groups = self::getList(['=PROPERTY_SCHEDULE' => $schedule_id], ["PROPERTY_USERS"]);

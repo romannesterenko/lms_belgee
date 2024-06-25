@@ -38,7 +38,7 @@ if((int)($request['id'])>0){
             if(!$allow)
                 $popup_body = "Количество зарегистрированных на этот курс сотрудников из дилерского центра ".\Models\Dealer::getNameByUser($enr['UF_USER_ID'])." достигло лимита";
             else {
-                $allow = \Teaching\SheduleCourses::getFreePlacesBySchedule($enr['UF_SHEDULE_ID']) > 0;
+                $allow = \Teaching\SheduleCourses::getFreeApprovedPlacesBySchedule($enr['UF_SHEDULE_ID']) > 0;
                 if(!$allow)
                     $popup_body = "Количество зарегистрированных на этот курс сотрудников достигло лимита";
             }

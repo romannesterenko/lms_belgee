@@ -166,11 +166,22 @@ class SheduleCourses
         return (int)$schedule['PROPERTIES']['LIMIT'] - self::getExistsPlaces($schedule_id);
     }
 
+    public static function getFreeApprovedPlacesBySchedule($schedule_id)
+    {
+        $schedule = current(self::getById($schedule_id));
+        return (int)$schedule['PROPERTIES']['LIMIT'] - self::getApprovedExistsPlaces($schedule_id);
+    }
+
     public static function getExistsPlaces($schedule_id)
     {
         $enrollments = new \Teaching\Enrollments();
-        //dump($enrollments->getListByScheduleId($schedule_id));
         return count($enrollments->getListByScheduleId($schedule_id));
+    }
+
+    public static function getApprovedExistsPlaces($schedule_id)
+    {
+        $enrollments = new \Teaching\Enrollments();
+        return count($enrollments->getApprovedListByScheduleId($schedule_id));
     }
     public static function getAllExistsPlaces($schedule_id)
     {

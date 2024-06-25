@@ -78,7 +78,7 @@ foreach ($courses as $rf){
     $course_ids = array_merge($course_ids, $rf);
 }
 $data = [];
-$params['filter'] = ['!UF_DEALER' => false, "UF_ROLE" => array_keys($roles)];
+$params['filter'] = ['ACTIVE' => 'Y', '!UF_DEALER' => false, "UF_ROLE" => array_keys($roles)];
 $params['select'] = ['ID', 'LAST_NAME', 'NAME', 'UF_CERT_USER', "UF_DEALER", "UF_ROLE"];
 $users = \Models\User::getArray($params);
 $completed = (new \Teaching\CourseCompletion())->get(['UF_IS_COMPLETE' => 1, 'UF_COURSE_ID' => $course_ids]);

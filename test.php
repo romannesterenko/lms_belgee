@@ -1,9 +1,13 @@
 <?php
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 
-$filename = $_SERVER["DOCUMENT_ROOT"] . "/upload/stop_words.txt"; // Укажите путь к вашему файлу
-$wordsArray = file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$completions = (new \Teaching\CourseCompletion())->get([
+    'UF_SHEDULE_ID' => 124393
+]);
 
-dump($wordsArray);
+foreach ($completions as $completion) {
+    \Teaching\TestDrive\Group::setEmployeeToRandGroup($completion['UF_SHEDULE_ID'], $completion['UF_USER_ID']);
+}
+
 
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php");

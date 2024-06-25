@@ -85,7 +85,7 @@ $data = [];
 foreach ($dealers as $dealer_) {
     if($dealer_["ID"]==360)
         continue;
-    $params['filter'] = ['ACTIVE' => 'ALL', '=UF_DEALER' => $dealer_['ID'], "!UF_ROLE" => false];
+    $params['filter'] = ['ACTIVE' => 'Y', '=UF_DEALER' => $dealer_['ID'], "!UF_ROLE" => false];
     $params['select'] = ['ID', 'UF_CERT_USER', "UF_DEALER", "UF_ROLE"];
     $users = \Models\User::getArray($params);
 

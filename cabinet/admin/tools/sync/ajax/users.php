@@ -79,7 +79,7 @@ if ($_REQUEST['method'] && $_REQUEST['method'] == 'getFilteredUsers'){
                 $httpClient->setHeader('Content-Type', 'application/x-www-form-urlencoded', true);
                 $response = $httpClient->post($url, http_build_query($data));
                 $response_array = json_decode($response, true);
-                if ($user_id == 3027 && $_REQUEST['migrated_user_actions_this_lms'] === 'deactivate'){
+                if ($_REQUEST['migrated_user_actions_this_lms'] === 'deactivate'){
                     \Models\User::resetDealer($user_id);
                     \Models\User::deactivate($user_id);
                 }

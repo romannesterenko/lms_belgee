@@ -74,7 +74,7 @@ if(check_full_array($_REQUEST['role'])){
     }
 }
 $data = [];
-$params['filter'] = ['!UF_DEALER' => false, "!UF_ROLE" => false];
+$params['filter'] = ['ACTIVE' => 'Y', '!UF_DEALER' => false, "!UF_ROLE" => false];
 $params['select'] = ['ID', 'UF_CERT_USER', "UF_DEALER", "UF_ROLE"];
 $users = \Models\User::getArray($params);
 foreach ($dealers as $dealer_){
