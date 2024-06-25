@@ -74,7 +74,7 @@ $schedules = \Teaching\SheduleCourses::getArray($filter);
                                     <tr>
                                         <td style="text-align: left; "><?=\Helpers\DateHelper::printDates($schedule['PROPERTY_BEGIN_DATE_VALUE'], $schedule['PROPERTY_END_DATE_VALUE'])?></td>
                                         <td style="text-align: left"><?=$schedule['NAME']?></td>
-                                        <td style="text-align: center"><?=\Teaching\SheduleCourses::getFreePlacesBySchedule($schedule['ID'])?> / <?=$schedule['PROPERTY_LIMIT_VALUE']?></td>
+                                        <td style="text-align: center"><?=\Teaching\SheduleCourses::getFreePlacesBySchedule($schedule['ID'])?> из <?=$schedule['PROPERTY_LIMIT_VALUE']?></td>
                                     </tr>
                                 <?php }?>
                             </tbody>

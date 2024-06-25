@@ -325,6 +325,25 @@ $aTabs = array(
                 "",
                 array("text", 60)
             ),
+            "Антиспам Бот",
+            array(
+                "telegram_antispam_bot_token",
+                "Токен Антиспам бота",
+                "",
+                array("text", 60)
+            ),
+            array(
+                "telegram_antispam_bot_handler_path",
+                "Путь к обработчику от корня",
+                "",
+                array("text", 60)
+            ),
+            [
+                "telegram_antispam_stop_words",
+                "Стоп слова (Через запятую)",
+                "",
+                ["text", 60]
+            ],
         )
     ),
 );

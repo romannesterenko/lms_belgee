@@ -58,9 +58,12 @@ Asset::getInstance()->addString('<script src="//cdn.datatables.net/buttons/2.2.3
 Asset::getInstance()->addString('<script src="//cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>');
 Asset::getInstance()->addString('<script src="//cdn.datatables.net/rowreorder/1.2.8/js/dataTables.rowReorder.min.js"></script>');
 Asset::getInstance()->addString('<script src="//cdn.datatables.net/responsive/2.3.0/js/dataTables.responsive.min.js"></script>');
+Asset::getInstance()->addString('<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>');
+Asset::getInstance()->addString('<script src="https://cdn.datatables.net/plug-ins/1.11.3/sorting/datetime-moment.js"></script>');
 ?>
     <script>
         $(document).ready( function () {
+            $.fn.dataTable.moment('DD.MM.YYYY HH:mm:ss');
             var table1 = $('#table-1').DataTable({
                 "order": [],
                 "pageLength" : 25,
