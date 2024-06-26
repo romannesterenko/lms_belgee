@@ -15,8 +15,8 @@ if(\Integrations\Zoom::getAllowCronApprovement()=='Y'&&!empty($meeting_id)&&(int
             foreach ($result['registrants'] as $registrant) {
                 if (\Models\Employee::isExistsForZoom($registrant['email']))
                     $users_to_approve[] = ['id' => $registrant['id'], 'email' => $registrant['email']];
-                else
-                    $users_to_deny[] = ['id' => $registrant['id'], 'email' => $registrant['email']];
+                /*else
+                    $users_to_deny[] = ['id' => $registrant['id'], 'email' => $registrant['email']];*/
             }
             if (check_full_array($users_to_approve)) {
                 \Integrations\Zoom::approveRegistrantBatch($meeting_id, $users_to_approve);
