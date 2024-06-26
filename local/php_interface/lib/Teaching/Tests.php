@@ -265,6 +265,8 @@ class Tests
     public static function getMaxPointsByCourse($id) {
         $points = 0;
         $test = current(self::getTestByCourse($id));
+        if(!check_full_array($test))
+            return $points;
         foreach(self::getQuestionsByTest($test['ID']) as $question){
             $points+=(int)$question['PROPERTIES']['POINTS'];
         }
@@ -273,6 +275,8 @@ class Tests
 
     public static function getQuestionsCntByCourse($id) {
         $test = current(self::getTestByCourse($id));
+        if(!check_full_array($test))
+            return 0;
         return count(self::getQuestionsByTest($test['ID']));
     }
 

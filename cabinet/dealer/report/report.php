@@ -20,6 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] != "POST")
 $user_array = \Settings\Reports::generate(true);
 //dump($user_array);
 foreach ($user_array as $key_item => $temp_item){
+    /*echo "<pre>";
+    print_r($temp_item['COURSE']['INFO']);
+    echo "</pre>";*/
     if($temp_item['NOT_ENROLLED']==1)
         continue;
     if($temp_item['UF_IS_COMPLETE']!=1){
@@ -81,6 +84,7 @@ dd($user_array);
                         <?php foreach ($user_array as $item){
                             if($item["NOT_NEEDED"] == 1)
                                 continue;
+
                             $enrolled = false;?>
                                 <tr>
                                     <td><?=$item['DEALER']['CODE']?></td>
@@ -158,7 +162,7 @@ dd($user_array);
                                                 <?php }?>
                                             <?php }
                                             } else {?>
-                                                <td>Выключен</td>
+                                                <td>-</td>
                                                 <td>-</td>
                                             <?php }?>
                                         <?php } else {?>

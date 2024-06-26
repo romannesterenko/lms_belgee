@@ -63,6 +63,7 @@ Asset::getInstance()->addString('<script src="https://cdn.datatables.net/plug-in
 ?>
     <script>
         $(document).ready( function () {
+            $.fn.dataTable.moment('DD.MM.YYYY');
             $.fn.dataTable.moment('DD.MM.YYYY HH:mm:ss');
             var table1 = $('#table-1').DataTable({
                 "order": [],

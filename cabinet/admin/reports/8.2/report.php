@@ -172,7 +172,7 @@ $table_courses = $tmp_arr;
                                                 <?php }?>
                                             <?php }?>
                                         <?php } else {?>
-                                            <td>Выключен</td>
+                                            <td>-</td>
                                             <td>-</td>
                                         <?php }?>
 
