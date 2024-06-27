@@ -25,6 +25,16 @@ function getUserName($user) {
     }
 }
 
+function containsBannedWord($text, $bannedWords) {
+    foreach ($bannedWords as $word) {
+        $pattern = '/(?<!\p{L})' . preg_quote($word, '/') . '(?!\p{L})/iu';
+        if (preg_match($pattern, $text)) {
+            return $word;
+        }
+    }
+    return false;
+}
+
 function processMessage($message) {
     $chatId = $message['chat']['id'];
     $text = $message['text'];
@@ -32,32 +42,32 @@ function processMessage($message) {
     $filename = $_SERVER["DOCUMENT_ROOT"] . "/upload/stop_words.txt";
     $bannedWords = file($filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     $userName = getUserName($message['from']);
-    foreach ($bannedWords as $word) {
-        if (stripos($text, trim($word)) !== false) {
-            // Удаление сообщения
-            sendRequest('deleteMessage', [
-                'chat_id' => $chatId,
-                'message_id' => $message['message_id']
-            ]);
-            $result = muteUser($userId, $chatId, $userName);
-            if($result){
-                $text = "$userName, до ".date('d.m.Y H:i:s', $result)." Вам запрещено писать в группе за использование запрещенных слов.";
-            } else {
-                $text = "$userName, Использование запрещенных слов запрещено. Предупреждение! В случае повторения, будут применены меры в виде ограничения общения";
-            }
-            logError([
-                'user' => $userName,
-                'message' => $message['text'],
-                'text' => $text,
-                'chat_id' => $chatId,
-                'word' => $word
-            ]);
-            sendRequest('sendMessage', [
-                'chat_id' => $chatId,
-                'text' => $text
-            ]);
-            break;
+    if($word = containsBannedWord($text, $bannedWords)){
+        // Удаление сообщения
+        sendRequest('deleteMessage', [
+            'chat_id' => $chatId,
+            'message_id' => $message['message_id']
+        ]);
+        //Мьют пользователя
+        $result = muteUser($userId, $chatId, $userName);
+        if($result){
+            $text = "$userName, до ".date('d.m.Y H:i:s', $result)." Вам запрещено писать в группе за использование недопустимой лексики.";
+        } else {
+            $text = "$userName, Использование запрещенных слов не допускается. Предупреждение! В случае повторения, будут применены меры в виде ограничения общения";
         }
+        //Логирование
+        logError([
+            'user' => $userName,
+            'message' => $message['text'],
+            'text' => $text,
+            'chat_id' => $chatId,
+            'word' => $word
+        ]);
+        //Уведомление в чат
+        sendRequest('sendMessage', [
+            'chat_id' => $chatId,
+            'text' => $text
+        ]);
     }
 }
 
