@@ -15,6 +15,7 @@ global $APPLICATION;
                 <th><?=GetMessage('COMPLETED_COURSES_ATTEMPTS')?></th>
                 <th><?=GetMessage('COMPLETED_COURSES_POINTS')?></th>
                 <th><?=GetMessage('COMPLETED_COURSES_DATE')?></th>
+                <th>Ретест</th>
                 <th><?=GetMessage('COMPLETED_COURSES_CERT')?></th>
             </tr>
         </thead>
@@ -34,6 +35,17 @@ global $APPLICATION;
                     <?php /*<?php if($row['UF_SHEDULE_ID']>0) { ?><?=$row['UF_DATE']?><?php } else { ?> <?=$row['UF_COMPLETED_TIME'] != '&nbsp;'?\Helpers\DateHelper::getHumanDate( $row['UF_COMPLETED_TIME'] ):$row['UF_DATE']?><?php }?></td>*/?>
                     <?=\Teaching\Courses::isFreeSheduleCourse($row['UF_COURSE_ID'])&&$row['UF_COMPLETED_TIME'] != '&nbsp;'?\Helpers\DateHelper::getHumanDate( $row['UF_COMPLETED_TIME'] ):$row['UF_DATE']?>
                 </td>
+                <td><?php
+                    if($row['STATUS']=='expired'){
+                        echo "<a href='".$row['COURSE_LINK']."'>Нужен</a>";
+                    } else {
+                        if ($row['UF_RETEST'] == 'да'){
+                            echo "Пройден";
+
+                        }
+                    }
+
+                ?></td>
                 <td>
                     <?php
                     if(\Models\Course::isOP($row['UF_COURSE_ID']) || \Models\Course::isMarketing($row['UF_COURSE_ID']))
