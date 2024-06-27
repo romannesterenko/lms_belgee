@@ -338,7 +338,6 @@ class CourseCompletion
         $user_id = UserHelper::prepareUserId($user_id);
         $course = Course::find($course_id, ['PROPERTY_CERT_EXP']);
         $expire_period = $course["PROPERTY_CERT_EXP_VALUE"]??12;
-
         if($completion_id > 0) {
             $list = $this->get(['ID' => $completion_id, 'UF_IS_COMPLETE'=>1]);
         } else {

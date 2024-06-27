@@ -50,6 +50,7 @@ function processMessage($message) {
                 'message' => $message['text'],
                 'text' => $text,
                 'chat_id' => $chatId,
+                'word' => $word
             ]);
             sendRequest('sendMessage', [
                 'chat_id' => $chatId,
