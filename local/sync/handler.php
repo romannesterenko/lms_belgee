@@ -26,6 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $arFilter = array("EMAIL" => $arFields['EMAIL']);
                 $exists_user = \CUser::GetList(($by = "id"), ($order = "asc"), $arFilter)->fetch();
                 if (check_full_array($exists_user)) {
+                    if($arFields['ACTIVE'] != $exists_user['ACTIVE']){
+                        $update_user = new CUser;
+                        $update_user->Update($exists_user['ID'], ['ACTIVE' => $arFields['ACTIVE']]);
+                    }
                     $userId = $exists_user['ID'];
                     $exists = true;
                     if ($_REQUEST['data']['linkIfExists']=='true' || $_REQUEST['data']['linkIfExists']) {
