@@ -22,6 +22,7 @@ class UserHelper
 
     public static function getList($filter = [], $select){
         $return_array = [];
+        $filter = array_merge(['ACTIVE' => 'Y'], $filter);
         $rsUsers = \CUser::GetList(($by = "ID"), ($order = "desc"), $filter, ['SELECT' => $select]);
         while ($user = $rsUsers->Fetch()) {
             $return_array[] = $user;
@@ -264,12 +265,6 @@ class UserHelper
     {
         $phone = self::getList(['ID' => $user_id], ['PERSONAL_MOBILE']);
         return check_full_array($phone)?$phone['PERSONAL_MOBILE']:'';
-    }
-
-    public static function getMarketingAdminByUser($user_id = 0)
-    {
-        $user_id = self::prepareUserId($user_id);
-        return self::getListArray(['ACTIVE' => 'Y', 'UF_DEALER' => Dealer::getByEmployee($user_id), 'UF_TEACHING_ADMIN_TYPE' => 53], ['ID', 'LAST_NAME','NAME']);
     }
 
     public static function getPPOAdminByUser($user_id = 0)

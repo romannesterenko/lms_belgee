@@ -82,10 +82,10 @@ $params['filter'] = ['ACTIVE' => 'Y', '!UF_DEALER' => false, "UF_ROLE" => array_
 $params['select'] = ['ID', 'LAST_NAME', 'NAME', 'UF_CERT_USER', "UF_DEALER", "UF_ROLE"];
 $users = \Models\User::getArray($params);
 $completed = (new \Teaching\CourseCompletion())->get(['UF_IS_COMPLETE' => 1, 'UF_COURSE_ID' => $course_ids]);
-foreach ($dealers as $dealer_){
+foreach ($dealers as $dealer_) {
     if($dealer_["ID"]==360)
         continue;
-    foreach ($users as $key => $user){
+    foreach ($users as $key => $user) {
         if($user['UF_DEALER']!=$dealer_['ID'])
             continue;
         $row = [];

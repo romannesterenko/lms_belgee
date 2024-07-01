@@ -1,6 +1,6 @@
 <?php
-$_SERVER["DOCUMENT_ROOT"] = "/home/u520251/lms.geely-motors.com/www";
-$_SERVER['HTTP_HOST'] = 'lms.geely-motors.com';
+$_SERVER["DOCUMENT_ROOT"] = realpath(dirname(__FILE__).'/../../..');
+$_SERVER["REMOTE_ADDR"] = $_SERVER["DOCUMENT_ROOT"];
 require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
 
 $end_date = date('Y-m-d', strtotime('yesterday'));
