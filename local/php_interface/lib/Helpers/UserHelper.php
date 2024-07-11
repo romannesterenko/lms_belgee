@@ -1,7 +1,9 @@
 <?php
 
 namespace Helpers;
+use Bitrix\Main\Grid\Settings;
 use Models\Dealer;
+use Settings\Common;
 
 class UserHelper
 {
@@ -141,7 +143,7 @@ class UserHelper
     {
         global $USER;
         $user_id = self::prepareUserId($user_id);
-        return $USER->GetID()==2||(self::getUserValue($user_id, 'UF_LOCAL_ADMIN')==1&&\Models\User::getDealerByUser()==292);
+        return $USER->GetID()==2||(self::getUserValue($user_id, 'UF_LOCAL_ADMIN')==1&&\Models\User::getDealerByUser()==Common::get('main_dealer'));
     }
 
     public static function getDealerId($user_id = 0)

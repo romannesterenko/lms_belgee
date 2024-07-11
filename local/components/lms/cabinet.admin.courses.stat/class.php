@@ -9,7 +9,7 @@ class CabinetAdminCoursesStatComponent extends CBitrixComponent
     private $completed_items;
     /**
      * кешируемые ключи arResult
-     * @var array()
+     * @var array() a
      */
     protected $cacheKeys = array();
 

@@ -41,7 +41,6 @@ global $APPLICATION;
                     } else {
                         if ($row['UF_RETEST'] == 'да'){
                             echo "Пройден";
-
                         }
                     }
 

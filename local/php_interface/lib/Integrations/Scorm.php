@@ -188,4 +188,9 @@ class Scorm
         }
         return count($date_rows) > 0 ? end($date_rows) : [];
     }
+
+    public function delete(mixed $ID)
+    {
+        HLBlock::delete($ID, $this->dataClass);
+    }
 }

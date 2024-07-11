@@ -183,7 +183,9 @@ $course_formats = \Helpers\PropertyHelper::getPropertyValuesList(\Models\Course:
             $(document).on('submit', '.report_generator', function (){
                 $('.loader').removeClass('hidden')
             });
-
+            $(document).on('change', '[name="direction"]', function (){
+                processData($(this))
+            });
             $(document).on('change', '[name="city[]"]', function (){
                 processData($(this))
             });
@@ -226,7 +228,7 @@ $course_formats = \Helpers\PropertyHelper::getPropertyValuesList(\Models\Course:
             let formData = new FormData($('.report_generator')[0]);
             $.ajax({
                 type: 'POST',
-                url: '/local/templates/geely/ajax/report_fields2.php',
+                url: '/local/templates/geely/ajax/report_fields_ratings.php',
                 data: formData,
                 processData: false,
                 contentType: false,

@@ -18,14 +18,12 @@ $_REQUEST['report_id'] = 999999;
 if ($_SERVER["REQUEST_METHOD"] != "POST")
     die("Доступ по прямой ссылке запрещен");
 $user_array = \Settings\Reports::generate(true);
-//dump($user_array);
 foreach ($user_array as $key_item => $temp_item){
-    /*echo "<pre>";
-    print_r($temp_item['COURSE']['INFO']);
-    echo "</pre>";*/
     if($temp_item['NOT_ENROLLED']==1)
         continue;
     if($temp_item['UF_IS_COMPLETE']!=1){
+
+
         if($temp_item['COURSE']['INFO']['PROPERTY_COURSE_TYPE_ENUM_ID']==6){
             if(!check_full_array($temp_item['COURSE']['INFO']['PROPERTY_SCORM_VALUE'])&&$temp_item['COMPLETION_ID']>0){
                 $test = current((new \Teaching\ProcessTest())->get(['UF_COMPLETION' => $temp_item['COMPLETION_ID']], ['UF_POINTS'])->getArray());
@@ -33,10 +31,17 @@ foreach ($user_array as $key_item => $temp_item){
                     $user_array[$key_item]['UF_POINTS'] = (int)$test['UF_POINTS'];
             }
         }
+        $another_completions = (new \Teaching\CourseCompletion())->get(['!ID' => $temp_item['COMPLETION_ID'], 'UF_USER_ID'=>$temp_item['UF_USER_ID'], 'UF_COURSE_ID' =>  $temp_item['UF_COURSE_ID']]);
+        if(check_full_array($another_completions) && $another_completions[0]['UF_RETEST'] == 1 && $another_completions[0]['UF_RETEST_FAILED'] == 1){
+            $user_array[$key_item]['WAS_FAILED_RETEST'] = true;
+            $user_array[$key_item]['FAILED_RETEST_COMPLETION_ID'] = $another_completions[0]['ID'];
+            $user_array[$key_item]['UF_COMPLETED_TIME'] = $another_completions[0]['UF_COMPLETED_TIME'];
+            $user_array[$key_item]['UF_POINTS'] = $another_completions[0]['UF_POINTS'];
+        }
     }
 }
 
-dd($user_array);
+//dump($user_array);
 ?>
     <div class="main-content">
         <div class="content">
@@ -170,10 +175,25 @@ dd($user_array);
                                             <td>-</td>
                                         <?php }?>
                                     <?php } else {?>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
+                                        <?php if($item['WAS_FAILED_RETEST']){
+                                            $process_filter = [
+                                                'UF_COMPLETION' => $item['FAILED_RETEST_COMPLETION_ID'],
+                                            ];
+                                            $process_test = current((new \Teaching\ProcessTest())->get($process_filter)->getArray());
+                                            ?>
+                                            <td><?=$item['UF_COMPLETED_TIME']?\Helpers\DateHelper::getHumanDate($item['UF_COMPLETED_TIME']):''?></td>
+                                            <td><?=(int)$item['UF_POINTS']?><?=(int)$item['COURSE']['INFO']['MAX_POINTS']>0?"/".(int)$item['COURSE']['INFO']['MAX_POINTS']:""?></td>
+                                            <td><?php
+                                                $date = $item['UF_COMPLETED_TIME']??false;
+                                                echo $date?Helpers\DateHelper::getFormatted($date->add('+'.\Models\Course::getExpiredDate($item['COURSE']['INFO']['ID']).' months'), 'd.m.Y'):'';?></td>
+                                            <td>Провален (<?=$process_test['UF_POINTS']?>/<?=\Models\Course::getMaxPoints($item['COURSE']['INFO']['ID'])?>)</td>
+                                        <?php } else {?>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                        <?php }?>
+
                                     <?php }?>
                                     <td>
                                         <?php if($enrolled) {

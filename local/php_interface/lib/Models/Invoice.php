@@ -88,6 +88,7 @@ class Invoice
         $start_date = date('Y-m-d H:i:s', strtotime('01.01.2024 00:00:00'));
         if(!empty($completion['UF_DATE']) && $completion['UF_DATE']->format('Y-m-d H:i:s') < $start_date)
             return;
+
         $course = Course::find($completion['UF_COURSE_ID'], ['PROPERTY_COST']);
 
         $user = User::find($completion['UF_USER_ID'], ['UF_DEALER']);

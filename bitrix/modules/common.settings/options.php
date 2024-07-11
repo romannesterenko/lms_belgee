@@ -38,6 +38,13 @@ $aTabs = array(
                 "",
                 array("checkbox")
             ),
+            "Настройки дилеров",
+            array(
+                "main_dealer",
+                "Ключевой дилер (дистрибьютор)",
+                "",
+                array("selectbox", $dealers_array)
+            ),
             "Лого и изображения",
             array(
                 "header_logo",

@@ -178,7 +178,9 @@ $years = range((int)date('Y')-5, (int)date('Y'));
             $(document).on('submit', '.report_generator', function (){
                 $('.loader').removeClass('hidden')
             });
-
+            $(document).on('change', '[name="direction"]', function (){
+                processData($(this))
+            });
             $(document).on('change', '[name="city[]"]', function (){
                 processData($(this))
             });
@@ -218,7 +220,7 @@ $years = range((int)date('Y')-5, (int)date('Y'));
             let formData = new FormData($('.report_generator')[0]);
             $.ajax({
                 type: 'POST',
-                url: '/local/templates/geely/ajax/report_fields2.php',
+                url: '/local/templates/geely/ajax/report_fields_ratings.php',
                 data: formData,
                 processData: false,
                 contentType: false,

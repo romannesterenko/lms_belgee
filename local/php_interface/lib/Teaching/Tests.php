@@ -52,7 +52,8 @@ class Tests
     public static function getQuestionsByTest($test_id, $order=[])
     {
         $getlistOrder = ['SORT'=>'ASC'];
-        $filter = ['IBLOCK_ID' => Iblock::getTestQuestionsIblock(), 'PROPERTY_TEST' => $test_id];
+        $filter = ['IBLOCK_ID' => Iblock::getTestQuestionsIblock(), '=PROPERTY_TEST' => $test_id];
+
         $questions = Iblock::getElements($filter, $getlistOrder);
         foreach ($questions as &$question){
             $question = \Helpers\PropertyHelper::collectFields($question);
@@ -216,7 +217,7 @@ class Tests
 
         if(!empty($already_string)) {
             $array = explode('|', $already_string);
-            foreach ($array as $k => $value){
+            foreach ($array as $k => $value) {
                 if($k==0)
                     continue;
                 $ids = explode('_', $value);
@@ -290,5 +291,10 @@ class Tests
             $points+=(int)$question['PROPERTIES']['POINTS'];
         }
         return $points;
+    }
+
+    public static function getAll()
+    {
+        return Iblock::getElements(['IBLOCK_ID' => Iblock::getTestsIblock()], ['ID' => 'DESC'], ['ID']);
     }
 }

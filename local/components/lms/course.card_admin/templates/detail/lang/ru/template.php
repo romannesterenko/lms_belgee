@@ -24,7 +24,7 @@ $MESS ['YOU_ARE_REGISTERING'] = "Вы регистрируетесь на сем
 $MESS ['APPROVE_YOUR_REGISTRATION'] = "Подтвердите вашу регистрацию, подробное письмо с инструкциями придет к вам на почту.";
 $MESS ['APPROVE_REGISTRATION_BUTTON'] = "Подтвердить регистрацию";
 $MESS ['SCHEDULE_TITLE'] = "расписание";
-$MESS ['MAIN_EVENT_SPEAKER'] = "ведущий мероприятия";
+$MESS ['MAIN_EVENT_SPEAKER'] = "ведущий тренинга";
 $MESS ['EVENT_SPEAKERS'] = "спикеры";
 $MESS ['CURRENCY'] = "руб.";
 

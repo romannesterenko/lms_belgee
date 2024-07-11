@@ -178,7 +178,7 @@ $years = range((int)date('Y')-5, (int)date('Y'));
                 $('.loader').removeClass('hidden')
             });
 
-            $(document).on('change', '[name="city[]"]', function (){
+            $(document).on('change', '[name="direction"]', function (){
                 processData($(this))
             });
 
@@ -204,20 +204,17 @@ $years = range((int)date('Y')-5, (int)date('Y'));
             });
             $(document).on('change', '[name="dealer_codes[]"]', function (){
                 $('[name="dealer_names[]"]').val($('[name="dealer_codes[]"]').val()).select2({language: "en"});
-                //checkDealerForm('code');
-                processData($(this))
             });
 
             $(document).on('change', '[name="dealer_names[]"]', function (){
                 $('[name="dealer_codes[]"]').val($('[name="dealer_names[]"]').val()).select2({language: "en"});
-                processData($(this))
             });
         })
         function processData(main_entity){
             let formData = new FormData($('.report_generator')[0]);
             $.ajax({
                 type: 'POST',
-                url: '/local/templates/geely/ajax/report_fields2.php',
+                url: '/local/templates/geely/ajax/report_fields_ratings.php',
                 data: formData,
                 processData: false,
                 contentType: false,

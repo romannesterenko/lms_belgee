@@ -31,6 +31,7 @@ class ProcessTest
     public function isPreBegined($test_id, $user_id = 0, $completion_id)
     {
         $user_id = \Helpers\UserHelper::prepareUserId($user_id);
+
         $list = $this->getPreTestByCompletion($completion_id);
         return $list['ID'] > 0;
     }
@@ -298,7 +299,6 @@ class ProcessTest
     public function goToQuestionOfTestByNumber($need_question, $test_id)
     {
         $questions = array_values(\Teaching\Tests::getQuestionsByTest($test_id));
-
         if($need_question>count($questions))
             $need_question=count($questions);
         LocalRedirect('/cabinet/courses/testing/' . $test_id.'/'.$questions[($need_question-1)]['ID'].'/');
@@ -315,6 +315,7 @@ class ProcessTest
     public function goToQuestionOfPreTestByNumber($need_question, $test_id)
     {
         $questions = array_values(\Teaching\Tests::getQuestionsByTest($test_id));
+
         if($need_question>count($questions))
             $need_question=count($questions);
         LocalRedirect('/cabinet/courses/pretesting/' . $test_id.'/'.$questions[($need_question-1)]['ID'].'/');

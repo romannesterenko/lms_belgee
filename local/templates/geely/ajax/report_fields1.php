@@ -96,6 +96,7 @@ $roles_filter = [];
 if(check_full_array($filter['UF_ROLE']))
     $roles_filter["ID"] = $filter['UF_ROLE'];
 
+$_REQUEST['direction'] = $_REQUEST['direction']??'all';
 
 $roles =  check_full_array($roles_filter["ID"])||$_REQUEST['direction'] == 'all'? Role::getList($roles_filter, ['ID', 'NAME']):[];
 if(check_full_array($roles)){
@@ -158,7 +159,10 @@ switch ($_REQUEST['direction']) {
 $response['filter'] = $filter;
 
 $response['users_getlist'] = $users;
+
+
 $response['request'] = $request;
+
 echo json_encode($response);
 
 

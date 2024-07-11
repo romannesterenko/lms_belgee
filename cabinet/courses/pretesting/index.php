@@ -82,7 +82,6 @@ $questions = Tests::getQuestionsByTest($test['ID'], $new_order);
 $id = 0;
 $num = 1;
 $need_question = $test_processed->getCurrentQuestionNumber($_REQUEST['test_id'], 0, $current_completion['ID']);
-
 if($test_processed->isPreBegined($_REQUEST['test_id'], 0, $current_completion['ID'])) {
     foreach ($questions as $key => $one_question) {
         $id = $key;
@@ -93,6 +92,7 @@ if($test_processed->isPreBegined($_REQUEST['test_id'], 0, $current_completion['I
 }
 if($num>count($questions))
     $num=count($questions);
+
 if($num==1&&!$test_processed->isPreBegined($_REQUEST['test_id'], 0, $current_completion['ID']))
     $test_processed->startPreProcess($_REQUEST['test_id'], 0, $current_completion['ID']);
 else {

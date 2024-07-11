@@ -6,7 +6,7 @@ foreach ($arResult['ITEMS'] as &$ITEM){
     }else{
         $schedules = \Teaching\SheduleCourses::getByCourse($ITEM['ID']);
         $schedule = end($schedules);
-        $ITEM['PROPERTIES']['BEGIN_DATE']['VALUE'] = \Helpers\DateHelper::getHumanDate($schedule['PROPERTIES']['BEGIN_DATE'], 'd F');
-        $ITEM['PROPERTIES']['END_DATE']['VALUE'] = \Helpers\DateHelper::getHumanDate($schedule['PROPERTIES']['END_DATE'], 'd F Y');
+        $ITEM['PROPERTIES']['BEGIN_DATE']['VALUE'] = check_full_array($schedule)?\Helpers\DateHelper::getHumanDate($schedule['PROPERTIES']['BEGIN_DATE'], 'd F'):'Нет расписаний';
+        $ITEM['PROPERTIES']['END_DATE']['VALUE'] = check_full_array($schedule)?\Helpers\DateHelper::getHumanDate($schedule['PROPERTIES']['END_DATE'], 'd F Y'):'';
     }
 }
