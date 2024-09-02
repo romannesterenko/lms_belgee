@@ -74,8 +74,12 @@ if(check_full_array($_REQUEST['role'])){
     }
 }
 $data = [];
-$params['filter'] = ['ACTIVE' => 'Y', '!UF_DEALER' => false, "!UF_ROLE" => false];
-$params['select'] = ['ID', 'UF_CERT_USER', "UF_DEALER", "UF_ROLE"];
+$params['filter'] = [
+    'ACTIVE' => 'Y',
+    '!UF_DEALER' => false,
+    "!UF_ROLE" => false
+];
+$params['select'] = ['ID', 'UF_CERT_USER', "UF_DEALER", "UF_ROLE", "UF_CERT_USER_DATA"];
 $users = \Models\User::getArray($params);
 foreach ($dealers as $dealer_){
     if($dealer_["ID"]==360)
@@ -89,8 +93,26 @@ foreach ($dealers as $dealer_){
             if(!in_array($role_id, $user['UF_ROLE']))
                 continue;
             $data[$dealer_['ID']."_".$role_id]['USERS'][] = $user;
-            if($user['UF_CERT_USER']==1)
-                $data[$dealer_['ID']."_".$role_id]['CERT_USERS']++;
+            if($user['UF_CERT_USER']==1) {
+                if (!empty($_REQUEST['course_date_before']) || !empty($_REQUEST['course_date_after'])){
+                    if (empty($_REQUEST['course_date_before']))
+                        $start_request_tmstmp = strtotime("01.01.1970");
+                    else
+                        $start_request_tmstmp = strtotime($_REQUEST['course_date_before']);
+                    if (empty($_REQUEST['course_date_after']))
+                        $end_request_tmstmp = time();
+                    else
+                        $end_request_tmstmp = strtotime($_REQUEST['course_date_after']);
+
+                    $date_cert_tmstmp = strtotime($user['UF_CERT_USER_DATA']);
+                    if ($date_cert_tmstmp >= $start_request_tmstmp && $date_cert_tmstmp <= $end_request_tmstmp ) {
+                        $data[$dealer_['ID'] . "_" . $role_id]['CERT_USERS']++;
+                    }
+
+                } else {
+                    $data[$dealer_['ID'] . "_" . $role_id]['CERT_USERS']++;
+                }
+            }
             unset($users[$key]);
         }
         $data[$dealer_['ID']."_".$role_id]['DEALER'] = $dealer_;

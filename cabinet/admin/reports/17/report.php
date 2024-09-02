@@ -81,7 +81,19 @@ $data = [];
 $params['filter'] = ['ACTIVE' => 'Y', '!UF_DEALER' => false, "UF_ROLE" => array_keys($roles)];
 $params['select'] = ['ID', 'LAST_NAME', 'NAME', 'UF_CERT_USER', "UF_DEALER", "UF_ROLE"];
 $users = \Models\User::getArray($params);
-$completed = (new \Teaching\CourseCompletion())->get(['UF_IS_COMPLETE' => 1, 'UF_COURSE_ID' => $course_ids]);
+$completions_filter = ['UF_IS_COMPLETE' => 1, 'UF_COURSE_ID' => $course_ids];
+
+if (!empty($_REQUEST['course_date_before']) || !empty($_REQUEST['course_date_after'])){
+    if (empty($_REQUEST['course_date_before']))
+        $completions_filter['>=UF_COMPLETED_TIME'] = "01.01.1970 00:00:00";
+    else
+        $completions_filter['>=UF_COMPLETED_TIME'] = date("d.m.Y 00:00:00", strtotime($_REQUEST['course_date_before']));
+    if (empty($_REQUEST['course_date_after']))
+        $completions_filter['<=UF_COMPLETED_TIME'] = date('d.m.Y H:i:s');
+    else
+        $completions_filter['<=UF_COMPLETED_TIME'] = date("d.m.Y 23:59:59", strtotime($_REQUEST['course_date_after']));
+}
+$completed = (new \Teaching\CourseCompletion())->get($completions_filter);
 foreach ($dealers as $dealer_) {
     if($dealer_["ID"]==360)
         continue;

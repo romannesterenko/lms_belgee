@@ -123,6 +123,16 @@ $years = range((int)date('Y')-5, (int)date('Y'));
                                 <?php }?>
                             </select>
                         </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <div class="form-group" style="width: 100%;margin-right: 20px;">
+                                    <label for="">Дата прохождения курса от</label>
+                                    <input type="date" name="course_date_before">
+                                </div>
+                                <div class="form-group" style="width: 100%;">
+                                    <label for="">Дата прохождения курса до</label>
+                                    <input type="date" name="course_date_after">
+                                </div>
+                            </div>
                         <div class="form-group" style="display: flex; padding-top: 1rem;">
                             <div class="btn-center">
                                 <button class="btn">Генерировать</button>

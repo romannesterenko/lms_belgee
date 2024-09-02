@@ -149,7 +149,20 @@ foreach ($dealers as $dealer_temp) {
             }
         }
     }
-    $completed = (new CourseCompletion())->get(['UF_IS_COMPLETE' => 1, 'UF_USER_ID' => array_keys($dealer_temp['USERS']), "UF_COURSE_ID" => array_values(array_unique($item["ALL_COURSES_ARRAY"]))]);
+
+    $completions_filter = ['UF_IS_COMPLETE' => 1, 'UF_USER_ID' => array_keys($dealer_temp['USERS']), "UF_COURSE_ID" => array_values(array_unique($item["ALL_COURSES_ARRAY"]))];
+
+    if (!empty($_REQUEST['course_date_before']) || !empty($_REQUEST['course_date_after'])){
+        if (empty($_REQUEST['course_date_before']))
+            $completions_filter['>=UF_COMPLETED_TIME'] = "01.01.1970 00:00:00";
+        else
+            $completions_filter['>=UF_COMPLETED_TIME'] = date("d.m.Y 00:00:00", strtotime($_REQUEST['course_date_before']));
+        if (empty($_REQUEST['course_date_after']))
+            $completions_filter['<=UF_COMPLETED_TIME'] = date('d.m.Y H:i:s');
+        else
+            $completions_filter['<=UF_COMPLETED_TIME'] = date("d.m.Y 23:59:59", strtotime($_REQUEST['course_date_after']));
+    }
+    $completed = (new \Teaching\CourseCompletion())->get($completions_filter);
 
     $arr = [];
 

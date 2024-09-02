@@ -112,14 +112,21 @@ foreach ($dealers as $dealer_) {
     foreach ($users as $user__){
         $n_u[$user__['ID']] = $user__;
     }
-    /*if($dealer_['CODE']=='501504265') {
-        dump(array_values(array_unique($course_ids)));
-        dump(array_values(array_unique($data[$dealer_['ID']]['ALL_COURSES_'])));
-        dump(array_diff(array_values(array_unique($course_ids)), array_values(array_unique($data[$dealer_['ID']]['ALL_COURSES_']))));
-    }*/
-    //dump($data[$dealer_['ID']]['ALL_COURSES_']);
+
     $data[$dealer_['ID']]['ALL_COURSES'] = count($data[$dealer_['ID']]['ALL_COURSES_']);
-    $completed = (new \Teaching\CourseCompletion())->get(['UF_IS_COMPLETE' => 1, 'UF_USER_ID' => $user_ids, "UF_COURSE_ID" => array_values(array_unique($data[$dealer_['ID']]['ALL_COURSES_']))]);
+    $completions_filter = ['UF_IS_COMPLETE' => 1, 'UF_USER_ID' => $user_ids, "UF_COURSE_ID" => array_values(array_unique($data[$dealer_['ID']]['ALL_COURSES_']))];
+
+    if (!empty($_REQUEST['course_date_before']) || !empty($_REQUEST['course_date_after'])){
+        if (empty($_REQUEST['course_date_before']))
+            $completions_filter['>=UF_COMPLETED_TIME'] = "01.01.1970 00:00:00";
+        else
+            $completions_filter['>=UF_COMPLETED_TIME'] = date("d.m.Y 00:00:00", strtotime($_REQUEST['course_date_before']));
+        if (empty($_REQUEST['course_date_after']))
+            $completions_filter['<=UF_COMPLETED_TIME'] = date('d.m.Y H:i:s');
+        else
+            $completions_filter['<=UF_COMPLETED_TIME'] = date("d.m.Y 23:59:59", strtotime($_REQUEST['course_date_after']));
+    }
+    $completed = (new \Teaching\CourseCompletion())->get($completions_filter);
     $new_completions = [];
     $completions_by_users = [];
     foreach ($completed as $one) {
