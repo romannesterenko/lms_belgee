@@ -219,7 +219,7 @@ class UserHelper
     public static function getFullName($user_id = 0)
     {
         $user_id = self::prepareUserId($user_id);
-        $user = self::getList(['ID' => $user_id], ['NAME']);
+        $user = self::getList(['ID' => $user_id], ['NAME', 'LAST_NAME']);
         return $user['NAME'].' '.$user['LAST_NAME'];
     }
 

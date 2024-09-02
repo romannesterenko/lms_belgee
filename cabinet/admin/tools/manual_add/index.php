@@ -30,6 +30,12 @@ $courses = Models\Course::getList(['ACTIVE' => 'Y'], ['ID', 'NAME'])
                                 <?php }?>
                             </select>
                         </div>
+                            <div class="form-group no_cert hidden">
+                                <div class="checkbox-item" style="padding-right: 20px">
+                                    <input type="checkbox" id="no_cert" name="no_cert" style="display: none" value="Y">
+                                    <label for="no_cert" style="padding-left: 30px;">Не активировать сертификат</label>
+                                </div>
+                            </div>
                         <div class="form-group selectable hidden" >
                             <label for="">Сертификат для курса</label>
                             <select class="js-example-basic-multiple" name="certificate" style="width: 100%;">
@@ -108,6 +114,7 @@ $courses = Models\Course::getList(['ACTIVE' => 'Y'], ['ID', 'NAME'])
                 let course_id = $(this).val();
                 let date = $('[name="course_date"]').val();
                 $("[name='certificate']").parent('.form-group.selectable').addClass('hidden');
+                $('.form-group.no_cert').addClass('hidden');
                 $("[name='certificate']").empty();
                 $.ajax({
                     type: 'POST',
@@ -125,6 +132,7 @@ $courses = Models\Course::getList(['ACTIVE' => 'Y'], ['ID', 'NAME'])
                                 html += '<option value="' + response.list[k].ID + '">' + response.list[k].CODE + '</option>';
                             }
                             $("[name='certificate']").parent('.form-group.selectable.hidden').removeClass('hidden');
+                            $('.form-group.no_cert.hidden').removeClass('hidden');
                             $("[name='certificate']").empty().html(html);
                         }
                         /*if (!response.is_payment_course) {

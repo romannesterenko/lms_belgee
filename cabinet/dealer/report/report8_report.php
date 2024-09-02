@@ -51,7 +51,7 @@ if($_REQUEST['registered_employee']=='on'||$_REQUEST['deleted_employee']=='on'){
     }
 }
 if($_REQUEST['last_authorization_before']){
-    $filter['>LAST_LOGIN'] = date('d.m.Y 00:00:01', strtotime($_REQUEST['last_authorization_before']));
+    $filter['>LAST_LOGIN'] = date('d.m.Y 00:00:00', strtotime($_REQUEST['last_authorization_before']));
 }
 if($_REQUEST['last_authorization_after']){
     $filter['<LAST_LOGIN'] = date('d.m.Y 23:59:59', strtotime($_REQUEST['last_authorization_after']));

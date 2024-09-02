@@ -141,12 +141,12 @@ foreach ($dealers as &$dealer_) {
                 $completions_filter = $period_completions_filter = ['UF_COURSE_ID' => $role_foreach_course['ID'], 'UF_IS_COMPLETE' => 1];
                 if (\Models\Course::isFreeEntrance($role_foreach_course['ID'])){
                     if($from_date)
-                        $period_completions_filter['>=UF_COMPLETED_TIME'] = $from_date." 00:00:01";
+                        $period_completions_filter['>=UF_COMPLETED_TIME'] = $from_date." 00:00:00";
                     if($from_to)
                         $period_completions_filter['<=UF_COMPLETED_TIME'] = $from_to." 23:59:59";
                 } else {
                     if($from_date)
-                        $period_completions_filter['>=UF_DATE'] = $from_date." 00:00:01";
+                        $period_completions_filter['>=UF_DATE'] = $from_date." 00:00:00";
                     if($from_to)
                         $period_completions_filter['<=UF_DATE'] = $from_to." 23:59:59";
                 }

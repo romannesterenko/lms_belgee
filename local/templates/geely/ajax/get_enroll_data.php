@@ -29,7 +29,7 @@ if($request['action']=='set_course_for_employee'){
             $all_employees[] = $employee;
         }
     }
-    foreach ($all_employees as $tem_employee){
+    foreach ($all_employees as $tem_employee) {
         $exists = $completions->getByCourseAndUser($tem_employee['ID'], $course['ID']);
     }
 
@@ -156,7 +156,7 @@ if($request['action']=='set_course_for_employee'){
     if ($type == 'enroll_form') {
         $html .= '<div class="modal-icon"><img src="' . SITE_TEMPLATE_PATH . '/images/education-icon.svg" alt=""></div>
         <h3 class="h3 center">'.Loc::getMessage('COURSE_REGISTER').'</h3>';
-        if(Courses::isPaid($request['course_id'])) {
+        if(!\Models\Course::allowToFreeEnroll($request['course_id']) && Courses::isPaid($request['course_id'])) {
             $payment_methods = \Models\Course::getPaymentMethodsList();
             if(\Models\Course::isAllPayment($request['course_id']) && !\Teaching\Courses::isAllowToEnrollByCourseAndDealer($request['course_id'])){
                 $html .= '<p style="margin-bottom: 10px; color: red">Оплата с баланса счета недоступна из за отрицательного баланса дилера</p>';

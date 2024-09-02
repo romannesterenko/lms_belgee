@@ -40,11 +40,11 @@ if(!empty($selected_month)||!empty($selected_year)) {
         $first_day_of_month = '01.'.$selected_month.'.'.$selected_year;
         $last_day_of_month = cal_days_in_month(CAL_GREGORIAN, $selected_month, $selected_year).'.'.$selected_month.'.'.$selected_year;
         $filter = [
-            '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($first_day_of_month.' 00:00:01', "YYYY-MM-DD H:i:s"),
+            '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($first_day_of_month.' 00:00:00', "YYYY-MM-DD H:i:s"),
             '<=PROPERTY_BEGIN_DATE' => ConvertDateTime($last_day_of_month.' 23:59:59', "YYYY-MM-DD H:i:s"),
         ];
         $filter_end = [
-            '>=PROPERTY_END_DATE' => ConvertDateTime($first_day_of_month.' 00:00:01', "YYYY-MM-DD H:i:s"),
+            '>=PROPERTY_END_DATE' => ConvertDateTime($first_day_of_month.' 00:00:00', "YYYY-MM-DD H:i:s"),
             '<=PROPERTY_END_DATE' => ConvertDateTime($last_day_of_month.' 23:59:59', "YYYY-MM-DD H:i:s"),
         ];
     } else {
@@ -52,11 +52,11 @@ if(!empty($selected_month)||!empty($selected_year)) {
             $first_day_of_month = '01.01.'.$selected_year;
             $last_day_of_month = '31.12.'.$selected_year;;
             $filter = [
-                '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($first_day_of_month.' 00:00:01', "YYYY-MM-DD H:i:s"),
+                '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($first_day_of_month.' 00:00:00', "YYYY-MM-DD H:i:s"),
                 '<=PROPERTY_BEGIN_DATE' => ConvertDateTime($last_day_of_month.' 23:59:59', "YYYY-MM-DD H:i:s"),
             ];
             $filter_end = [
-                '>=PROPERTY_END_DATE' => ConvertDateTime($first_day_of_month.' 00:00:01', "YYYY-MM-DD H:i:s"),
+                '>=PROPERTY_END_DATE' => ConvertDateTime($first_day_of_month.' 00:00:00', "YYYY-MM-DD H:i:s"),
                 '<=PROPERTY_END_DATE' => ConvertDateTime($last_day_of_month.' 23:59:59', "YYYY-MM-DD H:i:s"),
             ];
         } else {

@@ -25,7 +25,9 @@ $APPLICATION->SetTitle($arResult['ITEM']['NAME']);
                 </div>
                 <div class="course-main__content">
                     <div class="course-main__information">
-                        <?php if(is_array($arResult['ITEM']['AVAILABLE_SCHEDULES_BY_DATE'])&&count($arResult['ITEM']['AVAILABLE_SCHEDULES_BY_DATE'])>0){?>
+                        <?php
+                        //dump($arResult['ITEM']);
+                        if(is_array($arResult['ITEM']['AVAILABLE_SCHEDULES_BY_DATE']) && count($arResult['ITEM']['AVAILABLE_SCHEDULES_BY_DATE'])>0){?>
                             <div class="course-main__info-item">
                                 <span class="course-main__info-item-title">Даты проведения:</span>
                                 <p>
@@ -66,7 +68,7 @@ $APPLICATION->SetTitle($arResult['ITEM']['NAME']);
                         <?php }?>
                         <div class="course-main__info-item">
                             <span class="course-main__info-item-title"><?=Loc::getMessage('FORMAT_TITLE')?></span>
-                            <span class="course-main__info-item-format <?=strtolower($arResult['ITEM']['PROPERTIES']['COURSE_FORMAT'])?>"><?=$arResult['ITEM']['PROPERTIES']['COURSE_FORMAT']?></span>
+                            <span class="course-main__info-item-format <?=strtolower($arResult['ITEM']['PROPERTIES']['COURSE_FORMAT']??'offline')?>"><?=$arResult['ITEM']['PROPERTIES']['COURSE_FORMAT']??"Offline"?></span>
                         </div>
 
                         <?php if($arResult['ITEM']['PROPERTIES']['FOR_ROLES_MUST']&&count($arResult['ITEM']['PROPERTIES']['FOR_ROLES_MUST'])>0){?>
@@ -177,15 +179,18 @@ $APPLICATION->SetTitle($arResult['ITEM']['NAME']);
                 if(!$arResult['ITEM']['IS_COMPLETE']&&(new \Teaching\CourseCompletion())->missAttempts($arResult['ITEM']['ID'])){?>
                     <span class="status status--passed status--lg"><span class="icon"><img src="<?=SITE_TEMPLATE_PATH?>/images/check3.svg" alt=""></span> Попытки исчерпаны</span>
                 <?php } else {
-                    if(!\Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID'])){?>
+                    if(!\Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID']) && !\Models\Course::allowToFreeEnroll($arResult['ITEM']['ID'])) {?>
                         <span class="status status--not-passed status--lg"><span class="icon"><img src="<?=SITE_TEMPLATE_PATH?>/images/delete.svg" alt=""></span> На балансе дилера недостаточно средств для записи</span>
                     <?php }
+                    if ($status=="expired") {?>
+                        <span class="status status--not-passed status--lg"><span class="icon"><img src="<?=SITE_TEMPLATE_PATH?>/images/delete.svg" alt=""></span> Закончился срок действия сертификата</span>
+                    <?php } elseif($status=="expired_date") {?>
+                        <span class="status status--not-passed status--lg"><span class="icon"><img src="<?=SITE_TEMPLATE_PATH?>/images/delete.svg" alt=""></span> Закончился срок действия сертификата</span>
+                    <?php } elseif($status=="retest_failed") {?>
+                        <span class="status status--not-passed status--lg"><span class="icon"><img src="<?=SITE_TEMPLATE_PATH?>/images/delete.svg" alt=""></span> Ретест провален</span>
+                    <?php }
                     if($arResult['ITEM']['INFO']) {
-                        if ($status=="expired") {?>
-                            <span class="status status--not-passed status--lg"><span class="icon"><img src="<?=SITE_TEMPLATE_PATH?>/images/delete.svg" alt=""></span> Закончился срок действия сертификата</span>
-                        <?php } elseif($status=="expired_date") {?>
-                            <span class="status status--not-passed status--lg"><span class="icon"><img src="<?=SITE_TEMPLATE_PATH?>/images/delete.svg" alt=""></span> Закончился срок действия сертификата</span>
-                        <?php } elseif($status=="uncompleted") {
+                        if($status=="uncompleted") {
 
                         } else {?>
                             <span class="status status--passed status--lg"><span class="icon"><img src="<?=SITE_TEMPLATE_PATH?>/images/check3.svg" alt=""></span> <?=$arResult['ITEM']['INFO']?></span>
@@ -193,8 +198,9 @@ $APPLICATION->SetTitle($arResult['ITEM']['NAME']);
                     }
                 }
 
-
+            //dump($arResult['ITEM']);
             if($arResult['ITEM']['WAS_STARTED'] && $arResult['ITEM']['IS_HYBRID']) {
+
                     if (\Models\Course::hasIncomingTest($arResult['ITEM']['ID'])) {
                         if(\Models\Course::hasUncompletingIncomingTest($arResult['ITEM']['ID'])) {?>
                             <a href="<?= \Teaching\Tests::generateLinkToIncomingTest($arResult['ITEM']['ID'])?>" class="btn btn--reverse">Пройти предварительный тест</a>
@@ -213,15 +219,43 @@ $APPLICATION->SetTitle($arResult['ITEM']['NAME']);
                         <?php }
                     }?>
                 <?php } ?>
-                <?php if($arResult['ITEM']['IS_FOR_SINGLE_STUDY']) {?>
+                <?php if($arResult['ITEM']['IS_FOR_SINGLE_STUDY']) {
+                    ?>
                     <?php if($arResult['ITEM']['WAS_STARTED']) {?>
                         <a href="<?=$arResult['ITEM']['COMPLETION_LINK']?>" class="btn btn--reverse"><?= Loc::getMessage('TO_PROCESS') ?></a>
-                    <?php } elseif($arResult['ITEM']['IS_COMPLETED_COURSE']) {
-                        ?>
+                    <?php }
+                    elseif ($status=='expired') {
+                        if($arResult['ITEM']['PROPERTIES']["HAS_RETEST"] == "Да") {
+                            if (\Models\Course::isScormCourse($arResult['ITEM']['ID']) && !\Models\Course::ScormCourseHasRetest($arResult['ITEM']['ID'])) {?>
+                                <a href="<?= \Teaching\Tests::generateLinkToScormReTest($arResult['ITEM']['ID'])?>" class="btn btn--reverse">Пройти ретест</a>
+                            <?php } else {?>
+                                <a href="<?= \Teaching\Tests::generateLinkToReTest($arResult['ITEM']['ID'])?>" class="btn btn--reverse">Пройти ретест</a>
+                            <?php }
+                        } else {
+                            if($arResult['ITEM']['REGISTER_BUTTON']['NOT_NEED_SHOW']) {
+
+                            } else {
+                                if(!(new \Teaching\CourseCompletion())->missAttempts($arResult['ITEM']['ID'])){?>
+                                    <?php if(\Teaching\Courses::isAllowToEnrollByCountry($arResult['ITEM']['ID'])) {?>
+                                        <a href="javascript:void(0)" class="btn btn--reverse detail_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL')?></a>
+                                    <?php }?>
+                                <?php }
+                            }
+                        }
+                    } elseif($status=='retest_failed') {
+                        if(!(new \Teaching\CourseCompletion())->missAttempts($arResult['ITEM']['ID'])){?>
+                            <?php if(\Teaching\Courses::isAllowToEnrollByCountry($arResult['ITEM']['ID'])) {?>
+                                <a href="javascript:void(0)" class="btn btn--reverse detail_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL')?></a>
+                            <?php }?>
+                        <?php }
+                    } elseif($arResult['ITEM']['IS_COMPLETED_COURSE']) {?>
                         <?php if( $status=='expired') {
                                 if($arResult['ITEM']['PROPERTIES']["HAS_RETEST"] == "Да") {
                                     if (\Models\Course::isScormCourse($arResult['ITEM']['ID']) && !\Models\Course::ScormCourseHasRetest($arResult['ITEM']['ID'])) {?>
                                         <a href="<?= \Teaching\Tests::generateLinkToScormReTest($arResult['ITEM']['ID'])?>" class="btn btn--reverse">Пройти ретест</a>
+                                    <?php } elseif(\Models\Course::hasOnlyScormRetest($arResult['ITEM']['ID'])) {?>
+                                        <a href="<?= \Teaching\Tests::generateLinkToScormReTest($arResult['ITEM']['ID'])?>" class="btn btn--reverse">Пройти ретест</a>
+
                                     <?php } else {?>
                                         <a href="<?= \Teaching\Tests::generateLinkToReTest($arResult['ITEM']['ID'])?>" class="btn btn--reverse">Пройти ретест</a>
                                     <?php }
@@ -237,6 +271,7 @@ $APPLICATION->SetTitle($arResult['ITEM']['NAME']);
                                     }
                                 }?>
                             <?php } else {
+
                                 if( $status=='uncompleted') {
                                     if($arResult['ITEM']['REGISTER_BUTTON']['NOT_NEED_SHOW']) {
 
@@ -272,7 +307,7 @@ $APPLICATION->SetTitle($arResult['ITEM']['NAME']);
                     <?php }?>
                     <?php if($arResult['USER']['HAS_RIGHTS_TO_ENROLL_EMPLOYEE'] && \Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID'])){?>
                         <?php if(\Teaching\Courses::isAllowToEnrollByCountry($arResult['ITEM']['ID'])) {?>
-                            <a href="javascript:void(0)" class="btn btn--reverse employee_enroll_butt" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL_EMPLOYEE')?></a>
+                            <a href="javascript:void(0)" class="btn btn--reverse employee_enroll_butt" style="width: 200px" data-course-id="<?=$arResult['ITEM']['ID']?>"><?=Loc::getMessage('ENROLL_EMPLOYEE')?></a>
                         <?php }?>
                     <?php }?>
 
@@ -283,7 +318,10 @@ $APPLICATION->SetTitle($arResult['ITEM']['NAME']);
                     if($status=='expired') {
                         if($arResult['ITEM']['PROPERTIES']["HAS_RETEST"] == "Да") {
                             if (\Models\Course::isScormCourse($arResult['ITEM']['ID'])) {?>
-                            <?php } else { ?>
+                            <?php } elseif(\Models\Course::hasOnlyScormRetest($arResult['ITEM']['ID'])) {?>
+                                <a href="<?= \Teaching\Tests::generateLinkToScormReTest($arResult['ITEM']['ID'])?>" class="btn btn--reverse">Пройти ретест</a>
+
+                            <?php } else {?>
                                 <a href="<?= \Teaching\Tests::generateLinkToReTest($arResult['ITEM']['ID'])?>" class="btn btn--reverse">Пройти ретест</a>
                             <?php } ?>
                         <?php }

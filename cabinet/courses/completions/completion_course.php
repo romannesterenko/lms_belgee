@@ -32,12 +32,12 @@ if((int)$_REQUEST['id']>0) {
     }?>
     <div class="main-content">
         <div class="content">
-            <?php if($is_free) {?>
-                <?php if(!empty($course['PROPERTIES']['SCORM'])) {
+            <?php $current_completion = (new CourseCompletion())->get(['UF_USER_ID' => $USER->GetID(), 'UF_COURSE_ID' => $course['ID']]);
+            if($is_free || ($current_completion[0]['UF_RETEST'] && !empty($course['PROPERTIES']['RETEST_SCORM']))) {
+                if(!empty($course['PROPERTIES']['SCORM']) || ($current_completion[0]['UF_RETEST'] && !empty($course['PROPERTIES']['RETEST_SCORM']))) {
                     $all_links = $course['PROPERTIES']['SCORM'];
                     $completed = true;
                     $is_retest = false;
-                    $current_completion = (new CourseCompletion())->get(['UF_USER_ID' => $USER->GetID(), 'UF_COURSE_ID' => $course['ID']]);
                     if(check_full_array($current_completion)){
                         $current_completion = current($current_completion);
                         if($current_completion['UF_RETEST'] && !empty($course['PROPERTIES']['RETEST_SCORM'])) {

@@ -300,7 +300,7 @@ class Pdf
             }
         }
     }
-    public static function generateCertFromCompletionId($completion_id): void
+    public static function generateCertFromCompletionId($completion_id, $regen = false): void
     {
         $completions = new \Teaching\CourseCompletion();
         $compl_info = $completions->find($completion_id);
@@ -319,7 +319,6 @@ class Pdf
             $user = User::find($compl_info['UF_USER_ID'], ['ID', 'NAME', 'LAST_NAME']);
             if(!$user['ID']>0)
                 return;
-
             $user = $user['LAST_NAME'].' '.$user['NAME'];
             $start_cert_date = $compl_info['UF_COMPLETED_TIME']?date('d.m.Y', strtotime($compl_info['UF_COMPLETED_TIME'])):(string)$compl_info['UF_DATE'];
             $file_date = (string)$compl_info['UF_DATE'];
@@ -461,17 +460,33 @@ class Pdf
             }
         } else {
             if (!empty($course['PROPERTY_CERT_NUMBER_TEMPLATE_VALUE'])) {
-                $user = User::getFullName($compl_info['UF_USER_ID']);
-                if (!$user)
+                $user = User::find($compl_info['UF_USER_ID'], ['ID', 'NAME', 'LAST_NAME']);
+                if(!$user['ID']>0)
                     return;
+                $user = $user['LAST_NAME'].' '.$user['NAME'];
                 $last_num = $course['PROPERTY_LAST_CERT_NUMBER_VALUE'] ?? 0;
-                $cur_num = ++$last_num;
                 $compl_info['UF_DATE'] = Courses::isFreeSheduleCourse($compl_info['UF_COURSE_ID']) && !empty($compl_info['UF_COMPLETED_TIME'])?DateHelper::getHumanDate((string)$compl_info['UF_COMPLETED_TIME'], "d.m.Y"):$compl_info['UF_DATE'];
 
-                if ((int)$course['PROPERTY_COUNT_SYMBOLS_VALUE'] > 0) {
-                    $cur_num = str_pad($cur_num, (int)$course['PROPERTY_COUNT_SYMBOLS_VALUE'], 0, STR_PAD_LEFT);
+                if ($compl_info['ID'] == 31871) {
+                    if ($exist_sertificate = Sertificate::getByCompletion($compl_info['ID'])) {
+                        $cur_num = $last_num;
+                        $cert_number = $exist_sertificate['UF_CERT_NUMBER'];
+                    } else {
+                        $cur_num = ++$last_num;
+                        if ((int)$course['PROPERTY_COUNT_SYMBOLS_VALUE'] > 0) {
+                            $cur_num = str_pad($cur_num, (int)$course['PROPERTY_COUNT_SYMBOLS_VALUE'], 0, STR_PAD_LEFT);
+                        }
+                        $cert_number = str_replace('#NUMBER#', $cur_num, $course['PROPERTY_CERT_NUMBER_TEMPLATE_VALUE']);
+                    }
+                } else {
+                    $cur_num = ++$last_num;
+
+                    if ((int)$course['PROPERTY_COUNT_SYMBOLS_VALUE'] > 0) {
+                        $cur_num = str_pad($cur_num, (int)$course['PROPERTY_COUNT_SYMBOLS_VALUE'], 0, STR_PAD_LEFT);
+                    }
+                    $cert_number = str_replace('#NUMBER#', $cur_num, $course['PROPERTY_CERT_NUMBER_TEMPLATE_VALUE']);
                 }
-                $cert_number = str_replace('#NUMBER#', $cur_num, $course['PROPERTY_CERT_NUMBER_TEMPLATE_VALUE']);
+
 
                 $months = $course['PROPERTY_CERT_EXP_VALUE'] > 0 ? $course['PROPERTY_CERT_EXP_VALUE'] : 12;
                 $start_cert_date = Courses::isFreeSheduleCourse($compl_info['UF_COURSE_ID'])&&$compl_info['UF_COMPLETED_TIME']?(string)$compl_info['UF_COMPLETED_TIME']:(string)$compl_info['UF_DATE'];
@@ -575,5 +590,31 @@ class Pdf
 
             }
         }
+    }
+
+    public static function setWaterMarkImage($pdfPath, $waterMarkPath)
+    {
+        $pdf = new FPDI();
+        $pageCount = $pdf->setSourceFile($pdfPath);
+        // Проходим через все страницы исходного PDF
+        for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+            // Импортируем страницу
+            $templateId = $pdf->importPage($pageNo);
+            // Определяем размеры страницы
+            $size = $pdf->getTemplateSize($templateId);
+
+            // Создаем новую страницу с теми же размерами
+            $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+            // Используем импортированный шаблон
+            $pdf->useTemplate($templateId);
+
+
+            // Позиционируем водяной знак по центру страницы
+            $pdf->Image($waterMarkPath, ($size['width'] - 50) / 1.2, ($size['height'] - 50) / 1.2, 50, 50);
+
+            // Сбрасываем прозрачность
+        }
+        // Выводим готовый PDF файл для скачивания
+
     }
 }

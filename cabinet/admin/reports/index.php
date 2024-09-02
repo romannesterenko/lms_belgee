@@ -255,6 +255,17 @@ use Bitrix\Main\Localization\Loc;?>
                     <img src="<?=SITE_TEMPLATE_PATH?>/images/spinner.gif" alt="">
                 </div>
             </div>
+            <div class="timetable-item timetable-item--small timetable-item--attention go_to_report">
+                <a href="/cabinet/admin/reports/23/">
+                    <span class="timetable-item__content">
+                        <span class="timetable-item__title">№23. Обученность персонала по обязательным модулям</span>
+                        <span class="timetable-item__text">Обученность персонала по обязательным модулям</span>
+                  </span>
+                </a>
+                <div class="link_loading_spinner">
+                    <img src="<?=SITE_TEMPLATE_PATH?>/images/spinner.gif" alt="">
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -118,7 +118,7 @@ $_REQUEST['report_id'] = 999999;
         $filter_completions['UF_COURSE_ID'] = \Models\Course::getByRole($_REQUEST['role'], true);
     }
     if(!empty($_REQUEST['course_date_before']))
-        $filter_completions['>UF_DATE'] = date('d.m.Y 00:00:01', strtotime($_REQUEST['course_date_before']));
+        $filter_completions['>UF_DATE'] = date('d.m.Y 00:00:00', strtotime($_REQUEST['course_date_before']));
     if(!empty($_REQUEST['course_date_after']))
         $filter_completions['<UF_DATE'] = date('d.m.Y 23:59:59', strtotime($_REQUEST['course_date_after']));
     $all_completions = (new \Teaching\CourseCompletion())->get($filter_completions);

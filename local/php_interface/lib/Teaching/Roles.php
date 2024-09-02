@@ -138,11 +138,11 @@ class Roles
 
         $by_user = is_array($by_user)?$by_user:[];
         $by_role = self::GetRequiredCourseIdsByRole(UserHelper::getRoleByUser($user_id));
-
         $completion = new CourseCompletion();
         $complete_ids = [];
         foreach ($completion->getCompletedItems($user_id)->getArray() as $completedItem) {
-            if(!Courses::isExpired($completedItem['UF_COURSE_ID']))
+            $status = Course::getStatus($completedItem['UF_COURSE_ID']);
+            if($status=='completed')
                 $complete_ids[] = $completedItem['UF_COURSE_ID'];
         }
         $merge_ids = array_unique(array_merge($by_user, $by_role));

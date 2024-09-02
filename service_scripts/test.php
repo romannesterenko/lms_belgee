@@ -144,7 +144,7 @@ $users_array = [];
 $completions = [];
 foreach ($users as $user){
     $users_array[$user['ID']] = $user;
-    $completions = array_merge($completions, (new \Teaching\CourseCompletion)->get(['UF_USER_ID' => $user['ID'], '>=UF_DATE' => "01.01.2024 00:00:01"]));
+    $completions = array_merge($completions, (new \Teaching\CourseCompletion)->get(['UF_USER_ID' => $user['ID'], '>=UF_DATE' => "01.01.2024 00:00:00"]));
 }
 
 

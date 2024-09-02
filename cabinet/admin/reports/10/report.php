@@ -35,11 +35,11 @@ $first_day_of_month = '01.'.$month.'.'.$year;
 $last_day_of_month = cal_days_in_month(CAL_GREGORIAN, $month, $year).'.'.$month.'.'.$year;
 
 $filter = [
-    '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($first_day_of_month.' 00:00:01', "YYYY-MM-DD H:i:s"),
+    '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($first_day_of_month.' 00:00:00', "YYYY-MM-DD H:i:s"),
     '<=PROPERTY_BEGIN_DATE' => ConvertDateTime($last_day_of_month.' 23:59:59', "YYYY-MM-DD H:i:s"),
 ];
 $filter_end = [
-    '>=PROPERTY_END_DATE' => ConvertDateTime($first_day_of_month.' 00:00:01', "YYYY-MM-DD H:i:s"),
+    '>=PROPERTY_END_DATE' => ConvertDateTime($first_day_of_month.' 00:00:00', "YYYY-MM-DD H:i:s"),
     '<=PROPERTY_END_DATE' => ConvertDateTime($last_day_of_month.' 23:59:59', "YYYY-MM-DD H:i:s"),
 ];
 switch ($_REQUEST['direction']) {
@@ -55,7 +55,38 @@ switch ($_REQUEST['direction']) {
 }
 $this_months_list = $temp_arr = \Teaching\SheduleCourses::collectInfo($filter, $by_days);
 $this_months_end = \Teaching\SheduleCourses::collectInfo($filter_end, $by_days);
-if(check_full_array($this_months_end)){
+$this_months_list_by_days = \Teaching\SheduleCourses::collectInfo($filter, true);
+$this_months_end_by_days = \Teaching\SheduleCourses::collectInfo($filter_end, true);
+
+//dump($this_months_list_by_days);
+//dump($this_months_end_by_days);
+$temp_all_data = [];
+//$temp_end_data = [];
+if (check_full_array($this_months_list_by_days)){
+    foreach ($this_months_list_by_days as $date__ => $this_months_list_by_day) {
+        foreach ($this_months_list_by_day as $this_months_list_by_day_schedule) {
+            if (!$temp_all_data[$this_months_list_by_day_schedule['ID']])
+                $temp_all_data[$this_months_list_by_day_schedule['ID']] = $this_months_list_by_day_schedule;
+        }
+    }
+}
+if (check_full_array($this_months_end_by_days)){
+    foreach ($this_months_end_by_days as $date__ => $this_months_end_by_day) {
+        foreach ($this_months_end_by_day as $this_months_end_by_day_schedule) {
+            if (!$temp_all_data[$this_months_end_by_day_schedule['ID']])
+                $temp_all_data[$this_months_end_by_day_schedule['ID']] = $this_months_end_by_day_schedule;
+        }
+    }
+}
+
+$temp_all_data = array_values($temp_all_data);
+
+// Функция сортировки
+usort($temp_all_data, function($a, $b) {
+    return strtotime($a['PROPERTY_BEGIN_DATE_VALUE']) - strtotime($b['PROPERTY_BEGIN_DATE_VALUE']);
+});
+//dump($temp_all_data);
+if(check_full_array($this_months_end)) {
     $this_months_end = array_reverse($this_months_end);
     foreach ($this_months_end as $day => $schedules) {
         if(!$this_months_list[$day]) {
@@ -65,7 +96,7 @@ if(check_full_array($this_months_end)){
         }
     }
 }
-$data = $temp_arr;
+$data = $temp_all_data;
 $months = [
     "01" => "Январь",
     "02" => "Февраль",

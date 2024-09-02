@@ -19,11 +19,11 @@ $first_day_of_month = '01.'.$month.'.'.$year;
 $last_day_of_month = cal_days_in_month(CAL_GREGORIAN, $month, $year).'.'.$month.'.'.$year;
 
 $filter = [
-    '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($first_day_of_month.' 00:00:01', "YYYY-MM-DD H:i:s"),
+    '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($first_day_of_month.' 00:00:00', "YYYY-MM-DD H:i:s"),
     '<=PROPERTY_BEGIN_DATE' => ConvertDateTime($last_day_of_month.' 23:59:59', "YYYY-MM-DD H:i:s"),
 ];
 $filter_end = [
-    '>=PROPERTY_END_DATE' => ConvertDateTime($first_day_of_month.' 00:00:01', "YYYY-MM-DD H:i:s"),
+    '>=PROPERTY_END_DATE' => ConvertDateTime($first_day_of_month.' 00:00:00', "YYYY-MM-DD H:i:s"),
     '<=PROPERTY_END_DATE' => ConvertDateTime($last_day_of_month.' 23:59:59', "YYYY-MM-DD H:i:s"),
 ];
 if($_REQUEST['op_servis']=='op'||$_REQUEST['op_servis']=='ppo'){

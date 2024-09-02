@@ -114,12 +114,41 @@ use Bitrix\Main\Localization\Loc;?>
                 </div>
             </div>
         </div>
+        <?php if(\Settings\Common::get('enable_subscription_mode') == 'Y'){?>
+            <div style="background-color: #fff; padding: 20px;">
+                <div class="timetable-item timetable-item--small timetable-item--attention go_to_report">
+                    <a href="/cabinet/admin/tools/add_subscriptions/">
+                    <span class="timetable-item__content">
+                        <span class="timetable-item__title">Загрузка подписок</span>
+                    </span>
+                    </a>
+                    <div class="link_loading_spinner">
+                        <img src="<?=SITE_TEMPLATE_PATH?>/images/spinner.gif" alt="">
+                    </div>
+                </div>
+            </div>
+        <?php }?>
+
 
         <div style="background-color: #fff; padding: 20px;">
             <div class="timetable-item timetable-item--small timetable-item--attention go_to_report">
                 <a href="/cabinet/admin/tools/sync/">
                     <span class="timetable-item__content">
                         <span class="timetable-item__title">Миграции</span>
+                    </span>
+                </a>
+                <div class="link_loading_spinner">
+                    <img src="<?=SITE_TEMPLATE_PATH?>/images/spinner.gif" alt="">
+                </div>
+            </div>
+        </div>
+
+
+        <div style="background-color: #fff; padding: 20px;">
+            <div class="timetable-item timetable-item--small timetable-item--attention go_to_report">
+                <a href="/cabinet/admin/tools/check_workbook/">
+                    <span class="timetable-item__content">
+                        <span class="timetable-item__title">Раскодирование пользователя, скачавшего материал</span>
                     </span>
                 </a>
                 <div class="link_loading_spinner">

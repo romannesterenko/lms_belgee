@@ -264,12 +264,28 @@ $arUrlRewrite=array (
     'PATH' => '/cabinet/admin/polls/poll.php',
     'SORT' => 200,
   ),
-  100 => 
+  100 =>
   array (
     'CONDITION' => '#^/api/scorm/([0-9]+)/([0-9]+)/#',
     'RULE' => 'course_id=$1&part=$2',
     'ID' => NULL,
     'PATH' => '/api/scorm/controller.php',
     'SORT' => 200,
+  ),
+  154 =>
+  array (
+    'CONDITION' => '#^/register/([-a-zA-Z0-9_.]+)/#',
+    'RULE' => 'hash=$1',
+    'ID' => NULL,
+    'PATH' => '/register/register.php',
+    'SORT' => 100,
+  ),
+  155 =>
+  array (
+    'CONDITION' => '#^/download/document/([0-9]+)/#',
+    'RULE' => 'id=$1',
+    'ID' => NULL,
+    'PATH' => '/system/tools/download/workbook/index.php',
+    'SORT' => 100,
   ),
 );

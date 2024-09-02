@@ -5,6 +5,7 @@ const NOT_CHECK_PERMISSIONS = true;
 require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.php");
 
 use Bitrix\Main\Application;
+use Helpers\Log;
 use Notifications\SiteNotifications;
 use Teaching\CourseCompletion;
 use Teaching\Courses;
@@ -14,6 +15,11 @@ use Teaching\SheduleCourses;
 $request = Application::getInstance()->getContext()->getRequest()->getValues();
 //test commit
 $response['request'] = $request;
+$error = [
+    'type' => 'enroll_employee_to_course',
+    'request' => $request,
+];
+Log::writeCommon($error, 'add_completion_errors');
 if($request['employee_id']>0&&$request['course_id']>0) {
     $send = false;
     $allow_to_course = true;
@@ -45,7 +51,7 @@ if($request['employee_id']>0&&$request['course_id']>0) {
                     $response['message'] = "Запись невозможна. Количество зарегистрированных на эту дату сотрудников из дилерского центра ".\Models\Dealer::getNameByUser($request['employee_id'])." достигло лимита";
                 } else {
                     $schedule_array = current(SheduleCourses::getById($request['schedule_id']));
-                    if ((int)$schedule_array['PROPERTIES']['LIMIT']==0 || SheduleCourses::getFreePlacesBySchedule($request['schedule_id']) > 0) {
+                    if ((int)$schedule_array['PROPERTIES']['LIMIT'] == 0 || SheduleCourses::getFreePlacesBySchedule($request['schedule_id']) > 0) {
                         $completion = new CourseCompletion();
                         $enroll = new Enrollments();
                         $enroll->create($request);
@@ -93,6 +99,11 @@ if($request['employee_id']>0&&$request['course_id']>0) {
             $response['success'] = false;
         }
     }
+    $error = [
+        'type' => 'enroll_employee_to_course',
+        'response' => $response,
+    ];
+    Log::writeCommon($error, 'add_completion_errors');
     echo json_encode($response);
 }
 

@@ -661,6 +661,10 @@ $(document).on('click','.enroll_employee_to_shedule', function(e){
         need_answer = true;
         title = $('.answer_title').text();
     }
+    if($('input[name="free_enroll"]').val() === 'Y'){
+        need_coupon = 'N';
+        from_balance = 'N';
+    }
     if(need_answer&&answer===''){
         $('.btn.enroll_employee_to_course').parent('.btn-center').before('<div class="popup_error error">Ответ обязателен</div>')
     } else {
@@ -1171,6 +1175,18 @@ $(document).on('click','.employee_enroll_butt', function(e){
     if($('#need_shedule_in_select').length>0 && parseInt($('#need_shedule_in_select').val())>0){
         need_schedule = $('#need_shedule_in_select').val();
     }
+
+    const originalText = $(button).text();
+    let loadingText = 'Загрузка';
+    let dotCount = 0;
+    const maxDots = 3;
+    // Анимация многоточия
+    var loadingInterval = setInterval(function() {
+        dotCount = (dotCount + 1) % (maxDots + 1);
+        var dots = '.'.repeat(dotCount);
+        $(button).text(loadingText + dots);
+    }, 500); // Интервал смены точек
+
     $.ajax({
         type: 'POST',
         url: '/local/templates/geely/ajax/get_enroll_employee_block.php',
@@ -1189,6 +1205,8 @@ $(document).on('click','.employee_enroll_butt', function(e){
                 theme: 'which'
             });
             $('a[href="#ex3"]').click();
+            clearInterval(loadingInterval);
+            $(button).text(originalText);
         },
         error: function (xhr, ajaxOptions, thrownError) {
         },
@@ -1197,7 +1215,19 @@ $(document).on('click','.employee_enroll_butt', function(e){
 //запись сотрудника на расписание
 $(document).on('click','.employee_shedule_enroll_butt', function(e){
     e.preventDefault();
-    var button = $(this);
+    const button = $(this);
+    const id = $(button).data('course-id');
+    const originalText = $(button).text();
+    let loadingText = 'Загрузка';
+    let dotCount = 0;
+    const maxDots = 3;
+    // Анимация многоточия
+    var loadingInterval = setInterval(function() {
+        dotCount = (dotCount + 1) % (maxDots + 1);
+        var dots = '.'.repeat(dotCount);
+        $(button).text(loadingText + dots);
+    }, 500); // Интервал смены точек
+
     $.ajax({
         type: 'POST',
         url: '/local/templates/geely/ajax/get_enroll_shedule_employee_block.php',
@@ -1214,17 +1244,55 @@ $(document).on('click','.employee_shedule_enroll_butt', function(e){
                 theme: 'which'
             });
             $('a[href="#ex3"]').click();
+            getNextFreeEnroll($('#course_id_hidden').val(), $('.change_employee_id').val())
+            clearInterval(loadingInterval);
+            $(button).text(originalText);
         },
         error: function (xhr, ajaxOptions, thrownError) {
         },
     });
 });
+$(document).on('change','.change_employee_id', function(e){
+    e.preventDefault();
+    getNextFreeEnroll($('#course_id_hidden').val(), $(this).val())
+
+});
+
+//проверка на прошлый пройденный курс сотрудником
+function getNextFreeEnroll(course_id, user_id){
+    if (course_id > 0 && user_id > 0){
+        $.ajax({
+            type: 'POST',
+            url: '/local/templates/geely/ajax/check_next_free_enroll.php',
+            data: {
+                course_id: course_id,
+                user_id: user_id,
+            },
+            dataType: 'json',
+            beforeSend: function () {
+
+            },
+            success: function(response){
+                if (response.free_enroll){
+                    $(".payment_method_select").addClass('hidden').after("<input type='hidden' name='free_enroll' id='free_enroll' value='Y'>")
+                } else {
+                    $("#free_enroll").remove();
+                    $(".payment_method_select").removeClass('hidden')
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+            },
+        });
+    }
+}
+
 //вызов пояснялки
 $(document).on('click','.alert_popup', function(e){
     e.preventDefault();
     setModalText('Подсказка', $(this).find('span').text());
     showCommonModal();
 });
+
 //удаление уведомления с рабочего стола
 $(document).on('click','.delete_notification', function(e){
     e.preventDefault();

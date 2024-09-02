@@ -8,7 +8,7 @@ $courses = \Models\Course::getAll(['ID', 'NAME']);
 $counter = 0;
 foreach ($courses as $course) {
     if (\Models\Course::isScormCourse($course['ID'])) {
-        if ($counter==50000)
+        if ($counter==5000)
             continue;
         $completions = (new \Teaching\CourseCompletion())->get(['UF_COURSE_ID' => $course['ID'], 'UF_IS_COMPLETE' => 1]);
 
@@ -22,7 +22,7 @@ foreach ($courses as $course) {
             $scorms = (new Scorm())->get($filter, ['*'], ['ID' => 'DESC']);
             foreach ($scorms as $scorm) {
                 if (in_array($scorm['UF_KEY'], $already_added)) {
-                    if ($counter==50000)
+                    if ($counter==5000)
                         break 2;
                     (new Scorm())->delete($scorm['ID']);
                     $counter++;

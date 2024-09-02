@@ -111,7 +111,7 @@ foreach ($dealers as &$dealer_) {
             if(!check_full_array($completions_array[$course['ID']])) {
                 $completions_filter = $period_completions_filter = ['UF_COURSE_ID' => $course['ID'], 'UF_IS_COMPLETE' => 1];
                 if($from_date)
-                    $period_completions_filter['>UF_COMPLETED_TIME'] = $from_date." 00:00:01";
+                    $period_completions_filter['>UF_COMPLETED_TIME'] = $from_date." 00:00:00";
                 if($from_to)
                     $period_completions_filter['<UF_COMPLETED_TIME'] = $from_to." 23:59:59";
                 $completions = (new \Teaching\CourseCompletion())->get($completions_filter);

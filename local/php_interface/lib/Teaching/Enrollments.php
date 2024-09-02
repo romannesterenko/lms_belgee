@@ -59,13 +59,11 @@ class Enrollments
 
     public function addFromRequest($request)
     {
-        $log = date('Y-m-d H:i:s') . ' ' . print_r($request, true);
-        file_put_contents(__DIR__ . '/log$requestEnrollments.txt', $log . PHP_EOL, FILE_APPEND);
         if ($request['with_coupon']==true){
             if((int)$request['schedule']==0){
                 $completion = new \Teaching\CourseCompletion();
                 $completion->addWithoutSchedule($request);
-            }else {
+            } else {
                 $exists = $this->get(['UF_USER_ID' => $request['user'], 'UF_SHEDULE_ID' => $request['schedule']]);
                 if (count($exists) == 0) {
                     $fields = [
@@ -89,16 +87,23 @@ class Enrollments
                         $this->add($fields);
                     }
 
+                } else {
+                    $error = [
+                        'type' => 'exists_completion',
+                        'request' => $request,
+                        'exists' => $exists,
+                    ];
+                    Log::writeCommon($error, 'add_completion_errors');
                 }
             }
         } else {
             if((int)$request['schedule']==0){
                 $completion = new \Teaching\CourseCompletion();
                 $completion->addWithoutSchedule($request);
-            }else {
+            } else {
                 $exists = $this->get(['UF_USER_ID' => $request['user'], 'UF_SHEDULE_ID' => $request['schedule']]);
-                $log = date('Y-m-d H:i:s') . ' ' . print_r($exists, true);
-                file_put_contents(__DIR__ . '/log$requestEnrollments.txt', $log . PHP_EOL, FILE_APPEND);
+                //$log = date('Y-m-d H:i:s') . ' ' . print_r($exists, true);
+                //file_put_contents(__DIR__ . '/log$requestEnrollments.txt', $log . PHP_EOL, FILE_APPEND);
                 if (count($exists) == 0) {
                     $fields = [
                         'UF_USER_ID' => $request['user'],
@@ -284,7 +289,7 @@ class Enrollments
 
     public function getListByScheduleId($course_id)
     {
-        return $this->get(['UF_SHEDULE_ID' => $course_id, 'UF_DIDNT_COM' => false]);
+        return $this->get(['UF_SHEDULE_ID' => $course_id,  'UF_DIDNT_COM' => false]);
     }
 
     public function getAlllListByScheduleId($course_id)
@@ -325,7 +330,7 @@ class Enrollments
         return $this->get(['UF_IS_APPROVED' => false, 'UF_USER_ID' => $ids]);
     }
 
-    public function delete($id, $from_cron=false, $expired = false)
+    public function delete($id, $from_cron=false, $expired = false, $reset_cert = true)
     {
         global $USER;
         $notifications = new \Notifications\SiteNotifications();
@@ -349,7 +354,8 @@ class Enrollments
             if ($USER->GetID() != $item[0]['UF_USER_ID'])
                 $notifications->addNotification($item[0]['UF_USER_ID'], $text);
         }
-        \Models\Certificate::resetByUserAndCourse($item[0]['UF_USER_ID'], $item[0]['UF_COURSE_ID']);
+        if($reset_cert)
+            \Models\Certificate::resetByUserAndCourse($item[0]['UF_USER_ID'], $item[0]['UF_COURSE_ID']);
         $this->dataClass::delete($id);
     }
 

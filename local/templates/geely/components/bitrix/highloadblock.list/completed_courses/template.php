@@ -17,6 +17,7 @@ global $APPLICATION;
                 <th><?=GetMessage('COMPLETED_COURSES_DATE')?></th>
                 <th>Ретест</th>
                 <th><?=GetMessage('COMPLETED_COURSES_CERT')?></th>
+                <th>Материалы</th>
             </tr>
         </thead>
         <tbody>
@@ -57,6 +58,12 @@ global $APPLICATION;
                     <?php } else {
                         //echo $path;
                     }?>
+                </td>
+                <td>
+                    <?php if($USER->GetID()==2&&$row['WORK_BOOK_LINK']){?>
+                        <a href="/download/document/<?=$row['ID']?>/" >Скачать</a>
+                    <?php } else {?>
+                    <?php }?>
                 </td>
             </tr>
         <?php }?>

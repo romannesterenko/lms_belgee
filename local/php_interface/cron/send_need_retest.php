@@ -27,7 +27,7 @@ foreach ($array as $course_id => $info){
                 sendNeedRetest($last_completion['ID']);
                 //die();
             }*/
-            if ((new DateTime())->format('Y-m-d H:i:s') >= $expired_date->format('Y-m-d 00:00:01') && (new DateTime())->format('Y-m-d H:i:s') <= $expired_date->format('Y-m-d 23:59:59')) {
+            if ((new DateTime())->format('Y-m-d H:i:s') >= $expired_date->format('Y-m-d 00:00:00') && (new DateTime())->format('Y-m-d H:i:s') <= $expired_date->format('Y-m-d 23:59:59')) {
                 sendNeedRetest($last_completion['ID']);
             }
         }

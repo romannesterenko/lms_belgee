@@ -13,6 +13,7 @@ $APPLICATION->SetTitle(Loc::getMessage('MAIN_TITLE'));
 $completions = new \Teaching\CourseCompletion();
 $enrollments = new \Teaching\Enrollments();
 $roless = \Models\Role::getAll(['ID', 'NAME', 'IBLOCK_SECTION_ID']);
+
 $user_array = \Settings\Reports::generateTest();
 foreach ($user_array as $key_item => $temp_item){
     if($temp_item['NOT_ENROLLED']==1)
@@ -66,7 +67,9 @@ foreach ($user_array as $key_item => $temp_item){
                                 <th>Роль</th>
                                 <th>ФИО</th>
                                 <th>Уровень</th>
-                                <th>Email</th>
+                                <?php if($_REQUEST['show_email']=='Y') {?>
+                                    <th>Email</th>
+                                <?php }?>
                                 <th>Телефон</th>
                                 <th>ID</th>
                                 <th>Должность</th>
@@ -124,7 +127,9 @@ foreach ($user_array as $key_item => $temp_item){
                                     <td><?php foreach ($item['UF_ROLE'] as $r){?><?=$roless[$r]['NAME']?><br /><?php }?></td>
                                     <td><?=$item['NAME']?> <?=$item['LAST_NAME']?></td>
                                     <td><?=$item['UF_USER_RATING']?></td>
-                                    <td><?=$item['EMAIL']?></td>
+                                    <?php if($_REQUEST['show_email']=='Y') {?>
+                                        <td><?=$item['EMAIL']?></td>
+                                    <?php }?>
                                     <td><?=$item['PERSONAL_MOBILE']?></td>
                                     <td><?=$item['ID']?></td>
                                     <td><?=$item['WORK_POSITION']?></td>

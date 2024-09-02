@@ -8,7 +8,7 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 global $APPLICATION, $USER;
 $_REQUEST['report_id'] = 999999;
 $APPLICATION->SetTitle(Loc::getMessage('MAIN_TITLE'));
-$start_date = date('Y-m-d 00:00:01');
+$start_date = date('Y-m-d 00:00:00');
 $end_date = date('Y-m-d 23:59:59', strtotime('+ 4 months'));
 $filter = [
     '>PROPERTY_BEGIN_DATE' => $start_date,

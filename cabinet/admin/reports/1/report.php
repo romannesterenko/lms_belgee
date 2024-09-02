@@ -25,11 +25,12 @@ if(!$dealer_id>0) {
 } else {
     $dealer = current(DealerHelper::getList(['ID' => $dealer_id], ['ID', 'NAME', 'CODE', 'PROPERTY_CITY']));
 }
-$employees = Employee::getListByDealer($dealer['ID'], ['ID', 'UF_ROLE', 'NAME', 'LAST_NAME', 'UF_REQUIRED_COURSES']);
+$employees = Employee::getListByDealer($dealer['ID'], ['ID', 'UF_ROLE', 'NAME', 'LAST_NAME', 'DATE_REGISTER', 'UF_REQUIRED_COURSES']);
 
 $roles = [];
 $completions = new CourseCompletion();
 foreach($employees as $employee) {
+    //echo $employee['DATE_REGISTER']->format('d.m.Y')."<br/>";
     if(is_array($employee['UF_ROLE']))
         $roles = array_merge($roles, $employee['UF_ROLE']);
 }
@@ -123,15 +124,20 @@ $dealer['REGIONAL_PPO'] = Dealer::getRegionalPPO($dealer_id);
                                     <tr style="height: 50px">
                                         <td class="text-left" rowspan="<?=count($role__['COURSES'])+1?>"><b><?= Loc::getMessage('ROLE_FOR_COURSE') ?> "<?=$role__['NAME']?>"</b></td>
                                         <td class="text-left" style="padding-left:20px"><b><?= Loc::getMessage('EMPLOYESS') ?></b></td>
-                                        <td class="text-left"><?=count($role__['USERS'])?></td>
+                                        <td class="text-left">
+                                            <b><?=count($role__['USERS'])?></b>
+                                            <?php foreach ($role__['USERS'] as $role_user){
+                                                echo "<br/>".$role_user['NAME']." ".$role_user['LAST_NAME']." (".$role_user['DATE_REGISTER']->format('d.m.Y').")";
+                                            }?>
+                                        </td>
                                     </tr>
                                 <?php }?>
                                 <tr style="height: 50px">
                                     <td class="text-left"><?=$course__['NAME']?></td>
-                                    <td class="text-left<?=check_full_array($course__['COMPLETION_INFO'])?' load_info':''?>" style="width: 40%; height: 60px">
+                                    <td class="text-left<?//=check_full_array($course__['COMPLETION_INFO'])?' load_info':''?>" style="width: 40%; height: 60px">
                                         <span><?=$course__['COMPLETED']?> (<?=$course__['COMPLETED_PERCENTS']?>)</span>
                                         <?php if(check_full_array($course__['COMPLETION_INFO'])){?>
-                                            <span class="loaded">
+                                            <span class="">
                                                 <?php foreach ($course__['COMPLETION_INFO'] as $completion_info){?>
                                                     <div><?=$completion_info['USER_NAME']?> (<?=$completion_info['DATE']?>)</div>
                                                 <?php }?>

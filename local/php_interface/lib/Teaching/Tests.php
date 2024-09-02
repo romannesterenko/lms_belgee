@@ -214,7 +214,6 @@ class Tests
         $return_array = [];
         $user_id = UserHelper::prepareUserId(0);
         $already_string = \COption::GetOptionString('common.settings', 'rand_questions_'.$user_id.'_'.$test_id);
-
         if(!empty($already_string)) {
             $array = explode('|', $already_string);
             foreach ($array as $k => $value) {
@@ -222,6 +221,37 @@ class Tests
                     continue;
                 $ids = explode('_', $value);
                 $return_array[$ids[0]] = $ids[1];
+            }
+            $questions = self::getQuestionsByTest($test_id);
+            $orig_ids = $random_ids = array_keys($questions);
+
+            if(check_full_array(array_diff($return_array, $orig_ids))) {
+                unset($return_array);
+                shuffle($random_ids);
+
+                if(self::getLimitQuestions($test_id)>0){
+
+                    $result_array = array_chunk($random_ids, self::getLimitQuestions($test_id));
+                    $random_ids = $result_array[0];
+                }
+
+                $new_arr[] = $user_id;
+                foreach ($orig_ids as $key => $orig_id) {
+                    if($random_ids[$key])
+                        $new_arr[] = $orig_id . "_" . $random_ids[$key];
+                }
+
+                \COption::SetOptionString('common.settings', 'rand_questions_'.$user_id.'_'.$test_id, implode('|', $new_arr));
+                $already_string = \COption::GetOptionString('common.settings', 'rand_questions_'.$user_id.'_'.$test_id);
+
+                $array = explode('|', $already_string);
+
+                foreach ($array as $k => $value){
+                    if($k==0)
+                        continue;
+                    $ids = explode('_', $value);
+                    $return_array[$ids[0]] = $ids[1];
+                }
             }
         } else {
             $questions = self::getQuestionsByTest($test_id);

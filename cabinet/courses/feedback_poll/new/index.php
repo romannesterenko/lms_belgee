@@ -23,7 +23,6 @@ $arTestConstructor = CIBlockElement::GetList(
     ['ID', 'CODE', 'IBLOCK_ID', 'PROPERTY_TEST_QUSTION', 'PROPERTY_COURSE']
 )->Fetch();
 
-
 if (!$arTestConstructor) {
    if ($course['PROPERTY_COURSE_TYPE_VALUE'] == 'Гибридный' && $course['PROPERTY_EVENTS_COURSE_VALUE'] == 'Да'){
        $type = 149;//ФОС офлайн выездной
@@ -44,9 +43,8 @@ if (empty($arTestConstructor) || empty($arTestConstructor['PROPERTY_TEST_QUSTION
 }
 
 $questions_count = \Models\FeedbackPoll::getAllQuestionsNew( false, $arTestConstructor['PROPERTY_TEST_QUSTION_VALUE']);
+
 $number = count($questions_count);
-dd($arTestConstructor);
-dd(count($questions_count));
 
 if ($_REQUEST['sended'] == 'Y') {
     $url = '/cabinet/courses/feedback_poll/new/' . (int)$_REQUEST['form_completion'] . '/';
@@ -75,7 +73,6 @@ if ($_REQUEST['sended'] == 'Y') {
 
 $comment_page = false;
 $finish_page = false;
-var_dump(\Models\FeedbackPoll::isFinishedNew($current_completion['ID'] , $arTestConstructor['PROPERTY_TEST_QUSTION_VALUE']));
 if (ProcessFBPOll::isRunning($current_completion['ID'])) {
     if (\Models\FeedbackPoll::isFinishedNew($current_completion['ID'] , $arTestConstructor['PROPERTY_TEST_QUSTION_VALUE'])) {
         if (\Models\FeedbackPoll::isEnded($current_completion['ID'])) {
@@ -84,6 +81,7 @@ if (ProcessFBPOll::isRunning($current_completion['ID'])) {
             $comment_page = true;
         }
     } else {
+
         $current_question = \Models\FeedbackPoll::getNextQuestionNew($current_completion['ID'], $arTestConstructor['PROPERTY_TEST_QUSTION_VALUE']);
     }
 } else {

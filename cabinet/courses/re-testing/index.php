@@ -58,7 +58,7 @@ if($test_processed->isRetestFinished($_REQUEST['test_id'], $USER->GetID(), $curr
 
     $questions = Tests::getQuestionsByTest($_REQUEST['test_id'], $new_order);
     //минимальная сумма для прохождения ретеста - 80%
-    $min_points = \Models\Course::getMaxPoints($course['ID']);
+    $min_points = \Models\Course::getMaxPoints($course['ID'], true);
 
     $test_is_correct = $test_process_info['UF_POINTS']>=$min_points;
 

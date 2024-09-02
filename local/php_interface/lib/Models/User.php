@@ -157,12 +157,12 @@ class User
     public static function getNotAdminsEmployeesList()
     {
         $cache = \Bitrix\Main\Data\Cache::createInstance();
-        if ($cache->initCache(10800, 'employees/not_admin')) {
+        if ($cache->initCache(10800, 'employees/not_admin_')) {
             $result = $cache->getVars();
             //dump($result);
         } elseif ($cache->startDataCache()) {
             $getListParams['select'] = ['ID', 'NAME', 'LAST_NAME', 'SECOND_NAME', 'UF_DEALER'];
-            $getListParams['filter'] = ['UF_LOCAL_ADMIN' => false, 'UF_TEACHING_ADMIN_TYPE'=>false];
+            $getListParams['filter'] = ['ACTIVE' => 'Y', '!UF_DEALER' => false];
             $result = self::getArray($getListParams);
             // Сохранение результатов в кеш
             $cache->endDataCache($result);
@@ -184,6 +184,16 @@ class User
         if($ids)
             return self::collectIds(self::getArray($getListParams));
         return self::getArray($getListParams);
+    }
+    public static function getEmployeesByDealerCourse($course_id, $dealer_id = 0)
+    {
+        if ($dealer_id == 0) {
+            $dealer = Dealer::getByEmployee();
+            $dealer_id = (int)$dealer;
+        }
+        $getListParams['select'] = ['ID', 'NAME', 'LAST_NAME', 'SECOND_NAME'];
+        $getListParams['filter'] = ['UF_REQUIRED_COURSES' => $course_id, 'UF_DEALER' => $dealer_id];
+        return self::collectIds(self::getArray($getListParams));
     }
 
     //получаем пользователей, которым курс назначен по ролям
@@ -210,6 +220,28 @@ class User
             return self::collectIds(self::getArray($getListParams));
         return self::getArray($getListParams);
     }
+
+    public static function getEmployeesByRoleAndDealerToCourse($course_id, $dealer_id=0)
+    {
+        if ($dealer_id == 0) {
+            $dealer = Dealer::getByEmployee();
+            $dealer_id = (int)$dealer;
+        }
+        $return_roles = [];
+        $roles = Roles::getRoleIdsForCourse($course_id);
+        if(count($roles)==0||(int)$roles[0]<=0)
+            return [];
+
+        foreach ($roles as $role)
+            $return_roles[] = $role;
+
+        $getListParams['select'] = ['ID', 'NAME', 'LAST_NAME', 'SECOND_NAME'];
+        $getListParams['filter'] = ['UF_ROLE' => $return_roles, 'UF_DEALER' => $dealer_id];
+
+        return $dealer_id>0?self::collectIds(self::getArray($getListParams)):[];
+    }
+
+
     //получаем пользователей, которым можно назначить курс
 
     /**
@@ -399,6 +431,24 @@ class User
             return self::collectIds(self::getArray($getListParams));
         return self::getArray($getListParams);
     }
+    public static function getEnrolledEmployeesToCourseByDealer($course_id, $dealer_id = 0)
+    {
+        if ($dealer_id == 0) {
+            $dealer = Dealer::getByEmployee();
+            $dealer_id = (int)$dealer;
+        }
+        $enrolls = new Enrollments();
+        $return_ids = [];
+        foreach ($enrolls->getAllByCourseId($course_id) as $enroll){
+                if(!(new CourseCompletion())->isDidntCom($enroll))
+                    $return_ids[] = $enroll['UF_USER_ID'];
+        }
+        if(count($return_ids)==0)
+            return [];
+        $getListParams['select'] = ['ID', 'NAME', 'LAST_NAME', 'SECOND_NAME'];
+        $getListParams['filter'] = ['ID' => $return_ids, 'UF_DEALER' => $dealer_id];
+        return self::collectIds(self::getArray($getListParams));
+    }
     public static function getEnrolledEmployeesToShedule($shedule_id, $ids=false)
     {
         $enrolls = new Enrollments();
@@ -417,18 +467,67 @@ class User
     }
     public static function getCompletedEmployeesToCourse($course_id, $ids=false)
     {
-        $enrolls = new CourseCompletion();
-        $return_ids = [];
-        foreach ($enrolls->getCompletedItemsByCourseID($course_id) as $enroll){
-            $return_ids[] = $enroll['UF_USER_ID'];
+        /*$enrolls = new CourseCompletion();
+        $return_ids = [];*/
+        $new_return_ids = [];
+        $collected_data = [];
+        $completions = (new CourseCompletion())->get([
+            'UF_COURSE_ID' => $course_id
+        ]);
+        foreach ($completions as $completion){
+            $collected_data[$completion['UF_USER_ID']][] = $completion;
         }
-        if(count($return_ids)==0)
+        foreach ($collected_data as $user_id => $user_completions){
+            $status = Course::getStatus($course_id, $user_id);
+            if($status!='uncompleted' &&  $status!='expired_date' && $status!='retest_failed')
+                $new_return_ids[] = $user_id;
+        }
+        /*foreach ($enrolls->getCompletedItemsByCourseID($course_id) as $enroll){
+            $return_ids[] = $enroll['UF_USER_ID'];
+        }*/
+        if(count($new_return_ids)==0)
             return [];
         $getListParams['select'] = ['ID', 'NAME', 'LAST_NAME', 'SECOND_NAME'];
-        $getListParams['filter'] = ['ID' => $return_ids];
+        $getListParams['filter'] = ['ID' => $new_return_ids];
         if($ids)
             return self::collectIds(self::getArray($getListParams));
         return self::getArray($getListParams);
+    }
+    public static function getCompletedEmployeesToCourseByDealer($course_id, $dealer_id=0)
+    {
+        if ($dealer_id == 0) {
+            $dealer = Dealer::getByEmployee();
+            $dealer_id = (int)$dealer;
+        }
+        $dealer_users = User::get(['UF_DEALER' => $dealer_id]);
+
+        /*$enrolls = new CourseCompletion();
+        $return_ids = [];*/
+        $new_return_ids = [];
+        $collected_data = [];
+
+
+
+        $completions = check_full_array($dealer_users)?(new CourseCompletion())->get([
+            'UF_COURSE_ID' => $course_id,
+            'UF_USER_ID' => array_keys($dealer_users)
+        ]):[];
+        foreach ($completions as $completion){
+            $collected_data[$completion['UF_USER_ID']][] = $completion;
+        }
+        foreach ($collected_data as $user_id => $user_completions){
+            $status = Course::getStatus($course_id, $user_id);
+            if($status!='uncompleted' &&  $status!='expired_date' && $status!='retest_failed')
+                $new_return_ids[] = $user_id;
+        }
+        /*foreach ($enrolls->getCompletedItemsByCourseID($course_id) as $enroll){
+            $return_ids[] = $enroll['UF_USER_ID'];
+        }*/
+        if(count($new_return_ids)==0)
+            return [];
+        $getListParams['select'] = ['ID', 'NAME', 'LAST_NAME', 'SECOND_NAME'];
+        $getListParams['filter'] = ['ID' => $new_return_ids];
+        return self::collectIds(self::getArray($getListParams));
     }
     public static function getCompletedEmployeesToShedule($shedule_id, $ids=false)
     {
@@ -459,6 +558,23 @@ class User
         if($ids)
             return self::collectIds(self::getArray($getListParams));
         return self::getArray($getListParams);
+    }
+    public static function getCompletingEmployeesToCourseByDealer($course_id, $dealer_id = 0)
+    {
+        if ($dealer_id == 0) {
+            $dealer = Dealer::getByEmployee();
+            $dealer_id = (int)$dealer;
+        }
+        $enrolls = new CourseCompletion();
+        $return_ids = [];
+        foreach ($enrolls->getCompletingItemsByCourseID($course_id) as $enroll){
+            $return_ids[] = $enroll['UF_USER_ID'];
+        }
+        if(count($return_ids)==0)
+            return [];
+        $getListParams['select'] = ['ID', 'NAME', 'LAST_NAME', 'SECOND_NAME'];
+        $getListParams['filter'] = ['ID' => $return_ids, 'UF_DEALER' => $dealer_id];
+        return self::collectIds(self::getArray($getListParams));
     }
     public static function getCompletingEmployeesToShedule($shedule_id, $ids=false)
     {
@@ -491,6 +607,18 @@ class User
         if($ids)
             return self::collectIds(self::getArray($getListParams));
         return [];
+    }
+    public static function getRecommendEmployeesByRoleAndDealerToCourse($course_id, $dealer_id=0)
+    {
+        if ($dealer_id == 0) {
+            $dealer_id = (int)Dealer::getByEmployee();
+        }
+        $return_ids = Roles::getRoleIdsForCourse($course_id);
+        if(count($return_ids)==0)
+            return [];
+        $getListParams['select'] = ['ID', 'NAME', 'LAST_NAME', 'SECOND_NAME'];
+        $getListParams['filter'] = ['UF_ROLE' => $return_ids, 'UF_DEALER' => $dealer_id];
+        return self::collectIds(self::getArray($getListParams));
     }
 
     public static function getTeachingType($user_id)

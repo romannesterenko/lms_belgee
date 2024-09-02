@@ -99,8 +99,9 @@ class CourseCardComponent extends CBitrixComponent
 
     private function calculateSheduleData()
     {
+        $status = \Models\Course::getStatus($this->item['ID']);
         $this->item['IS_FOR_SINGLE_STUDY'] = Courses::isFreeSheduleCourse($this->item['ID']);
-        $this->item['IS_COMPLETED_COURSE'] = Courses::isCompleted($this->item['ID']);
+        $this->item['IS_COMPLETED_COURSE'] = $status=='completed';
         $this->item['HAS_FREE_PLACES'] = false;
         $this->item['HAS_SCHEDULES'] = false;
         if(\Helpers\UserHelper::isTeachingAdmin()||!$this->item['IS_FOR_SINGLE_STUDY']&&!$this->item['IS_COMPLETED_COURSE']||SheduleCourses::isExistsCheckedByCourse($this->item['ID'])) {
@@ -198,6 +199,8 @@ class CourseCardComponent extends CBitrixComponent
 
     private function getLabel()
     {
+        $status = \Models\Course::getStatus($this->item['ID']);
+
         if(Courses::wasStarted($this->item['ID'])){
             $this->item['NEED_LABEL'] = true;
             $this->item['INFO'] = Loc::getMessage('IN_ACTIVE_INFO');
@@ -209,11 +212,25 @@ class CourseCardComponent extends CBitrixComponent
         } else {
             $enrollments = new Enrollments();
             $completions = new \Teaching\CourseCompletion();
+            $completions_array = $completions->get(['UF_IS_COMPLETE' => 1, 'UF_COURSE_ID' => $this->item['ID'], 'UF_USER_ID' => \Helpers\UserHelper::prepareUserId(0)]);
+            $was_enroll = false;
+            $compl_dates = [];
+            foreach ($completions_array as $comp){
+                $compl_dates[] = (string)$comp['UF_DATE'];
+            }
+
             $this->item['NEED_LABEL'] = false;
             $this->enrolls = $this->item['ENROLLS'] = $enrollments->getByUserAndCourse($this->item['ID']);
+            foreach ($this->enrolls as $enroll){
+                if($enroll['UF_IS_APPROVED'] == 1){
+                    if(!in_array((string)$enroll['UF_DATE'], $compl_dates)){
+                        $was_enroll = true;
+                    }
+                }
+            }
             //$this->compls = $this->item['ENROLLS'] = $completions->getByUserAndCourse($this->item['ID']);
             if ($this->item['HAS_SCHEDULES']) {
-                if (count($this->enrolls) > 0) {
+                if (count($this->enrolls) > 0 && $was_enroll) {
                     $this->item['INFO'] = GetMessage("IN_APPROVE_COURSE");
                     $this->item['LABEL'] = GetMessage("IN_APPROVE_COURSE");
                     foreach ($this->enrolls as $enroll) {

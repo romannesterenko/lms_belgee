@@ -45,8 +45,6 @@ class FeedbackPoll
     public static function isEnded($completion_id)
     {
         $last_question = ProcessFBPOll::getLastQuestion($completion_id, true);
-        dump($last_question);
-        dump($last_question);
         return $last_question['UF_IS_COMENT'] == 1;
     }
 
@@ -145,15 +143,24 @@ class FeedbackPoll
     {
         \CModule::includeModule('iblock');
         $iblock = \Bitrix\Iblock\Iblock::wakeUp(12)->getEntityDataClass();
-        return ($iblock::getList([
+        $item = $iblock::getList([
             'filter' => ['=IBLOCK_SECTION_ID' => $iSectionID, 'ACTIVE' => 'Y', 'SORT' => $question_number],
             'select' => ['*']
-        ])->fetch());
+        ])->fetch();
+        while (!check_full_array($item)){
+            $question_number++;
+            $item = $iblock::getList([
+                'filter' => ['=IBLOCK_SECTION_ID' => $iSectionID, 'ACTIVE' => 'Y', 'SORT' => $question_number],
+                'select' => ['*']
+            ])->fetch();
+        }
+        return $item;
     }
 
     public static function getNextQuestionNew($completion_id , $iSID)
     {
         $last_question = ProcessFBPOll::getLastQuestion($completion_id, false ,$iSID);
+
         if(check_full_array($last_question) && $last_question['ID']>0)
             return self::getQuestionByNumberNew((++$last_question['UF_QUESTION_NUMBER']) ,$iSID);
         return self::getFirstQuestionNew(1 ,$iSID );

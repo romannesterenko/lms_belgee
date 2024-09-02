@@ -64,4 +64,12 @@ class PropertyHelper
         }
         return $values;
     }
+
+    public static function getPropertyValueCode(int $iblock_id, $id, string $code)
+    {
+        \Helpers\IBlockHelper::includeIBlockModule();
+        $res = \CIBlockElement::GetProperty($iblock_id, $id, 'sort', 'asc', ['CODE' => $code]);
+        if ($property = $res->fetch())
+            return $property['VALUE_XML_ID'];
+    }
 }

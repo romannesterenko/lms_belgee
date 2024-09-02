@@ -22,14 +22,12 @@ $need_courses = \Teaching\Courses::getCoursesBefore($course['ID']);
         $html.= '<h4 class="h4 center">'.$course['NAME'].'</h4>';
         $html.= '<h5 class="h4 center">'.Helpers\DateHelper::getHumanDate($schedule['PROPERTIES']['BEGIN_DATE']).' - '.Helpers\DateHelper::getHumanDate($schedule['PROPERTIES']['END_DATE']).'</h5>';
         $html.='<input type="hidden" name="schedule_id" value="'.$schedule['ID'].'">';
-        if(Courses::isPaid($course['ID'])){
+        if(!\Models\Course::allowToFreeEnroll($course['ID']) && Courses::isPaid($course['ID'])){
             $payment_methods = \Models\Course::getPaymentMethodsList();
-            //print_r($payment_methods);
             if(\Models\Course::isAllPayment($course['ID']) && !\Teaching\Courses::isAllowToEnrollByCourseAndBalance($course['ID'])){
                 $html .= '<p style="margin-bottom: 10px; color: red">Оплата с баланса счета недоступна из за отрицательного баланса дилера</p>';
                 unset($payment_methods[160]);
             }
-
             if(\Models\Course::isTestCourse($course['ID'])) {
                 $html .= '<div class="form-group payment_method_select"><label for="">Метод оплаты</label><div class="select select--custom">';
                 if(\Models\Course::isAllPayment($course['ID']) && count($payment_methods)>1){

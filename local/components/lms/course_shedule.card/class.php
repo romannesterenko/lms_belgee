@@ -62,7 +62,7 @@ class CourseSheduleCardComponent extends CBitrixComponent
     private function getCourse()
     {
         $this->schedule_item = IBlockHelper::getById($this->arParams['SHEDULE_ID'],true,  ['IBLOCK_ID', 'ID', 'NAME', 'PREVIEW_PICTURE', 'PREVIEW_TEXT', 'DETAIL_TEXT', 'CODE']);
-        $this->item = IBlockHelper::getById($this->schedule_item['PROPERTIES']['COURSE'],true,  ['IBLOCK_ID', 'ID', 'NAME', 'PREVIEW_PICTURE', 'PREVIEW_TEXT', 'CODE']);
+        $this->item = IBlockHelper::getById($this->schedule_item['PROPERTIES']['COURSE'],true,  ['IBLOCK_ID', 'ID', 'NAME', 'PREVIEW_PICTURE', 'PREVIEW_TEXT', 'DETAIL_TEXT', 'CODE']);
         if(check_full_array($this->item)) {
             $this->processItemData();
         }
@@ -322,6 +322,7 @@ class CourseSheduleCardComponent extends CBitrixComponent
         $this->getLabel();
         $this->getForRoles();
         $this->calculateButtonInfo();
+
     }
 
     private function getForRoles()

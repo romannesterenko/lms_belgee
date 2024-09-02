@@ -28,7 +28,7 @@ if(!empty($_REQUEST['dir'])&&$_REQUEST['dir']!=0){
     }
 }
 if($_REQUEST['start_date']){
-    $schedules_filter['>PROPERTY_BEGIN_DATE'] = $_REQUEST['start_date'].' 00:00:01';
+    $schedules_filter['>PROPERTY_BEGIN_DATE'] = $_REQUEST['start_date'].' 00:00:00';
 }
 if($_REQUEST['end_date']){
     $schedules_filter['<PROPERTY_END_DATE'] = $_REQUEST['end_date'].' 23:59:59';

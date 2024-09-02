@@ -19,7 +19,6 @@ $user_array = \Settings\Reports::generateTest();
 $new_array = [];
 $table_courses = [];
 foreach ($user_array as $key_item => $temp_item){
-
     if($temp_item['NOT_ENROLLED']==1 || $temp_item['NOT_NEEDED'] == 1)
         continue;
     if( $temp_item['UF_IS_COMPLETE'] != 1 ) {
@@ -153,7 +152,7 @@ $table_courses = $tmp_arr;
                                                 <td>Нужен</td>
                                                 <td>-</td>
                                             <?php } else {
-                                                if($status=='uncompleted'){
+                                                if($status=='retest_failed'){
                                                     $test = current(\Teaching\Tests::getTestByCourse($table_course['ID'], ['ID', 'NAME']));
                                                     $process_filter = [
                                                         'UF_TEST_ID' => $test['ID'],
@@ -164,7 +163,7 @@ $table_courses = $tmp_arr;
                                                     ];
                                                     $process_test = current((new \Teaching\ProcessTest())->get($process_filter)->getArray());
                                                     ?>
-                                                    <td>Не пройден (<?=$process_test['UF_POINTS']?>/<?=\Models\Course::getMaxPoints($table_course['ID'])?>)</td>
+                                                    <td>Провален (<?=$process_test['UF_POINTS']?> из <?=\Models\Course::getMaxPoints($table_course['ID'])?> необходимых)</td>
                                                     <td><?=$process_test['UF_LAST_ACTIVE']?></td>
                                                 <?php } else { ?>
                                                     <td>-</td>

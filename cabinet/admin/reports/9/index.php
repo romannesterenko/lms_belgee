@@ -88,6 +88,16 @@ $selected_year = date('Y');
                             <?php }?>
                         </select>
                     </div>
+                    <?php $cities = \Helpers\HLBlockHelper::get(\Helpers\HLBlockHelper::initialize('city'), [], ['ID', 'UF_NAME', 'UF_XML_ID'], ['UF_NAME' => 'ASC'])?>
+                    <div class="form-group selectable">
+                        <label for="">Город</label>
+                        <select class="js-example-basic-multiple" name="city" style="width: 100%;">
+                            <option value="all">Не выбрано</option>
+                            <?php foreach ($cities as $city){?>
+                                <option value="<?=$city['UF_XML_ID']?>"><?=$city['UF_NAME']?></option>
+                            <?php }?>
+                        </select>
+                    </div>
                     <div class="form-group selectable">
                         <label for="">Статус заявки</label>
                         <select class="js-example-basic-multiple" name="status" style="width: 100%;">

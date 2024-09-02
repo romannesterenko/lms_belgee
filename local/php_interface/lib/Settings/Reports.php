@@ -344,6 +344,7 @@ class Reports
      */
     public static function generateTest($for_dealer = false, $withoutGmr = false)
     {
+        unset($_REQUEST['city']);
         if($for_dealer && !check_full_array($_REQUEST['dealer_codes']))
             return [];
         $need_setted_courses = true;
@@ -418,14 +419,30 @@ class Reports
             $user_filter['UF_ROLE'] = $_REQUEST['role'];
             $need_setted_courses = false;
         }
+        $city_courses = [];
+        $city_shedules = [];
+        if ($_REQUEST['city'] && $_REQUEST['city']!='all'){
+            $city_courses = Course::getByCity($_REQUEST['city'], true);
+            $city_shedules = SheduleCourses::getByCity($_REQUEST['city'], true);
+            //dump($city_shedules);
+        }
+        //dump($city_courses);
+        dump($city_shedules);
         //если установлены курсы, получаем пользователей
         if (check_full_array($_REQUEST['courses'])) {
+            if (check_full_array($city_shedules)){
+
+                //$city_shedule_courses = Course::getList()
+            }
+            if (check_full_array($city_courses))
+                $_REQUEST['courses'] = array_intersect($city_courses, $_REQUEST['courses']);
             $need_and_filter = $_REQUEST['need_and']=='on'&&count($_REQUEST['courses'])>1;
             $ids = [];
             if($need_and_filter)
                 $user_ids_temp = [];
             //перебираем все курсы из $_REQUEST
             foreach ($_REQUEST['courses'] as $c_id) {
+
                 //Получаем все роли по курсу
                 $cs = User::getEmployeesByRoleToCourse($c_id, true);
                 if (check_full_array($cs)) {
@@ -499,6 +516,26 @@ class Reports
             $filter_completions['UF_COURSE_ID'] = array_unique(array_merge($filter_completions['UF_COURSE_ID'], $courses_by_role));
             unset($courses_by_role);
         }
+
+        switch ($_REQUEST['direction']) {
+            case 'S01':
+                $direction_courses = Course::getOPList(true);
+                $filter_completions['UF_COURSE_ID'] = array_intersect($direction_courses, $filter_completions['UF_COURSE_ID']);
+
+                break;
+            case 'A01':
+                $direction_courses = Course::getPPOList(true);
+                $filter_completions['UF_COURSE_ID'] = array_intersect($direction_courses, $filter_completions['UF_COURSE_ID']);
+                break;
+            case 'M01':
+                $direction_courses = Course::getMarketingList(true);
+                $filter_completions['UF_COURSE_ID'] = array_intersect($direction_courses, $filter_completions['UF_COURSE_ID']);
+
+                break;
+        }
+
+
+
         if(check_full_array($_REQUEST['role'])) {
 
             $filter_completions['UF_COURSE_ID'] = Course::getMustByRole($_REQUEST['role'], true);
@@ -508,9 +545,16 @@ class Reports
         }
 
         if(!empty($_REQUEST['course_date_before']))
-            $filter_completions['>UF_DATE'] = date('d.m.Y 00:00:01', strtotime($_REQUEST['course_date_before']));
+            $filter_completions['>UF_DATE'] = date('d.m.Y 00:00:00', strtotime($_REQUEST['course_date_before']));
         if(!empty($_REQUEST['course_date_after']))
             $filter_completions['<UF_DATE'] = date('d.m.Y 23:59:59', strtotime($_REQUEST['course_date_after']));
+        if ($_REQUEST['city'] && $_REQUEST['city']!='all') {
+            unset($filter_completions['UF_COURSE_ID']);
+            $filter_completions['UF_SHEDULE_ID'] = $city_shedules;
+            $filter_completions['UF_COURSE_ID'] = Course::getIdsBySheduleIds($city_shedules);
+            //$filter_completions['UF_COURSE_ID'] = array_intersect($city_courses, $filter_completions['UF_COURSE_ID']);
+        }
+        dump($filter_completions);
         $all_completions = (new CourseCompletion())->get($filter_completions);
         if($_REQUEST['status_complete']=='on'||$_REQUEST['status_not_complete']=='on') {
             if($_REQUEST['status_complete']=='on'&&$_REQUEST['status_not_complete']!='on')
@@ -541,38 +585,48 @@ class Reports
                 $users[$key]['MUST_COURSES'] = $_REQUEST['courses'];
             }
         }
-        if($need_and_filter && ($_REQUEST['status_complete']=='on'||$_REQUEST['status_not_complete']=='on')) {
+        dump($_REQUEST['city']);
+        if ($_REQUEST['city'] && $_REQUEST['city']!='all') {
+            unset($filter_completions['UF_COURSE_ID']);
+            $filter_completions['UF_SHEDULE_ID'] = $city_shedules;
+            $filter_completions['UF_COURSE_ID'] = Course::getIdsBySheduleIds($city_shedules);
+            //$filter_completions['UF_COURSE_ID'] = array_intersect($city_courses, $filter_completions['UF_COURSE_ID']);
+        }
+        dump($filter_completions);
+        if(check_full_array($filter_completions['UF_COURSE_ID']) || check_full_array($filter_completions['UF_SHEDULE_ID'])) {
+            if ($need_and_filter && ($_REQUEST['status_complete'] == 'on' || $_REQUEST['status_not_complete'] == 'on')) {
 
-            $need_completions = (new CourseCompletion())->getAndCourses($filter_completions);
-            $new_completions = [];
-            foreach ($need_completions as $compl_user_id => $array_completions){
-                if(count($array_completions)<count($_REQUEST['courses'])) {
-                    unset($users[$compl_user_id]);
-                } else {
-                    $array_exists_courses = [];
-                    foreach ($array_completions as $array_completion) {
-                        if(!in_array($array_completion["UF_COURSE_ID"], $array_exists_courses)) {
-                            $array_exists_courses[] = $array_completion["UF_COURSE_ID"];
-                        }
-                    }
-                    if(count($array_exists_courses)!=count($_REQUEST['courses'])){
+                $need_completions = (new CourseCompletion())->getAndCourses($filter_completions);
+                $new_completions = [];
+                foreach ($need_completions as $compl_user_id => $array_completions) {
+                    if (count($array_completions) < count($_REQUEST['courses'])) {
                         unset($users[$compl_user_id]);
                     } else {
-                        $new_array_exists_courses = [];
+                        $array_exists_courses = [];
                         foreach ($array_completions as $array_completion) {
-                            if(!in_array($array_completion["UF_COURSE_ID"], $new_array_exists_courses)) {
-                                $new_completions[] = $array_completion;
-                                $new_array_exists_courses[] = $array_completion["UF_COURSE_ID"];
+                            if (!in_array($array_completion["UF_COURSE_ID"], $array_exists_courses)) {
+                                $array_exists_courses[] = $array_completion["UF_COURSE_ID"];
+                            }
+                        }
+                        if (count($array_exists_courses) != count($_REQUEST['courses'])) {
+                            unset($users[$compl_user_id]);
+                        } else {
+                            $new_array_exists_courses = [];
+                            foreach ($array_completions as $array_completion) {
+                                if (!in_array($array_completion["UF_COURSE_ID"], $new_array_exists_courses)) {
+                                    $new_completions[] = $array_completion;
+                                    $new_array_exists_courses[] = $array_completion["UF_COURSE_ID"];
+                                }
                             }
                         }
                     }
                 }
+                $completions = $new_completions;
+            } else {
+                $completions = (new CourseCompletion())->get($filter_completions);
+                //dump($completions);
             }
-            $completions = $new_completions;
-        } else {
-            $completions = (new CourseCompletion())->get($filter_completions);
         }
-
         $course_ids = [];
         if(check_full_array($filter_completions['UF_COURSE_ID'])) {
             $course_ids = $filter_completions['UF_COURSE_ID'];
@@ -580,9 +634,7 @@ class Reports
             foreach ($completions as $one_completion)
                 $course_ids[] = $one_completion['UF_COURSE_ID'];
         }
-
-        $courses = Course::getList(['ID' => $course_ids], ['ID', 'NAME', 'CODE', 'PROPERTY_SCORM', 'PROPERTY_COURSE_TYPE', 'PROPERTY_COURSE_FORMAT']);
-
+        $courses = check_full_array($course_ids)?Course::getList(['ID' => $course_ids], ['ID', 'NAME', 'CODE', 'PROPERTY_SCORM', 'PROPERTY_COURSE_TYPE', 'PROPERTY_COURSE_FORMAT']):[];
         foreach ($courses as $kk => &$c_temp){
             if($c_temp['PROPERTY_COURSE_TYPE_ENUM_ID']!=5) {
                 if($c_temp['PROPERTY_COURSE_TYPE_ENUM_ID']==125) {
@@ -848,7 +900,7 @@ class Reports
         }
 
         if(!empty($_REQUEST['course_date_before']))
-            $filter_completions['>UF_DATE'] = date('d.m.Y 00:00:01', strtotime($_REQUEST['course_date_before']));
+            $filter_completions['>UF_DATE'] = date('d.m.Y 00:00:00', strtotime($_REQUEST['course_date_before']));
         if(!empty($_REQUEST['course_date_after']))
             $filter_completions['<UF_DATE'] = date('d.m.Y 23:59:59', strtotime($_REQUEST['course_date_after']));
         $all_completions = (new CourseCompletion())->get($filter_completions);

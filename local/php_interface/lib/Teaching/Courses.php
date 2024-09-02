@@ -67,6 +67,7 @@ class Courses
         IBlockHelper::includeIBlockModule();
         $db_props = CIBlockElement::GetProperty(IBlockHelper::getCoursesIBlock(), $ID, array("sort" => "asc"), array("CODE" => "COURSE_TYPE"));
         if ($prop = $db_props->Fetch()) {
+            dump($prop);
             return (int)$prop['VALUE'] == 125;
         }
         return false;
@@ -349,6 +350,19 @@ class Courses
     public static function isExpired($int, $user_id = 0) {
         $completions = new \Teaching\CourseCompletion();
         return $completions->isExpired($int, $user_id);
+    }
+
+    public static function isRetestFailed($int, $user_id = 0): bool
+    {
+        if(!Course::hasRetest($int))
+            return false;
+        $user_id = UserHelper::prepareUserId($user_id);
+        $completion = current((new \Teaching\CourseCompletion())->get(
+            ['UF_COURSE_ID' => $int, 'UF_USER_ID' => $user_id]
+        ));
+        if(check_full_array($completion))
+            return $completion['UF_IS_COMPLETE'] == 1 && $completion['UF_RETEST_FAILED'] == 1;
+        return false;
     }
 
     public static function isNeedRetest($int) {

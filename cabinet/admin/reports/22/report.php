@@ -17,13 +17,17 @@ $directions = [
     'A01' => 'Послепродажное обслуживание',
     'M01' => 'Маркетинг'
 ];
-$dealers_filter = ['ACTIVE' => 'Y', '!ID' => [360]];
+dump($_REQUEST);
+$dealers_filter = ['!ID' => [360]];
+if ($_REQUEST['show_none_active']!='Y')
+    $dealers_filter = ['ACTIVE' => 'Y'];
 \Helpers\Log::write(['user' => $USER->GetID(), 'report' => '21', 'request' => $_REQUEST]);
-if(check_full_array($_REQUEST['dealer_names'])){
+if(check_full_array($_REQUEST['dealer_names'])) {
     $dealers_filter['ID'] = $_REQUEST['dealer_names'];
 }
 $dealers = \Models\Dealer::getList($dealers_filter);
 $data = [];
+
 function getInfo($dealer, $direction_code, $start_date, $end_date)
 {
     $men_days = 0;
@@ -43,9 +47,11 @@ function getInfo($dealer, $direction_code, $start_date, $end_date)
     $new_completions = [];
     if(check_full_array($schedule_ids)) {
         $schedules = \Teaching\SheduleCourses::getArray(['ID' => $schedule_ids, '>=PROPERTY_END_DATE' => $start_date, '<=PROPERTY_END_DATE' => $end_date]);
+
         if(check_full_array($schedules)) {
             foreach($completions as $key => $completion) {
                 if($completion['UF_SHEDULE_ID'] > 0 && check_full_array($schedules[$completion['UF_SHEDULE_ID']])) {
+
                     $new_completions[$completion['ID']] = $schedules[$completion['UF_SHEDULE_ID']];
                 }
             }
@@ -59,8 +65,9 @@ function getInfo($dealer, $direction_code, $start_date, $end_date)
     }
     return ['men_days' => $men_days, 'sum' => $sum];
 }
-$start_date = $_REQUEST['start_date']??'Y-m-01 00:00:00';
-$end_date = $_REQUEST['end_date']??'Y-m-d 23:59:59';
+$start_date = $_REQUEST['start_date']?$_REQUEST['start_date']." 00:00:00":'Y-m-01 00:00:00';
+$end_date = $_REQUEST['end_date']?$_REQUEST['end_date']." 23:59:59":'Y-m-d 23:59:59';
+
 foreach ($dealers as $dealer){
     $data[$dealer['ID']]['DEALER'] = $dealer;
     if($_REQUEST['direction'] == 'all'){
@@ -97,8 +104,11 @@ foreach ($dealers as $dealer){
                                 </tr>
                             </thead>
                             <tbody>
-                            <?php foreach ($data as $key => $item){
-                                foreach ($item['DIRECTIONS'] as $item_direction_code => $item_direction_info){?>
+                            <?php
+                            $sss = 0;
+                            foreach ($data as $key => $item){
+                                foreach ($item['DIRECTIONS'] as $item_direction_code => $item_direction_info){
+                                    $sss+=$item_direction_info['sum'];?>
                                     <tr>
                                         <td><?=$directions[$item_direction_code]?></td>
                                         <td><?=$item['DEALER']['CODE']?></td>
@@ -107,7 +117,9 @@ foreach ($dealers as $dealer){
                                         <td><?=number_format($item_direction_info['sum'], 0, '', ' ')?></td>
                                     </tr>
                                 <?php }?>
-                            <?php }?>
+                            <?php }
+                            dump($sss);
+                            ?>
                             </tbody>
                         </table>
                     </div>

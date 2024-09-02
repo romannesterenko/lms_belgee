@@ -66,7 +66,7 @@ $role_array = Role::getAllArray(['ID' => array_unique($role_ids)]);
 if($_REQUEST['from_month']&&$_REQUEST['from_year']){
     if($_REQUEST['from_year']!='all'){
         $month = $_REQUEST['from_month']=='all'?"01.":$_REQUEST['from_month'].".";
-        $from = "01.".$month.$_REQUEST['from_year']." 00:00:01";
+        $from = "01.".$month.$_REQUEST['from_year']." 00:00:00";
     }
 }
 if($_REQUEST['to_month']&&$_REQUEST['to_year']){

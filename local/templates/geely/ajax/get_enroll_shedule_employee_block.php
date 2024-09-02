@@ -33,7 +33,7 @@ if(!SheduleCourses::isExistsCheckedByCourse($course['ID'])) {
     //print_r($completed_ids);
     //print_r($completed_ids);
     $without_ids = array_merge(
-        [$USER->GetID()],
+        //[$USER->GetID()],
         User::getEnrolledEmployeesToShedule($schedule['ID'], true),
         $completed_ids,
         User::getCompletingEmployeesToShedule($schedule['ID'], true),
@@ -51,18 +51,25 @@ if(!SheduleCourses::isExistsCheckedByCourse($course['ID'])) {
 $response['without_ids'] = $without_ids;
 $need_ids = array_diff($req_ids, $without_ids);
 //print_r($need_ids);
-$need_courses = \Teaching\Courses::getCoursesBefore($course['ID']);
+$response['need_courses'] = $need_courses = \Teaching\Courses::getCoursesBefore($course['ID']);
 $has_before_courses = false;
 foreach (User::getEmployeesByAdmin() as $employee) {
-    //print_r($employee);
+
     if (in_array($employee['ID'], $need_ids)) {
+        $status = \Models\Course::getStatus($course['ID'], $employee['ID']);
+        $response['statuses'][] = $employee['ID']."_".$status;
         $allow_to_enroll = true;
         foreach ($need_courses as $need_course){
             if($allow_to_enroll)
                 $allow_to_enroll = $completions->isCompleted((int)$need_course, $employee['ID']);
         }
-        if($allow_to_enroll)
-            $all_employees[] = $employee;
+        if($allow_to_enroll) {
+            if ($status == 'uncompleted' || $status == 'retest_failed' || $status == 'expired_date')
+                $all_employees[] = $employee;
+            elseif($status == 'completed' && $schedule['PROPERTIES']['DONT_CHECK_COMPLETIONS'] == 'Y'){
+                $all_employees[] = $employee;
+            }
+        }
         else
             $has_before_courses = true;
     }
@@ -81,7 +88,8 @@ if( count($all_employees) == 0 ) {
 } else {
     if( Courses::isPaid($course['ID']) ) {
         $payment_methods = \Models\Course::getPaymentMethodsList();
-        if(\Models\Course::isAllPayment($course['ID']) && !\Teaching\Courses::isAllowToEnrollByCourseAndDealer($course['ID'])){
+        $first_employee_in_list = $all_employees[0];
+        if(\Models\Course::isAllPayment($course['ID']) && !\Models\Course::allowToFreeEnroll($course['ID'], $first_employee_in_list['ID']) && !\Teaching\Courses::isAllowToEnrollByCourseAndDealer($course['ID'])){
             $html .= '<p style="margin-bottom: 10px; color: red">Оплата с баланса счета недоступна из за отрицательного баланса дилера</p>';
             unset($payment_methods[160]);
         }
@@ -124,7 +132,8 @@ if( count($all_employees) == 0 ) {
                       </div>';
         }
     }
-    $html .= '<div class="form-group"><label for="">'.GetMessage('SELECT_EMPLOYEE').'</label><div class="select select--custom"><select class="select2" name="employee_id">';
+    $html .= '<div class="form-group"><label for="">'.GetMessage('SELECT_EMPLOYEE').'</label><div class="select select--custom"><select class="select2 change_employee_id" name="employee_id">';
+    //dump($all_employees);
     foreach ( $all_employees as $employee ) {
         $html .= '<option value="' . $employee['ID'] . '">' . $employee['LAST_NAME'] . ' ' . $employee['NAME'] . ' ' . $employee['SECOND_NAME'] . '</option>';
     }

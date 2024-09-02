@@ -87,7 +87,7 @@ function remindAboutCourses(){
     $days_from = \Settings\Common::getRemindTermin();
     $date = new DateTime();
     $need_date = $date->modify('+'.$days_from.' days')->format('Y-m-d');
-    $need_date_from = $need_date .' 00:00:01';
+    $need_date_from = $need_date .' 00:00:00';
     $need_date_to = $need_date .' 23:59:59';
     $schedules = \Teaching\SheduleCourses::getArray(
         [
@@ -119,7 +119,7 @@ function remindAboutCourses(){
 
 function remindAboutCourseToday(){
     $days_from = \Settings\Common::getRemindTermin();
-    $need_date_from = date('Y-m-d') .' 00:00:01';
+    $need_date_from = date('Y-m-d') .' 00:00:00';
     $need_date_to = date('Y-m-d') .' 23:59:59';
     $schedules = \Teaching\SheduleCourses::getArray(
         [

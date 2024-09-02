@@ -86,7 +86,7 @@ $table_courses = $tmp_arr;
                                 }
                             }?>
                             <th>ФИО</th>
-                            <?php if($_REQUEST['need_show_ids'] == 'Y') {?>
+                            <?php if($_REQUEST['show_email']=='Y' || $_REQUEST['need_show_ids'] == 'Y') {?>
                                 <th>Email</th>
                             <?php }?>
                             <th>Уровень</th>
@@ -153,7 +153,7 @@ $table_courses = $tmp_arr;
                                 <td>
                                     <?=$_REQUEST['hide_fio'] == 'Y'?mb_substr($first_item['LAST_NAME'], 0, 1, "UTF-8").".":$first_item['LAST_NAME']?> <?=$_REQUEST['hide_fio'] == 'Y'?mb_substr($first_item['NAME'], 0, 1, "UTF-8").".":$first_item['NAME']?> <?=$_REQUEST['hide_fio'] == 'Y'&&!empty($first_item['SECOND_NAME'])?mb_substr($first_item['SECOND_NAME'], 0, 1, "UTF-8").".":""?>
                                 </td>
-                                <?php if($_REQUEST['need_show_ids'] == 'Y') {?>
+                                <?php if($_REQUEST['show_email']=='Y' || $_REQUEST['need_show_ids'] == 'Y') {?>
                                     <td><?=$first_item['EMAIL']?></td>
                                 <?php }?>
                                 <td><?=$first_item['UF_USER_RATING']?></td>

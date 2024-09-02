@@ -69,6 +69,12 @@ foreach ($dealers as $dealer){
                                 <input type="date" style="border-radius: 4px;" name="end_date" value="<?=date('Y-m-t', strtotime('last day of last month'))?>">
                             </div>
                         </div>
+                        <div class="form-group" style="display: flex">
+                            <div class="checkbox-item" style="padding-right: 20px">
+                                <input type="checkbox" id="show_none_active" name="show_none_active" style="display: none" value="Y">
+                                <label for="show_none_active" style="padding-left: 30px;">Показывать реализацию по неактивным дилерам</label>
+                            </div>
+                        </div>
                         <div class="form-group" style="display: flex; padding-top: 1rem;">
                             <div class="btn-center">
                                 <button class="btn">Генерировать</button>

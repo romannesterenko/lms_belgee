@@ -11,7 +11,7 @@ if (check_full_array($_REQUEST['course'])) {
     $shedule_filter['PROPERTY_COURSE'] = $_REQUEST['course'];
 }
 if (!empty($_REQUEST['from'])) {
-    $shedule_filter['>=PROPERTY_BEGIN_DATE'] = $_REQUEST['from'] . ' 00:00:01';
+    $shedule_filter['>=PROPERTY_BEGIN_DATE'] = $_REQUEST['from'] . ' 00:00:00';
 }
 if (!empty($_REQUEST['to'])) {
     $shedule_filter['<=PROPERTY_BEGIN_DATE'] = $_REQUEST['to'] . ' 23:59:59';

@@ -5,6 +5,7 @@ namespace Teaching;
 use DateTime;
 use Helpers\DateHelper;
 use Helpers\HLBlockHelper;
+use Helpers\Log;
 use Helpers\Tasks;
 use Helpers\UserHelper;
 use Models\Course;
@@ -116,6 +117,11 @@ class CourseCompletion
 
     public function add($fields, $need_paid = true)
     {
+        $error = [
+            'type' => 'method_add',
+            'fields' => $fields,
+        ];
+        Log::writeCommon($error, 'add_completion_errors');
         if((int)$fields['UF_USER_ID']>0) {
             $exists_completion = $this->get(
                 [
@@ -129,7 +135,7 @@ class CourseCompletion
             if(!check_full_array($exists_completion)) {
                 $result = $this->completionsHlDataClass::add($fields);
                 if ($result->getId() > 0 && $need_paid) {
-                    if (Courses::isPaid($fields['UF_COURSE_ID']) && $fields['UF_PAYMENT_FROM_BALANCE'] == 1 && Course::hasBalancePayment($fields['UF_COURSE_ID'])) {
+                    if (!Course::allowToFreeEnroll($fields['UF_COURSE_ID'], $fields['UF_USER_ID']) && Courses::isPaid($fields['UF_COURSE_ID']) && $fields['UF_PAYMENT_FROM_BALANCE'] == 1 && Course::hasBalancePayment($fields['UF_COURSE_ID'])) {
                         \Models\Invoice::createFromCompletion($result->getId());
                     }
                 }
@@ -137,6 +143,11 @@ class CourseCompletion
             }
             return false;
         } else {
+            $error = [
+                'type' => 'no_user_id',
+                'fields' => $fields,
+            ];
+            Log::writeCommon($error, 'add_completion_errors');
             return false;
         }
     }
@@ -232,12 +243,11 @@ class CourseCompletion
         return $this->get(['UF_USER_ID' => $user_id, 'UF_IS_COMPLETE' => false, '!UF_FAILED' => true, '!UF_DIDNT_COM' => true]);
     }
 
-    public function delete($id, $reset = true)
+    public function delete($id, $reset = true, $delete_reserve = true)
     {
         if((int)$id>0) {
             $item = current($this->get(['ID' => $id]));
             if($reset) {
-                \Models\Certificate::resetByUserAndCourse($item['UF_USER_ID'], $item['UF_COURSE_ID']);
                 if ($item['UF_SHEDULE_ID'] > 0 && SheduleCourses::getFreePlacesBySchedule($item['UF_SHEDULE_ID']) == 0) {
                     Tasks::setRemainTask($item);
                 }
@@ -246,8 +256,10 @@ class CourseCompletion
             if(Course::isEvent($item['UF_COURSE_ID']) && $item['UF_SHEDULE_ID'] > 0 && $item['UF_USER_ID'] > 0) {
                 Group::deleteEmployeeFromGroup($item['UF_SHEDULE_ID'], $item['UF_USER_ID']);
             }
-
-            Reserve::deleteByCompletion((int)$id);
+            if($delete_reserve) {
+                \Models\Certificate::resetByUserAndCourse($item['UF_USER_ID'], $item['UF_COURSE_ID']);
+                Reserve::deleteByCompletion((int)$id);
+            }
 
             $this->completionsHlDataClass::delete((int)$id);
         }
@@ -333,22 +345,24 @@ class CourseCompletion
 
     public function isCompleted1($course_id, $user_id=0, $completion_id=0)
     {
+
         if($course_id==0)
             return false;
         $user_id = UserHelper::prepareUserId($user_id);
+
         $course = Course::find($course_id, ['PROPERTY_CERT_EXP']);
         $expire_period = $course["PROPERTY_CERT_EXP_VALUE"]??12;
         if($completion_id > 0) {
             $list = $this->get(['ID' => $completion_id, 'UF_IS_COMPLETE'=>1]);
         } else {
-            $list = $this->get(['UF_USER_ID' => $user_id, 'UF_IS_COMPLETE'=>1, 'UF_COURSE_ID' => $course_id]);
+            $list = $this->get(['UF_USER_ID' => $user_id, 'UF_COURSE_ID' => $course_id]);
         }
         if(!Courses::isFreeSheduleCourse($list[0]["UF_COURSE_ID"]))
             $new_date = DateTime::createFromFormat('d.m.Y', (string)$list[0]["UF_DATE"]);
         else
             $new_date = DateTime::createFromFormat('d.m.Y H:i:s', (string)$list[0]["UF_COMPLETED_TIME"]);
+        if($list[0]['ID']>0 && $list[0]['UF_IS_COMPLETE'] == 1 && $new_date) {
 
-        if($list[0]['ID']>0 && $new_date) {
             $new_date->modify('+'.$expire_period.' months');
             return (new DateTime())->format('Y-m-d H:i:s') <= $new_date->format('Y-m-d H:i:s');
         } else {
@@ -405,15 +419,42 @@ class CourseCompletion
             'UF_REGISTER_ANSWER' => $request['need_answer']?json_encode(['question' => $request['title'], 'answer' => $request['answer']]):false,
             'UF_PAYMENT_FROM_BALANCE' => $request['from_balance'] == 'Y' ? 1 : 0
         ];
+        $error = [
+            'type' => 'method_create',
+            'request' => $request,
+        ];
+        Log::writeCommon($error, 'add_completion_errors');
+
         if((int)$fields['UF_USER_ID'] > 0) {
+            $error = [
+                'type' => 'method_create_exists_user',
+                'request' => $request,
+            ];
+            Log::writeCommon($error, 'add_completion_errors');
             if (!empty($request['schedule_id']) && $request['schedule_id'] > 0) {
                 $fields['UF_SHEDULE_ID'] = $request['schedule_id'];
                 $fields['UF_DATE'] = \Helpers\DateHelper::getHumanDate(\Teaching\SheduleCourses::getBeginDateBySchedule($request['schedule_id']), 'd.m.Y');
                 $exists = $this->get(['UF_USER_ID' => $request['employee_id'], 'UF_SHEDULE_ID' => $request['schedule_id'], '!UF_FAILED' => 1]);
-                if (count($exists) == 0) {
+                $error = [
+                    'type' => 'method_create_exists_schedule',
+                    'request' => $request,
+                    'fields' => $fields,
+                    'exists' => $exists,
+                ];
+                Log::writeCommon($error, 'add_completion_errors');
+                $all_schedule_completions = (new \Teaching\CourseCompletion())->get(['UF_SHEDULE_ID' => $request['schedule_id']]);
+                $schedule = current(SheduleCourses::getById($request['schedule_id']));
+                $free_places = (int)$schedule['PROPERTIES']['LIMIT'] - count($all_schedule_completions);
+                if ($free_places > 0 && count($exists) == 0) {
                     if(Course::isEvent($request['course_id'])){
                         Group::setEmployeeToRandGroup(($request['schedule_id']), $request['employee_id']);
                     }
+                    $error = [
+                        'type' => 'method_create_has_free_places_and_not_exists',
+                        'request' => $request,
+                        'fields' => $fields,
+                    ];
+                    Log::writeCommon($error, 'add_completion_errors');
                     return $this->add($fields);
                 }
             } else {
@@ -480,7 +521,7 @@ class CourseCompletion
             [
                 'UF_IS_COMPLETE'=>true,
                 'UF_COURSE_ID' => $ID,
-                '>UF_COMPLETED_TIME' => date('01.m.Y 00:00:01', $strtotime),
+                '>UF_COMPLETED_TIME' => date('01.m.Y 00:00:00', $strtotime),
                 '<UF_COMPLETED_TIME' => date('t.m.Y 23:59:59', $strtotime),
             ]
         );
@@ -492,7 +533,7 @@ class CourseCompletion
             [
                 'UF_IS_COMPLETE'=>true,
                 'UF_COURSE_ID' => $ID,
-                '>UF_COMPLETED_TIME' => date('d.m.Y 00:00:01', strtotime("last week monday")),
+                '>UF_COMPLETED_TIME' => date('d.m.Y 00:00:00', strtotime("last week monday")),
                 '<UF_COMPLETED_TIME' => date('d.m.Y 23:59:59', strtotime("last week sunday")),
             ]
         );
@@ -504,7 +545,7 @@ class CourseCompletion
             [
                 'UF_IS_COMPLETE'=>true,
                 'UF_COURSE_ID' => $ID,
-                '>UF_COMPLETED_TIME' => date('d.m.Y 00:00:01', strtotime("monday this week")),
+                '>UF_COMPLETED_TIME' => date('d.m.Y 00:00:00', strtotime("monday this week")),
                 '<UF_COMPLETED_TIME' => date('d.m.Y 23:59:59', strtotime("sunday this week")),
             ]
         );

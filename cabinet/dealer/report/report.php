@@ -21,9 +21,7 @@ $user_array = \Settings\Reports::generate(true);
 foreach ($user_array as $key_item => $temp_item){
     if($temp_item['NOT_ENROLLED']==1)
         continue;
-    if($temp_item['UF_IS_COMPLETE']!=1){
-
-
+    if($temp_item['UF_IS_COMPLETE']!=1) {
         if($temp_item['COURSE']['INFO']['PROPERTY_COURSE_TYPE_ENUM_ID']==6){
             if(!check_full_array($temp_item['COURSE']['INFO']['PROPERTY_SCORM_VALUE'])&&$temp_item['COMPLETION_ID']>0){
                 $test = current((new \Teaching\ProcessTest())->get(['UF_COMPLETION' => $temp_item['COMPLETION_ID']], ['UF_POINTS'])->getArray());
@@ -138,28 +136,28 @@ foreach ($user_array as $key_item => $temp_item){
                                         <td>
                                             <?php if($item['UF_IS_COMPLETE']==1){
                                                 $date = $item['UF_COMPLETED_TIME']??$item['UF_DATE'];?>
-                                                <?php echo $date?Helpers\DateHelper::getFormatted($date->add('+'.\Models\Course::getExpiredDate($table_course['ID']).' months'), 'd.m.Y'):'';
+                                                <?php echo $date?Helpers\DateHelper::getFormatted($date->add('+'.\Models\Course::getExpiredDate((int)$item['COURSE']['INFO']['ID']).' months'), 'd.m.Y'):'';
                                             }?>
                                         </td>
                                         <?php if($item['UF_IS_COMPLETE']==1){
-                                            if(\Teaching\Courses::isNeedRetest($table_course['ID'])) {
-                                            $status = \Models\Course::getStatus($item['UF_COURSE_ID'], $item['UF_USER_ID']);
+                                            if(\Teaching\Courses::isNeedRetest((int)$item['COURSE']['INFO']['ID'])) {
+                                            $status = \Models\Course::getStatus((int)$item['COURSE']['INFO']['ID'], $item['UF_USER_ID']);
                                             if($status=='expired') {?>
                                                 <td>Нужен</td>
                                                 <td>-</td>
                                             <?php } else {
-                                                if($status=='uncompleted'){
-                                                    $test = current(\Teaching\Tests::getTestByCourse($table_course['ID'], ['ID', 'NAME']));
+                                                if($status=='retest_failed'){
+                                                    $test = current(\Teaching\Tests::getTestByCourse((int)$item['COURSE']['INFO']['ID'], ['ID', 'NAME']));
                                                     $process_filter = [
                                                         'UF_TEST_ID' => $test['ID'],
                                                         'UF_IS_RETEST' => true,
-                                                        'UF_USER_ID' => $first_item['ID'],
+                                                        'UF_USER_ID' => $item['UF_USER_ID'],
                                                         'UF_FINISHED' => true,
                                                         '>UF_LAST_ACTIVE' => $date
                                                     ];
                                                     $process_test = current((new \Teaching\ProcessTest())->get($process_filter)->getArray());
                                                     ?>
-                                                    <td>Не пройден (<?=$process_test['UF_POINTS']?>/<?=\Models\Course::getMaxPoints($table_course['ID'])?>)</td>
+                                                    <td>Провален (<?=$process_test['UF_POINTS']?> из <?=\Models\Course::getMaxPoints((int)$item['COURSE']['INFO']['ID'])?> необходимых)</td>
                                                     <td><?=$process_test['UF_LAST_ACTIVE']?></td>
                                                 <?php } else { ?>
                                                     <td>-</td>
@@ -186,7 +184,7 @@ foreach ($user_array as $key_item => $temp_item){
                                             <td><?php
                                                 $date = $item['UF_COMPLETED_TIME']??false;
                                                 echo $date?Helpers\DateHelper::getFormatted($date->add('+'.\Models\Course::getExpiredDate($item['COURSE']['INFO']['ID']).' months'), 'd.m.Y'):'';?></td>
-                                            <td>Провален (<?=$process_test['UF_POINTS']?>/<?=\Models\Course::getMaxPoints($item['COURSE']['INFO']['ID'])?>)</td>
+                                            <td>Провален (<?=$process_test['UF_POINTS']?> из <?=\Models\Course::getMaxPoints($item['COURSE']['INFO']['ID'])?> необходимых)</td>
                                         <?php } else {?>
                                             <td>-</td>
                                             <td>-</td>

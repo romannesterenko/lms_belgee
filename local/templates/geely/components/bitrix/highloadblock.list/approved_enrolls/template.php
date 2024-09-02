@@ -42,18 +42,21 @@ global $APPLICATION;
                             <span class="application-item__position"><?=$row['USER']['PERSONAL_PROFESSION']?></span>
                             <span class="application-item__date"><?=$row['UF_DATE']?></span>
                         </div>
-                        <?php if(!$arResult['SCHEDULE']['ENDED']&&$arResult['SCHEDULE']['ALLOW_CANCEL']){?>
                             <div class="application-item__btns">
-                                <a href="#" class="btn btn--small course_application_actions" data-action="reject" data-id="<?=$row['ID']?>">
-                                    <svg class="icon" width="9px" height="4px">
-                                        <use xlink:href="#minus-btn"></use>
-                                    </svg>
-                                </a>
+                                <?php if(!$arResult['SCHEDULE']['ENDED']&&$arResult['SCHEDULE']['ALLOW_CANCEL']){?>
+                                    <a href="#" class="btn btn--small course_application_actions" data-action="reject" data-id="<?=$row['ID']?>">
+                                        <svg class="icon" width="9px" height="4px">
+                                            <use xlink:href="#minus-btn"></use>
+                                        </svg>
+                                    </a>
+                                <?php }?>
+                                <?php if(!$arResult['SCHEDULE']['ENDED']){?>
                                 <a href="#" class="btn btn--small replace_employee_popup" data-action="replace" data-id="<?=$row['ID']?>">
                                     <b>&#8645;</b>
                                 </a>
+                                <?php }?>
                             </div>
-                        <?php }?>
+
                         <?php /*if($arResult['SCHEDULE']['ENDED']){*/?><!--
                             <div class="application-item__btns">
                                 <a href="#" class="btn btn--small" title="Не явился на курс" data-id="<?/*=$row['ID']*/?>">

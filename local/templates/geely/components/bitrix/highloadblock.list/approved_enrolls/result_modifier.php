@@ -7,7 +7,8 @@ $arResult['SCHEDULE'] = $schedules[$schedule_id];
 $arResult['SCHEDULE']['ENDED'] = time()>strtotime($schedules[$schedule_id]['PROPERTIES']['END_DATE']);
 $arResult['SCHEDULE']['ALLOW_CANCEL'] = true;
 if($schedules[$schedule_id]['PROPERTIES']['NOT_UNENROLL_DATE'])
-    $arResult['SCHEDULE']['ALLOW_CANCEL'] = time()<strtotime($schedules[$schedule_id]['PROPERTIES']['NOT_UNENROLL_DATE']);
+    $arResult['SCHEDULE']['ALLOW_CANCEL'] = \Teaching\SheduleCourses::isAllowCancelApplication($schedule_id);;
+//$arResult['SCHEDULE']['ALLOW_CANCEL'] = time()<strtotime($schedules[$schedule_id]['PROPERTIES']['NOT_UNENROLL_DATE']);
 $confirmation = new \Teaching\CourseCompletion();
 foreach ($arResult['rows'] as &$row){
     $row['UF_CREATED_AT'] = !empty($row['UF_CREATED_AT'])?(int)$row['UF_CREATED_AT']:(int)time();

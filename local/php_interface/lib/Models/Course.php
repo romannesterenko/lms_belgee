@@ -10,6 +10,7 @@ use Helpers\PropertyHelper;
 use Helpers\UserHelper;
 use Teaching\CourseCompletion;
 use Teaching\Courses;
+use Teaching\SheduleCourses;
 use Teaching\Tests;
 
 class Course
@@ -164,6 +165,7 @@ class Course
         if(!check_full_array($test))
             return false;
         $test = current($test);
+        echo $test["ID"];
         return $test['PROPERTY_RETEST_ONLY_ENUM_ID'] == 164;
     }
 
@@ -221,7 +223,7 @@ class Course
         return $main_array;
     }
 
-    public static function getByRole($role, $ids = false):array {
+    public static function getByRole($role, $ids = false) {
         if($ids){
             $list = self::getList(['PROPERTY_ROLES' => $role], ['ID', 'PROPERTY_ROLES']);
             $ids_array = [];
@@ -307,6 +309,7 @@ class Course
         if($na)
             $filter["ACTIVE"] = "N";
         $list = self::getList($filter, ['ID', 'NAME']);
+
         if($ids){
             $array_ids = [];
             foreach ($list as $item)
@@ -330,8 +333,15 @@ class Course
         return $list;
     }
 
-    public static function getMaxPoints(mixed $ID):int
+    public static function getMaxPoints(mixed $ID, $retest = false):int
     {
+        if($retest && self::isScormCourse($ID) && Course::ScormCourseHasRetest($ID)) {
+            $test = current(Tests::getTestByCourse($ID, ['ID', 'PROPERTY_POINTS']));
+            if((int)$test['PROPERTY_POINTS_VALUE'] > 0)
+                return $test['PROPERTY_POINTS_VALUE'];
+            //минимальная сумма для прохождения ретеста - 80%
+            return Tests::getMaxPointsByCourse($ID)*0.8;
+        }
         if(self::isScormCourse($ID))
             return 100;
         $test = current(Tests::getTestByCourse($ID, ['ID', 'PROPERTY_POINTS']));
@@ -397,13 +407,42 @@ class Course
     {
         if(Courses::isCompleted1($course_id, $user_id))
             return 'completed';
+        if (Courses::isRetestFailed($course_id, $user_id))
+            return 'retest_failed';
         if(Courses::isExpired($course_id, $user_id)) {
             if(Courses::isNeedRetest($course_id))
                 return 'expired';
-            else
-                return 'expired_date';
+            return 'expired_date';
         }
         return 'uncompleted';
+    }
+    public static function getReportStatus($course_id, $user_id = 0)
+    {
+        $completion = current((new CourseCompletion())->get([
+            'UF_COURSE_ID' => $course_id,
+            'UF_USER_ID' => $user_id,
+        ]));
+        if(Courses::isCompleted1($course_id, $user_id))
+            return ['status' => 'completed', 'date' => $completion['UF_COMPLETED_TIME']?$completion['UF_COMPLETED_TIME']->format('d.m.Y'):$completion['UF_DATE']->format('d.m.Y')];
+        if (Courses::isRetestFailed($course_id, $user_id))
+            return ['status' => 'retest_failed', 'date' => $completion['UF_DATE_UPDATE']->format('d.m.Y')];
+        if(Courses::isExpired($course_id, $user_id)) {
+            if(Courses::isNeedRetest($course_id))
+                return ['status' => 'expired', 'date' => $completion['UF_COMPLETED_TIME']->format('d.m.Y')];
+            return ['status' => 'expired_date', 'date' => $completion['UF_COMPLETED_TIME']->format('d.m.Y')];
+        }
+        if(check_full_array($completion)){
+            if (time() < strtotime($completion['UF_DATE'])){
+                return ['status' => 'enrolled', 'date' => $completion['UF_DATE']->format('d.m.Y')];
+            } else {
+                if($completion['UF_FAILED'] == 1 || $completion['UF_DIDNT_COM'] == 1)
+                    return ['status' => 'failed', 'date' => $completion['UF_DATE_UPDATE']->format('d.m.Y')];
+                else
+                    return ['status' => 'in_process'];
+
+            }
+        }
+        return ['status' => 'uncompleted'];
     }
 
     public static function getStatusByCompletion($course_id, $user_id, $completion_id)
@@ -536,6 +575,56 @@ class Course
                 $return_array[] = $property['VALUE_XML_ID'];
         }
         return $return_array;
+    }
+
+    public static function getByCity(mixed $city_xml_id, bool $ids = false)
+    {
+        $list = self::getList(['PROPERTY_CITY' => $city_xml_id], ['ID', 'PROPERTY_CITY']);
+        if(check_full_array($list))
+            return $ids?array_keys($list):$list;
+        return [];
+    }
+
+    public static function allowToFreeEnroll($course_id, $user_id = 0): bool
+    {
+        if(!Course::hasRightsToFreeEnroll($course_id))
+            return false;
+        if(Course::hasRetest($course_id))
+            return false;
+        if (!Course::isPaid($course_id))
+            return false;
+        $user_id = UserHelper::prepareUserId($user_id);
+        $status = Course::getStatus($course_id, $user_id);
+        //dump($status);
+        return $status == 'expired_date';
+    }
+
+    public static function hasRetest($course_id): bool
+    {
+        return PropertyHelper::getPropertyValue(IBlockHelper::getCoursesIBlock(), $course_id, 'HAS_RETEST')==155;
+    }
+
+    private static function hasRightsToFreeEnroll($course_id)
+    {
+        return PropertyHelper::getPropertyValueCode(IBlockHelper::getCoursesIBlock(), $course_id, 'NEXT_FREE_ENROLL') == 'yes';
+    }
+
+    public static function getIdsBySheduleIds(array $city_shedules)
+    {
+        $shedules = SheduleCourses::getArray(['ID' => $city_shedules], ['ID', 'NAME', 'PROPERTY_COURSE']);
+        $ids = [];
+        if (check_full_array($shedules)){
+            foreach ($shedules as $shedule){
+                if($shedule['PROPERTY_COURSE_VALUE'] > 0)
+                    $ids[] = $shedule['PROPERTY_COURSE_VALUE'];
+            }
+        }
+        return $ids;
+    }
+
+    public static function hasOnlyScormRetest(mixed $course_id)
+    {
+        return self::hasRetest($course_id)&&!self::isScormCourse($course_id)&&!empty(PropertyHelper::getPropertyValue(IBlockHelper::getCoursesIBlock(), $course_id, 'RETEST_SCORM'));
     }
 
     public function activate($id){

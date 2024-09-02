@@ -20,24 +20,30 @@ $completions = new \Teaching\CourseCompletion();
 $html = '';
 
 $all_employees = [];
-$req_ids = array_unique(array_merge(
-    User::getEmployeesByRoleToCourse($course['ID'], true),
-    User::getRecommendEmployeesByRoleToCourse($course['ID'], true),
-    User::getEmployeesByCourse($course['ID'], true),
+$response['req_ids'] = $req_ids = array_unique(array_merge(
+    //User::getEmployeesByRoleToCourse($course['ID'], true),
+    User::getEmployeesByRoleAndDealerToCourse($course['ID']),
+    //User::getRecommendEmployeesByRoleToCourse($course['ID'], true),
+    User::getRecommendEmployeesByRoleAndDealerToCourse($course['ID']),
+    //User::getEmployeesByCourse($course['ID'], true),
+    User::getEmployeesByDealerCourse($course['ID'], true),
 ));
 $completed_ids = [];
 if(!SheduleCourses::isExistsCheckedByCourse($course['ID'])) {
-    $completed_ids = User::getCompletedEmployeesToCourse($course['ID'], true);
+    //$completed_ids = User::getCompletedEmployeesToCourse($course['ID'], true);
+    $completed_ids = User::getCompletedEmployeesToCourseByDealer($course['ID']);
     $without_ids = array_merge(
         [$USER->GetID()],
-        User::getEnrolledEmployeesToCourse($course['ID'], true),
+        //User::getEnrolledEmployeesToCourse($course['ID'], true),
+        User::getEnrolledEmployeesToCourseByDealer($course['ID']),
         $completed_ids,
-        User::getCompletingEmployeesToCourse($course['ID'], true),
+        //User::getCompletingEmployeesToCourse($course['ID'], true),
+        User::getCompletingEmployeesToCourseByDealer($course['ID']),
     );
 } else {
     $without_ids = array_merge(
         [$USER->GetID()],
-        User::getCompletingEmployeesToCourse($course['ID'], true),
+        User::getCompletingEmployeesToCourseByDealer($course['ID']),
     );
 }
 
@@ -48,13 +54,18 @@ $need_courses = \Teaching\Courses::getCoursesBefore($course['ID']);
 $has_before_courses = false;
 foreach (User::getEmployeesByAdmin() as $employee) {
     if (in_array($employee['ID'], $need_ids)) {
+        $status = \Models\Course::getStatus($course['ID'], $employee['ID']);
         $allow_to_enroll = true;
         foreach ($need_courses as $need_course) {
-            if($allow_to_enroll)
-                $allow_to_enroll = $completions->isCompleted((int)$need_course, $employee['ID']);
+            if($allow_to_enroll){
+                $need_course_status = \Models\Course::getStatus((int)$need_course, $employee['ID']);
+                $allow_to_enroll = $need_course_status=='completed';
+            }
+                //$allow_to_enroll = $completions->isCompleted((int)$need_course, $employee['ID']);
         }
         if($allow_to_enroll)
-            $all_employees[] = $employee;
+            if ($status=='uncompleted' || $status=='retest_failed' || $status=='expired_date')
+                $all_employees[] = $employee;
         else
             $has_before_courses = true;
     }

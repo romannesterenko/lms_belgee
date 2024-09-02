@@ -12,7 +12,6 @@ if(Tests::getLimitQuestions((int)$_REQUEST['test_id'])>0||Tests::isRandomQuestio
 } else {
     Tests::resetRandomizeQuestions((int)$_REQUEST['test_id']);
 }
-
 $course = Tests::getCourseByTest((int)$_REQUEST['test_id']);
 
 if(!check_full_array($course))
@@ -79,6 +78,7 @@ if($test_processed->isPreFinished($_REQUEST['test_id'], $USER->GetID(), $current
 <?php } else {
 $test = Tests::getById($_REQUEST['test_id']);
 $questions = Tests::getQuestionsByTest($test['ID'], $new_order);
+
 $id = 0;
 $num = 1;
 $need_question = $test_processed->getCurrentQuestionNumber($_REQUEST['test_id'], 0, $current_completion['ID']);

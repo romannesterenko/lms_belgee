@@ -44,7 +44,7 @@
 Дата записи: 19.06.2023 23:43:57
 
 Добавление пользователя BukarevaMarina не удалось. Причина - This peer is not present in the internal peer database
-Дата записи: 20.06.2023 00:00:01
+Дата записи: 20.06.2023 00:00:00
 
 Добавление пользователя geelyapmru не удалось. Причина - This peer is not present in the internal peer database
 Дата записи: 20.06.2023 00:20:02

@@ -223,6 +223,79 @@ $aTabs = array(
                 "",
                 array("selectbox", range(1,24))
             ),
+            "SMS уведомления",
+            array(
+                "sms_links_enabled",
+                "Рассылка включена",
+                "",
+                array("checkbox")
+            ),
+            array(
+                "sms_courses_directions",
+                "Направления курсов для рассылки",
+                "",
+                array("selectbox", [
+                    'all' => 'Все направления',
+                    'op' => 'Отдел продаж',
+                    'ppo' => 'Послепродажное обслуживание',
+                    'marketing' => 'Отдел маркетинга',
+                ])
+            ),
+            array(
+                "sms_courses_types",
+                "Тип курсов для рассылки",
+                "",
+                array("selectbox", [
+                    'all' => 'Все курсы',
+                    'online' => 'Онлайн',
+                    'offline' => 'Оффлайн',
+                ])
+            ),
+            array(
+                "sms_smsc_login",
+                "Логин провайдера SMSC",
+                "",
+                array("text", 60)
+            ),
+            array(
+                "sms_smsc_password",
+                "Пароль провайдера SMSC",
+                "",
+                array("text", 60)
+            ),
+            array(
+                "sms_sender_text",
+                "Шаблон сообщения",
+                "",
+                array("text", 100)
+            ),
+        )
+    ),
+    array(
+        "DIV" => "subscriptions",
+        "TAB" => "Подписки",
+        "TITLE" => "Подписки",
+        "OPTIONS" => array(
+            "Общие настройки",
+            array(
+                "enable_subscription_mode",
+                "Включить механизм подписок",
+                "",
+                array("checkbox")
+            ),
+            "Сроки напоминаний",
+            array(
+                "how_long_to_remind_subscription",
+                "За сколько дней напомнить о необходимости прохождения курса",
+                "7",
+                array("selectbox", range(1,31))
+            ),
+            array(
+                "how_long_to_remind_add_teaching_plan",
+                "За сколько дней напомнить о необходимости добавления плана обучения",
+                "7",
+                array("selectbox", range(1,24))
+            ),
         )
     ),
     array(
@@ -345,12 +418,13 @@ $aTabs = array(
                 "",
                 array("text", 60)
             ),
+            /*
             [
                 "telegram_antispam_stop_words",
                 "Стоп слова (Через запятую)",
                 "",
                 ["text", 60]
-            ],
+            ],*/
         )
     ),
 );

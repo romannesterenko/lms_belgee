@@ -7,7 +7,7 @@ $end_date = ConvertDateTime(date('d.m.Y', strtotime('yesterday')), "YYYY-MM-DD")
 $start_date = ConvertDateTime(date('d.m.Y', strtotime('-2 days')), "YYYY-MM-DD");
 $filter = [
     '!PROPERTY_COURSE' => false,
-    '>=PROPERTY_END_DATE' => $start_date.' 00:00:01',
+    '>=PROPERTY_END_DATE' => $start_date.' 00:00:00',
     '<=PROPERTY_END_DATE' => $end_date.' 23:59:59',
 ];
 $list = \Teaching\SheduleCourses::getAllArray($filter, ['ID']);

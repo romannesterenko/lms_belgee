@@ -9,16 +9,19 @@ global $USER, $APPLICATION; ?>
         <span class="post-item__image">
             <img src="<?= $arResult['ITEM']['PREVIEW_PICTURE'] > 0 ? CFile::GetPath($arResult['ITEM']['PREVIEW_PICTURE']) : SITE_TEMPLATE_PATH . '/images/img-3.jpg' ?>"
                  alt="<?= $arResult['ITEM']['NAME'] ?>">
-            <?php $status = \Models\Course::getStatus($arResult['ITEM']["ID"]);
-            if($status=='expired'){?>
+            <?php
+            $status = \Models\Course::getStatus($arResult['ITEM']["ID"]);
+            if($status=='expired') {?>
                 <span class="post-item__category"><span class="icon icon-check"></span>Просрочен</span>
             <?php } elseif ($status == 'expired_date') {?>
                 <span class="post-item__category"><span class="icon icon-check"></span>Закончился срок действия сертификата</span>
+            <?php }elseif ($status == 'retest_failed') {?>
+                <span class="post-item__category"><span class="icon icon-check"></span>Ретест провален</span>
             <?php } else {?>
                 <?php if ($arResult['ITEM']['NEED_LABEL']) {?>
                     <span class="post-item__category"><span class="icon icon-check"></span><?= $arResult['ITEM']['LABEL'] ?></span>
                 <?php } else {
-                    if($arResult['ITEM']['IS_COMPLETED_COURSE']){?>
+                    if($arResult['ITEM']['IS_COMPLETED_COURSE']) {?>
                         <span class="post-item__category"><span class="icon icon-check"></span>Курс пройден</span>
                     <?php }
                 }
@@ -65,9 +68,9 @@ global $USER, $APPLICATION; ?>
               if(!$arResult['ITEM']['IS_FOR_SINGLE_STUDY']&&!$arResult['ITEM']['ALREADY_ENROLLED']){
                   if ($arResult['ITEM']['HAS_FREE_PLACES']) { ?>
                       <span class="post-item__numbers"><?= GetMessage('FREE_PLACES') ?> - <?= $arResult['ITEM']['FREE_PLACES'] ?> / <span><?= $arResult['ITEM']['LIMIT'] ?></span></span>
-                  <?php } else {?>
+                  <?php } else { ?>
                       <?php if(!$arResult['ITEM']['LIMIT']):?>
-                        <span class="post-item__numbers"><?= GetMessage('NO_FREE_PLACES') ?></span>
+                            <span class="post-item__numbers"><?= GetMessage('NO_FREE_PLACES') ?></span>
                       <?php endif;?>
                   <?php
                   }

@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] != "POST")
 
 \Helpers\Log::write(['user' => $USER->GetID(), 'report' => '9', 'request' => $_REQUEST]);
 $_REQUEST['report_id'] = 9999;
-
+dump($_REQUEST);
 ?>
 
 <?php
@@ -46,29 +46,44 @@ if($_REQUEST['year']&&$_REQUEST['year']!=0){
             $start = '01.' . $_REQUEST['month'] . '.' . $_REQUEST['year'];
             $end = '31.' . $_REQUEST['month'] . '.' . $_REQUEST['year'];
             $filter_qwe = [
-                '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($start, "YYYY-MM-DD")." 00:00:01",
+                "PROPERTY_COURSE" => $_REQUEST['courses'],
+                '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($start, "YYYY-MM-DD")." 00:00:00",
                 '<=PROPERTY_BEGIN_DATE' => ConvertDateTime($end, "YYYY-MM-DD")." 23:59:59",
             ];
+            if ($_REQUEST['city'] && $_REQUEST['city']!='all') {
+                $filter_qwe['PROPERTY_TOWN'] = $_REQUEST['city'];
+            }
             $list = SheduleCourses::getArray($filter_qwe);
             if (check_full_array($list)) {
                 foreach ($list as $schedule) {
                     $filter['UF_SHEDULE_ID'][] = $schedule['ID'];
                 }
             }
+            if ($_REQUEST['city'] && $_REQUEST['city']!='all' && !check_full_array($filter['UF_SHEDULE_ID'])) {
+                $filter['UF_SHEDULE_ID'] = [];
+            }
         }
     } else {
         $start = '01.01.' . $_REQUEST['year'];
         $end = '31.12.' . $_REQUEST['year'];
         $filter_qwe = [
-            '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($start, "YYYY-MM-DD")." 00:00:01",
+            "PROPERTY_COURSE" => $_REQUEST['courses'],
+            '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($start, "YYYY-MM-DD")." 00:00:00",
             '<=PROPERTY_BEGIN_DATE' => ConvertDateTime($end, "YYYY-MM-DD")." 23:59:59",
         ];
+        if ($_REQUEST['city'] && $_REQUEST['city']!='all') {
+            $filter_qwe['PROPERTY_TOWN'] = $_REQUEST['city'];
+        }
         $list = SheduleCourses::getArray($filter_qwe);
         if (check_full_array($list)) {
             foreach ($list as $schedule) {
                 $filter['UF_SHEDULE_ID'][] = $schedule['ID'];
             }
         }
+        if ($_REQUEST['city'] && $_REQUEST['city']!='all' && !check_full_array($filter['UF_SHEDULE_ID'])) {
+            $filter['UF_SHEDULE_ID'] = [];
+        }
+
     }
 
 }

@@ -15,7 +15,7 @@ $settings = \Settings\Reports::getMenDaysPerfReport();
 $_REQUEST['report_id'] = 1;
 $schedules_filter = [
     'ACTIVE' =>'Y',
-    '>=PROPERTY_BEGIN_DATE'=>$_REQUEST['year'].'-01-01 00:00:01',
+    '>=PROPERTY_BEGIN_DATE'=>$_REQUEST['year'].'-01-01 00:00:00',
     '<=PROPERTY_END_DATE'=>$_REQUEST['year'].'-12-31 23:59:59',
     '!PROPERTY_COURSE'=>false
 ];

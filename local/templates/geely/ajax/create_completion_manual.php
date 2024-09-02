@@ -9,7 +9,7 @@ require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_be
 global $APPLICATION;
 $request = Application::getInstance()->getContext()->getRequest()->getValues();
 $success = true;
-if($request['course_id']>0){
+if($request['course_id']>0) {
     if($request['user_id']>0) {
         if ( $request['course_date'] ) {
             $completions = new \Teaching\CourseCompletion();
@@ -41,10 +41,11 @@ if($request['course_id']>0){
                 $enroll['UF_IS_APPROVED'] = $item['UF_IS_COMPLETE'] = $item['UF_FROM_EXPORT'] = $item['UF_VIEWED'] = $item['UF_WAS_ON_COURSE'] = true;
                 (new \Teaching\Enrollments())->add($enroll);
             }
-            if(\Teaching\Courses::isPaid($request['course_id'])&&$request['certificate']>0){
+            if($request['no_cert'] != 'Y' && \Teaching\Courses::isPaid($request['course_id']) && $request['certificate']>0){
                 \Models\Certificate::activate($request['certificate'], $request['user_id']);
             }
-            $completions->add($item);
+            $need_paid = $request['no_cert'] != 'Y';
+            $completions->add($item, $need_paid);
             $completion = current($completions->get(['UF_MANUAL_ADDED' => 1, 'UF_DATE' => $item['UF_DATE'], 'UF_COURSE_ID' => $item['UF_COURSE_ID'], 'UF_USER_ID' => $item['UF_USER_ID']]));
             if (check_full_array($completion))
                 \Helpers\Pdf::generateCertFromCompletionId($completion['ID']);

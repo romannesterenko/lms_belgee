@@ -211,6 +211,7 @@ class SheduleCalendarComponent extends CBitrixComponent
         if($month==0)
             $month = date('m');
         if(\Models\User::isTeachingAdmin()) {
+
             return \Teaching\SheduleCourses::getSchedulesByMonthToTeachingAdmin($month);
         }else {
             return \Teaching\SheduleCourses::getSchedulesByMonth($month);

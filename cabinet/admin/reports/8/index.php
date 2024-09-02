@@ -178,6 +178,16 @@ foreach ($dealers as $dealer){
                                 <?php }?>
                             </select>
                         </div>
+                        <?php $cities = \Helpers\HLBlockHelper::get(\Helpers\HLBlockHelper::initialize('city'), [], ['ID', 'UF_NAME', 'UF_XML_ID'], ['UF_NAME' => 'ASC'])?>
+                        <div class="form-group selectable">
+                            <label for="">Город</label>
+                            <select class="js-example-basic-multiple" name="city" style="width: 100%;">
+                                <option value="all">Не выбрано</option>
+                                <?php foreach ($cities as $city){?>
+                                    <option value="<?=$city['UF_XML_ID']?>"><?=$city['UF_NAME']?></option>
+                                <?php }?>
+                            </select>
+                        </div>
 
                         <div class="form-group">
                             <div class="form-group">
@@ -197,6 +207,12 @@ foreach ($dealers as $dealer){
                             <div class="form-group" style="width: 100%;">
                                 <label for="">Дата прохождения курса до</label>
                                 <input type="date" name="course_date_after">
+                            </div>
+                        </div>
+                        <div class="form-group" style="display: flex">
+                            <div class="checkbox-item" style="padding-right: 20px">
+                                <input type="checkbox" id="show_email" name="show_email" style="display: none" value="Y">
+                                <label for="show_email" style="padding-left: 30px;">Показать Email</label>
                             </div>
                         </div>
                         <div class="form-group" style="display: flex; padding-top: 1rem;">

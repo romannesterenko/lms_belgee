@@ -390,6 +390,7 @@ function GenerateScheduleCodeBeforeUpdate(&$arFields)
 AddEventHandler("main", "OnBeforeUserAdd", "checkOPRoles");
 AddEventHandler("main", "OnBeforeUserAdd", "checkDealerRoles");
 AddEventHandler("main", "OnBeforeUserUpdate", "checkOPRoles");
+AddEventHandler("main", "OnBeforeUserUpdate", "checkWorkStartDate");
 AddEventHandler("main", "OnBeforeUserUpdate", "checkDealerRoles");
 AddEventHandler("main", "OnBeforeUserUpdate", "checkDealers");
 AddEventHandler("main", "OnBeforeUserUpdate", "addUserUpdateLog");
@@ -607,9 +608,12 @@ function addElementDeleteLog($ID) {
         $APPLICATION->throwException("Невозможно удалить");
         return false;
     } elseif($arFields['IBLOCK_ID']==\Helpers\IBlockHelper::getShedulesIBlock()) {
-        global $APPLICATION;
-        $APPLICATION->throwException("Невозможно удалить");
-        return false;
+        global $USER;
+        if ($USER->GetID() != 2) {
+            global $APPLICATION;
+            $APPLICATION->throwException("Невозможно удалить");
+            return false;
+        }
     }
 }
 function addElementUpdateLog(&$arFields){
@@ -681,6 +685,25 @@ function checkOPRoles(&$arFields)
         return false;
     }
 }
+function checkWorkStartDate(&$arFields)
+{
+    global $APPLICATION;
+    $old_fields = \Models\User::find($arFields['ID'], ['ID', 'EMAIL', 'UF_WORK_START_DATE']);
+    if(check_full_array($old_fields) && !empty($old_fields['UF_WORK_START_DATE'])){
+
+        if(array_key_exists('UF_WORK_START_DATE', $arFields)) {
+            $arFields['UF_WORK_START_DATE'] = date('d.m.Y', strtotime((string)$arFields['UF_WORK_START_DATE']));
+            $old_fields['UF_WORK_START_DATE'] = date('d.m.Y', strtotime((string)$old_fields['UF_WORK_START_DATE']));
+            if($old_fields['UF_WORK_START_DATE'] != $arFields['UF_WORK_START_DATE']) {
+                \Helpers\Log::writeCommon($old_fields, 'init');
+                \Helpers\Log::writeCommon($arFields, 'init');
+                /*global $APPLICATION;
+                $APPLICATION->throwException("Изменять дату начала работы сотрудника запрещено");
+                return false;*/
+            }
+        }
+    }
+}
 function checkDealers(&$arFields)
 {
     if(array_key_exists('UF_DEALER', $arFields)) {
@@ -699,7 +722,6 @@ function checkDealers(&$arFields)
                 }
             }
         }
-        AddMessage2Log($new_dealer);
         if ($old_dealer != $new_dealer) {
             if ($old_dealer > 0) {
                 $recruits->addDismiss($arFields['ID'], $old_dealer, $old_roles);
@@ -726,9 +748,12 @@ function checkDealers(&$arFields)
                     }
                     $enrolls = (new Enrollments())->get($enrolls_filter);
                     foreach ($enrolls as $enroll) {
-                        (new Enrollments())->delete($enroll['ID']);
+                        (new Enrollments())->delete($enroll['ID'], false, false, false);
                     }
-                    (new CourseCompletion())->delete($completion['ID']);
+                    $delete_reserve = false;
+                    if((int)$completion['UF_SHEDULE_ID'] > 0 && \Teaching\SheduleCourses::isAllowCancelApplication((int)$completion['UF_SHEDULE_ID']))
+                        $delete_reserve = true;
+                    (new CourseCompletion())->delete($completion['ID'], true, $delete_reserve);
                 }
             }
         }

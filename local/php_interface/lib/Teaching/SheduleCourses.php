@@ -226,7 +226,7 @@ class SheduleCourses
         if(\Teaching\Courses::isFreeSheduleCourse($course_id)){
             return false;
         }
-        //$schedule = current(self::get(['PROPERTY_COURSE' => $course_id, '>PROPERTY_BEGIN_DATE' => date("Y-m-d H:i:s", strtotime($date.' 00:00:01')), '<PROPERTY_BEGIN_DATE' => date("Y-m-d H:i:s", strtotime($date.' 23:59:59'))], ['ID', 'NAME']));
+        //$schedule = current(self::get(['PROPERTY_COURSE' => $course_id, '>PROPERTY_BEGIN_DATE' => date("Y-m-d H:i:s", strtotime($date.' 00:00:00')), '<PROPERTY_BEGIN_DATE' => date("Y-m-d H:i:s", strtotime($date.' 23:59:59'))], ['ID', 'NAME']));
 
         $filter = [
             'PROPERTY_COURSE' => $course_id,
@@ -417,12 +417,12 @@ class SheduleCourses
         $courses_ids = array_keys(\Models\Course::getByTeachingAdmin($user_id));
         $filter = [
             'PROPERTY_COURSE'=>$courses_ids,
-            '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($first_day_of_month.' 00:00:01', "YYYY-MM-DD H:i:s"),
+            '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($first_day_of_month.' 00:00:00', "YYYY-MM-DD H:i:s"),
             '<=PROPERTY_BEGIN_DATE' => ConvertDateTime($last_day_of_month.' 23:59:59', "YYYY-MM-DD H:i:s"),
         ];
         $filter_end = [
             'PROPERTY_COURSE'=>$courses_ids,
-            '>=PROPERTY_END_DATE' => ConvertDateTime($first_day_of_month.' 00:00:01', "YYYY-MM-DD H:i:s"),
+            '>=PROPERTY_END_DATE' => ConvertDateTime($first_day_of_month.' 00:00:00', "YYYY-MM-DD H:i:s"),
             '<=PROPERTY_END_DATE' => ConvertDateTime($last_day_of_month.' 23:59:59', "YYYY-MM-DD H:i:s"),
         ];
         $this_months_list = $temp_arr =  self::collectInfo($filter, $by_days);
@@ -471,12 +471,12 @@ class SheduleCourses
         $courses_ids = $ds;
         $filter = [
             'PROPERTY_COURSE'=>$courses_ids,
-            '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($first_day_of_month.' 00:00:01', "YYYY-MM-DD H:i:s"),
+            '>=PROPERTY_BEGIN_DATE' => ConvertDateTime($first_day_of_month.' 00:00:00', "YYYY-MM-DD H:i:s"),
             '<=PROPERTY_BEGIN_DATE' => ConvertDateTime($last_day_of_month.' 23:59:59', "YYYY-MM-DD H:i:s"),
         ];
         $filter_end = [
             'PROPERTY_COURSE'=>$courses_ids,
-            '>=PROPERTY_END_DATE' => ConvertDateTime($first_day_of_month.' 00:00:01', "YYYY-MM-DD H:i:s"),
+            '>=PROPERTY_END_DATE' => ConvertDateTime($first_day_of_month.' 00:00:00', "YYYY-MM-DD H:i:s"),
             '<=PROPERTY_END_DATE' => ConvertDateTime($last_day_of_month.' 23:59:59', "YYYY-MM-DD H:i:s"),
         ];
         if(!check_full_array($courses_for_role)){
@@ -677,7 +677,7 @@ class SheduleCourses
         dump("Начальная дата выборки - ".$first_day);
         dump("Конечная дата выборки - ".$last_day."<br/><br/>");
         $filter = [
-            '>=PROPERTY_BEGIN_DATE' => $first_day." 00:00:01",
+            '>=PROPERTY_BEGIN_DATE' => $first_day." 00:00:00",
             '<=PROPERTY_BEGIN_DATE' => $last_day." 23:59:59",
         ];
         return self::get($filter, 1);
@@ -745,5 +745,19 @@ class SheduleCourses
             return $days + 1;
         }
         return 1;
+    }
+
+    public static function getByCity(mixed $city_xml_id, bool $ids = false)
+    {
+        $list = self::getArray(['PROPERTY_TOWN' => $city_xml_id]);
+        if(check_full_array($list))
+            return $ids?array_keys($list):$list;
+        return [];
+    }
+
+    public static function isAllowCancelApplication(int $schedule_id)
+    {
+        $schedule = current(self::getById($schedule_id));
+        return time()<strtotime($schedule['PROPERTIES']['NOT_UNENROLL_DATE']);
     }
 }

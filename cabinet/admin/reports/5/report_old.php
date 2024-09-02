@@ -38,7 +38,7 @@ if(check_full_array($_REQUEST['role'])){
         $schedules_filter['PROPERTY_COURSE'] = array_intersect($must_course_ids, $schedules_filter['PROPERTY_COURSE']);
 }
 if($_REQUEST['start_date']){
-    $schedules_filter['>=PROPERTY_BEGIN_DATE'] = date('Y-m-d', strtotime($_REQUEST['start_date']))." 00:00:01";
+    $schedules_filter['>=PROPERTY_BEGIN_DATE'] = date('Y-m-d', strtotime($_REQUEST['start_date']))." 00:00:00";
 }
 if($_REQUEST['end_date']){
     $schedules_filter["<=PROPERTY_END_DATE"] = $_REQUEST['end_date'].' 23:59:59';

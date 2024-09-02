@@ -9,6 +9,7 @@ use Teaching\MaterialsFiles;
 
 $this->setFrameMode(true);
 global $USER, $APPLICATION;
+$arResult['ITEM']['PROPERTIES']['COURSE_FORMAT']=$arResult['ITEM']['PROPERTIES']['COURSE_FORMAT']??"Offline"
 ?>
 <div class="content-section">
     <h1 class="h1"><?=$arResult['ITEM']['SCHEDULE']['NAME']??$arResult['ITEM']['NAME']?></h1>
@@ -73,7 +74,8 @@ global $USER, $APPLICATION;
                             </div>
                         <?php }?>
                     </div>
-                    <?php if($arResult['ITEM']['PROPERTIES']['COURSE_FORMAT']=="Offline"):?>
+                    <?php //if($arResult['ITEM']['PROPERTIES']['COURSE_FORMAT']=="Offline"):?>
+                    <?php if(!empty($arResult['ITEM']['SCHEDULE']['PROPERTIES']['ADDRESS'])):?>
                         <div class="course-main__contacts">
                             <?php if(!empty($arResult['ITEM']['SCHEDULE']['PROPERTIES']['ADDRESS'])){?>
                                 <div class="course-main__adress">
@@ -187,7 +189,7 @@ global $USER, $APPLICATION;
                             <?php }
                         }
                 }
-                if(!\Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID'])){?>
+                if(!\Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID']) && !\Models\Course::allowToFreeEnroll($arResult['ITEM']['ID'])){?>
                     <span class="status status--not-passed status--lg"><span class="icon"><img src="<?=SITE_TEMPLATE_PATH?>/images/delete.svg" alt=""></span> На балансе дилера недостаточно средств для записи</span>
                 <?php }
                 if(!$arResult['ITEM']['IS_COMPLETED_COURSE']&&(new \Teaching\CourseCompletion())->missAttemptsBySchedule($arResult['ITEM']['SCHEDULE']['ID'])){
@@ -197,9 +199,11 @@ global $USER, $APPLICATION;
                     <span class="status status--passed status--lg"><span class="icon"><img src="<?=SITE_TEMPLATE_PATH?>/images/check3.svg" alt=""></span> <?=$arResult['ITEM']['INFO']?></span>
                 <?php }
                 }
+
                 if($arResult['ITEM']['ALREADY_ENROLLED']&&$arResult['ITEM']['WAS_STARTED']&&$arResult['ITEM']['IS_HYBRID']){
                     if (\Models\Course::hasIncomingTest($arResult['ITEM']['ID'])){
-                        if(\Models\Course::hasUncompletingIncomingTest($arResult['ITEM']['ID'])){?>
+                        if(\Models\Course::hasUncompletingIncomingTest($arResult['ITEM']['ID'])){
+                            ?>
                             <a href="<?=\Teaching\Tests::generateLinkToIncomingTest($arResult['ITEM']['ID'])?>" class="btn btn--reverse">Пройти предварительный тест</a>
                         <?php } else {
                             if($arResult['ITEM']['SCHEDULE']['PROPERTIES']['ALLOW_MAIN_TEST']=='Да') {?>
@@ -215,8 +219,10 @@ global $USER, $APPLICATION;
                             <span class="status status--passed status--lg"><span class="icon"><img src="<?=SITE_TEMPLATE_PATH?>/images/check3.svg" alt=""></span>Выходное тестирование еще не разрешено</span>
                         <?php }
                     }?>
-                <?php }?>
-                <?php if(\Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID']) && $arResult['ITEM']['HAS_FREE_PLACES']&&$arResult['ITEM']['REGISTER_BUTTON']['NEED_SHOW']){?>
+                <?php }
+
+                ?>
+                <?php if((\Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID']) || \Models\Course::allowToFreeEnroll($arResult['ITEM']['ID'])) && $arResult['ITEM']['HAS_FREE_PLACES']&&$arResult['ITEM']['REGISTER_BUTTON']['NEED_SHOW']){?>
                     <?php if(\Teaching\Courses::isAllowToEnrollByCountry($arResult['ITEM']['ID'])) {?>
                         <a href="javascript:void(0)" class="btn btn--reverse detail_enroll_shedule_butt" data-course-id="<?=$arResult['ITEM']['SCHEDULE']['ID']?>"><?=Loc::getMessage('ENROLL')?></a>
                     <?php }?>
@@ -230,7 +236,7 @@ global $USER, $APPLICATION;
                 <?php
                 if(\Teaching\Courses::isAllowToEnrollByBalance($arResult['ITEM']['ID']) && $arResult['ITEM']['ALLOW_TO_REGISTER_BY_DATE']&&$arResult['ITEM']['HAS_FREE_PLACES']&&$arResult['ITEM']['REGISTER_EMPLOYEE_BUTTON']['NEED_SHOW']&&$arResult['USER']['HAS_RIGHTS_TO_ENROLL_EMPLOYEE']){?>
                     <?php if(\Teaching\Courses::isAllowToEnrollByCountry($arResult['ITEM']['ID'])) {?>
-                        <a href="javascript:void(0)" class="btn btn--reverse employee_shedule_enroll_butt" data-course-id="<?=$arResult['ITEM']['SCHEDULE']['ID']?>"><?=Loc::getMessage('ENROLL_EMPLOYEE')?></a>
+                        <a href="javascript:void(0)" class="btn btn--reverse employee_shedule_enroll_butt" style="width: 200px" data-course-id="<?=$arResult['ITEM']['SCHEDULE']['ID']?>"><?=Loc::getMessage('ENROLL_EMPLOYEE')?></a>
                     <?php }?>
                 <?php } ?>
                 <?php if($_REQUEST['load_ajax']=='enrolled_data')
@@ -247,6 +253,9 @@ global $USER, $APPLICATION;
         </div>
         <div class="text-content text-content--border">
             <p>
+                <?php if(!$arResult['ITEM']['SCHEDULE']['DETAIL_TEXT'])
+                    $arResult['ITEM']['SCHEDULE']['DETAIL_TEXT'] = $arResult['ITEM']['DETAIL_TEXT'];?>
+
                 <?=$arResult['ITEM']['SCHEDULE']['DETAIL_TEXT']??$arResult['ITEM']['PROPERTIES']['TEXT_BLOCK_1']['TEXT']?>
             </p>
             <?php if(!empty($arResult['ITEM']['PROPERTIES']['TEXT_SLIDER'])&&count($arResult['ITEM']['PROPERTIES']['TEXT_SLIDER'])>0){?>
