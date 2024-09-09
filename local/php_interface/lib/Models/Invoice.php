@@ -67,6 +67,11 @@ class Invoice
                     return true;
                 }
             } else {
+                if (!empty($data['payment_date']) && $data['payment_date'] != '0001-01-01T00:00:00' ) {
+                    $fields['UF_PAYMENT_DATE'] = date('d.m.Y H:i:s', strtotime($data['payment_date']));
+                    $fields['UF_STATUS'] = 51;
+                    $fields['UF_UPDATED_AT'] = date('d.m.Y H:i:s');
+                }
                 return HLBlock::add($fields, HLBlock::initialize('invoices'));
             }
         }
