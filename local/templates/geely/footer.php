@@ -35,7 +35,7 @@ if($USER->IsAuthorized()){?>
             </div>
         </div>
     </div>
-    <div class="copy">Geely © <?=date('Y')?> <?= Loc::getMessage('ALL_RIGHTS') ?></div>
+    <div class="copy"><?=\Settings\Common::get('footer_name')?> © <?=date('Y')?> <?= Loc::getMessage('ALL_RIGHTS') ?></div>
 </footer>
 <script src="https://unpkg.com/imask"></script>
 <?php

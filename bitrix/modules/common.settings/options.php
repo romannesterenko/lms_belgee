@@ -52,6 +52,13 @@ $aTabs = array(
                 "",
                 array("text", 30)
             ),
+            "Имя логотипа в футере",
+            array(
+                "footer_name",
+                "Наименование",
+                "",
+                array("text", 30)
+            ),
             array(
                 "common_logo",
                 "Логотип",
