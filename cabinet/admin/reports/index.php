@@ -266,6 +266,17 @@ use Bitrix\Main\Localization\Loc;?>
                     <img src="<?=SITE_TEMPLATE_PATH?>/images/spinner.gif" alt="">
                 </div>
             </div>
+            <div class="timetable-item timetable-item--small timetable-item--attention go_to_report">
+                <a href="/cabinet/admin/reports/24/">
+                    <span class="timetable-item__content">
+                        <span class="timetable-item__title">№24. Сертификация персонала</span>
+                        <span class="timetable-item__text">Сертификация персонала</span>
+                  </span>
+                </a>
+                <div class="link_loading_spinner">
+                    <img src="<?=SITE_TEMPLATE_PATH?>/images/spinner.gif" alt="">
+                </div>
+            </div>
         </div>
     </div>
 </div>

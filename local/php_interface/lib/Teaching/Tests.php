@@ -210,11 +210,13 @@ class Tests
         return (int)\Helpers\PropertyHelper::getPropertyValue(Iblock::getTestsIblock(), $test_id, 'LIMIT');
     }
 
-    public static function randomizeQuestions($test_id) {
+    public static function randomizeQuestions($test_id, $regen = false) {
         $return_array = [];
         $user_id = UserHelper::prepareUserId(0);
         $already_string = \COption::GetOptionString('common.settings', 'rand_questions_'.$user_id.'_'.$test_id);
-        if(!empty($already_string)) {
+        if(!$regen && !empty($already_string)) {
+
+
             $array = explode('|', $already_string);
             foreach ($array as $k => $value) {
                 if($k==0)

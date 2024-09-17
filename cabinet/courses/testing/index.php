@@ -11,6 +11,22 @@ $new_order = [];
 
 if(Tests::getLimitQuestions((int)$_REQUEST['test_id'])>0||Tests::isRandomQuestions((int)$_REQUEST['test_id'])) {
     $new_order = Tests::randomizeQuestions((int)$_REQUEST['test_id']);
+    $all_questions = Tests::getQuestionsByTest((int)$_REQUEST['test_id']);
+    $all_questions_ids = [];
+    foreach ($all_questions as $question) {
+        if ($question['ACTIVE'] == 'Y')
+            $all_questions_ids[] = $question['ID'];
+    }
+    $need_reset = false;
+    foreach ($new_order as $orig_id => $rand_id){
+        if(!in_array($rand_id, $all_questions_ids)){
+            $need_reset = true;
+            break;
+        }
+    }
+    if ($need_reset){
+        $new_order = Tests::randomizeQuestions((int)$_REQUEST['test_id'], true);
+    }
 } else {
     Tests::resetRandomizeQuestions((int)$_REQUEST['test_id']);
 }
