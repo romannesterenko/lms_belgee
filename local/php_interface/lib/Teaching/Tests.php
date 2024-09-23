@@ -125,24 +125,54 @@ class Tests
 
     public static function getNextQuestionLink($test_id, $value)
     {
+        //global $USER;
         $questions = self::getQuestionsByTest($test_id);
+
         $array = explode('_', $value);
         $current_id = $array[0];
         $curr_key = 0;
-        foreach ($questions as $id => $question){
-            $curr_key++;
-            if($id==$current_id)
-                break;
-        }
-        if($curr_key<count($questions))
+        $new_order = [];
+        //if ($USER->GetID() == 2 ) {
+            if(Tests::getLimitQuestions($test_id)>0||Tests::isRandomQuestions($test_id)) {
+                $curr_key++;
+                $new_order = Tests::randomizeQuestions($test_id);
+                foreach ($new_order as $orig_id => $order) {
+                    $curr_key++;
+                    if($order==$current_id)
+                        break;
+                }
+            } else {
+                foreach ($questions as $id => $question){
+                    $curr_key++;
+                    if($id==$current_id)
+                        break;
+                }
+            }
+        /*} else {
+            foreach ($questions as $id => $question){
+                $curr_key++;
+                if($id==$current_id)
+                    break;
+            }
+        }*/
+        if($curr_key < count($questions))
             $need_key = $curr_key+1;
         else
             $need_key = $curr_key;
         $tmp = 0;
-        foreach ($questions as $id => $question){
-            $tmp++;
-            if($need_key==$tmp) {
-                return '/cabinet/courses/testing/'.$test_id.'/'.$id.'/';
+        if (check_full_array($new_order)){
+            foreach ($new_order as $o_id => $n_id) {
+                $tmp++;
+                if ($need_key == $tmp) {
+                    return '/cabinet/courses/testing/' . $test_id . '/' . $o_id . '/';
+                }
+            }
+        } else {
+            foreach ($questions as $id => $question) {
+                $tmp++;
+                if ($need_key == $tmp) {
+                    return '/cabinet/courses/testing/' . $test_id . '/' . $id . '/';
+                }
             }
         }
     }

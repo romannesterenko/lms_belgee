@@ -130,8 +130,12 @@ class ProcessTest
         if ($list[0]['ID'] > 0) {
             $old_points = $list[0]['UF_POINTS'];
             $old_points+=\Teaching\Tests::checkCorrectAnswer($request['value']);
-            $max_points = \Teaching\Tests::getMaxPoints($request['test_id']);
-            if($old_points>$max_points) {
+            if(Tests::getLimitQuestions((int)$request['test_id']) > 0) {
+                $max_points = (int)Tests::getLimitQuestions((int)$request['test_id']);
+            } else {
+                $max_points = \Teaching\Tests::getMaxPoints($request['test_id']);
+            }
+            if($old_points > $max_points) {
                 $old_points = $max_points;
             }
             if($old_points>0)
@@ -299,8 +303,8 @@ class ProcessTest
     public function goToQuestionOfTestByNumber($need_question, $test_id)
     {
         $questions = array_values(\Teaching\Tests::getQuestionsByTest($test_id));
-        if($need_question>count($questions))
-            $need_question=count($questions);
+        if($need_question > count($questions))
+            $need_question = count($questions);
         LocalRedirect('/cabinet/courses/testing/' . $test_id.'/'.$questions[($need_question-1)]['ID'].'/');
     }
 

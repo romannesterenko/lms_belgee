@@ -29,9 +29,10 @@ class Completion
             $USER->GetID(),
             \Teaching\Courses::getIdByCompletion($completion_id)
         );
-        if (count($all_stages)==1){
+        if (count($all_stages)==1) {
             $common_completions->setCurrentStep($current_completion['ID'], 1);
-            $return_array['attempts'] = $common_completions->incrementAttempt($current_completion['ID']);
+            if ($current_completion['UF_FAILED'] == 1)
+                $return_array['attempts'] = $common_completions->incrementAttempt($current_completion['ID']);
             $common_completions->setAllSteps($current_completion['ID'], count($all_stages));
             $return_array['completion'] = self::getFirstStageByCompletion($completion_id);
             $return_array['current'] = 1;

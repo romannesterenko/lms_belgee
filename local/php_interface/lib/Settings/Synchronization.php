@@ -164,10 +164,27 @@ class Synchronization
             'PROPERTY_ENTITY' => self::getRelatedTypeIdByXML($entity),
             'PROPERTY_REMOTE_ID' => $remote_id,
         );
+
         $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
         if($ob = $res->GetNextElement()) {
             $arFields = $ob->GetFields();
+            dump($arFields);
             return $arFields['PROPERTY_LOCAL_ID_VALUE'];
+        }
+        return false;
+    }
+    public static function getLinkedEntity($entity, $remote_id)
+    {
+        $arSelect = Array("ID", "PROPERTY_LOCAL_ID", "PROPERTY_REMOTE_ID");
+        $arFilter = Array(
+            "IBLOCK_ID"=>self::getRelatedIblock()['ID'],
+            'PROPERTY_ENTITY' => self::getRelatedTypeIdByXML($entity),
+            'PROPERTY_LOCAL_ID' => $remote_id,
+        );
+
+        $res = CIBlockElement::GetList(Array(), $arFilter, false, false, $arSelect);
+        if($ob = $res->GetNextElement()) {
+            return $ob->GetFields();
         }
         return false;
     }
@@ -269,5 +286,10 @@ class Synchronization
                 $response_array = json_decode($response, true);
             }
         }
+    }
+    public static function getRemoteCompletionsBySchedule($schedule_id)
+    {
+        $linkedSchedule = self::getLinkedLocalID('schedule', $schedule_id, self::getCurrentLMS()['CODE']);
+        dump($linkedSchedule);
     }
 }

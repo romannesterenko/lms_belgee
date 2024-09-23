@@ -35,11 +35,13 @@ if(!check_full_array($course))
     \Helpers\PageHelper::set404(Loc::getMessage('PAGE_NOT_FOUND'));
 $completion = new \Teaching\CourseCompletion();
 $current_completion = current($completion->get(['UF_USER_ID' => $USER->GetID(), "UF_COURSE_ID"=>$course['ID'], "UF_FAILED" => false, "UF_IS_COMPLETE"=>false]));
+
 if(!check_full_array($current_completion))
     LocalRedirect('/cabinet/common/');
 if($current_completion['UF_SHEDULE_ID']>0&&!\Teaching\SheduleCourses::isAllowMainTest($current_completion['UF_SHEDULE_ID']))
     LocalRedirect('/cabinet/common/');
 if($test_processed->isFinished($_REQUEST['test_id'], $USER->GetID(), $current_completion['ID'])){
+
     Tests::resetRandomizeQuestions($_REQUEST['test_id']);
     $APPLICATION->SetTitle(GetMessage('TESTING').' '.$course['NAME']);
     $test_process_info = $test_processed->getByCompletion($current_completion['ID']);
@@ -145,18 +147,17 @@ $questions = Tests::getQuestionsByTest($test['ID'], $new_order);
 $id = 0;
 $num = 1;
 $need_question = $test_processed->getCurrentQuestionNumber($_REQUEST['test_id'], 0, $current_completion['ID']);
-
 foreach ($questions as $key => $one_question){
     $id = $key;
     if($key==(int)$_REQUEST['question_id'])
         break;
     $num++;
 }
-if($num>count($questions))
-    $num=count($questions);
-if($num==1&&!$test_processed->isBegined($_REQUEST['test_id'], 0, $current_completion['ID']))
+if($num > count($questions))
+    $num = count($questions);
+if($num==1&&!$test_processed->isBegined($_REQUEST['test_id'], 0, $current_completion['ID'])) {
     $test_processed->startProcess($_REQUEST['test_id'], 0, $current_completion['ID']);
-else{
+}else{
     $need_question = $test_processed->getCurrentQuestionNumber($_REQUEST['test_id'], 0, $current_completion['ID']);
     if($num!=$need_question) {
         $test_processed->goToQuestionOfTestByNumber($need_question, $_REQUEST['test_id']);
@@ -168,7 +169,7 @@ $need_question_timer = false;
 $time_for_completing_test = Tests::getTimeForCompleting($_REQUEST['test_id']);
 $time_for_completing_answer = (int)$question['PROPERTIES']['TIME_TO_ANSWER'];
 $process = new \Teaching\ProcessTest();
-if($time_for_completing_test>0){
+if($time_for_completing_test>0) {
     $pr_test = current($process->get(['UF_TEST_ID' => $_REQUEST['test_id'], 'UF_USER_ID' => $USER->GetID()])->getArray());
     $start_timestamp = $pr_test['UF_BEGIN_DATETIME']->getTimestamp();
     $fact_different = time()-$start_timestamp;
@@ -183,14 +184,14 @@ if($time_for_completing_test>0){
     }
 
 }
-if($time_for_completing_answer>0){
+if( $time_for_completing_answer > 0 ) {
 
     $pr_test = current($process->get(['UF_TEST_ID' => $_REQUEST['test_id'], 'UF_USER_ID' => $USER->GetID()])->getArray());
 
     $start_timestamp_a = $pr_test['UF_LAST_ACTIVE']->getTimestamp();
     $fact_different_a = time()-$start_timestamp_a;
     $need_different_a = $time_for_completing_answer*60;
-    if($fact_different_a>$need_different_a){
+    if($fact_different_a > $need_different_a) {
         $test = current($test_processed->getByTestAndUser($_REQUEST['test_id']));
         $test_processed->setFinished($test['ID']);
         LocalRedirect($APPLICATION->GetCurPage());
@@ -201,7 +202,7 @@ if($time_for_completing_answer>0){
 
 }
 
-if($need_question_timer&&$question_time<=0){
+if($need_question_timer && $question_time <= 0) {
     $test = current($test_processed->getByTestAndUser($_REQUEST['test_id']));
     $test_processed->setFinished($test['ID']);
     LocalRedirect($APPLICATION->GetCurPage());
@@ -250,7 +251,9 @@ $APPLICATION->SetTitle(Loc::getMessage('PROCESS_TESTING_TITLE', ['#NAME#' => $co
                                 <div style="width: 100%; text-align: center; margin: 10px">
                                     <img src="<?=CFile::GetPath($question['PREVIEW_PICTURE'])?>" alt="">
                                 </div>
-                            <?php }?>
+                            <?php }
+                            dump($question['PROPERTIES']['CORRECT_NUM']);
+                            ?>
 
                             <?php if(!empty($question['PROPERTIES']['CORRECT_NUM'])){
                                 $many_answers = false;

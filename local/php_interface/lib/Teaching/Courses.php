@@ -67,7 +67,6 @@ class Courses
         IBlockHelper::includeIBlockModule();
         $db_props = CIBlockElement::GetProperty(IBlockHelper::getCoursesIBlock(), $ID, array("sort" => "asc"), array("CODE" => "COURSE_TYPE"));
         if ($prop = $db_props->Fetch()) {
-            dump($prop);
             return (int)$prop['VALUE'] == 125;
         }
         return false;

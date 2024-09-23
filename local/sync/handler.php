@@ -74,6 +74,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             echo json_encode(['status' => 'ok', 'data' => $_REQUEST, 'result' => $result, 'dealer_id' => (int)$PRODUCT_ID, 'exists' => $exists]);
         }
+        if($_REQUEST['method'] === 'getSheduleCompletions') {
+            if($_REQUEST['data']['scheduleId'] > 0) {
+                $list = (new \Teaching\CourseCompletion())->get(['UF_SHEDULE' => $_REQUEST['data']['scheduleId']], ['ID', 'UF_USER_ID']);
+            }
+            echo json_encode(['status' => 'ok', 'data' => $list]);
+        }
         if($_REQUEST['method'] === 'setFailedCompletion') {
             if($_REQUEST['data']['completion_id'] > 0){
                 (new \Teaching\CourseCompletion())->setFailedCourse($_REQUEST['data']['completion_id']);
